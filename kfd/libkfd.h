@@ -71,35 +71,6 @@ struct info {
     } kaddr;
 };
 
-struct perf {
-    u64 kernel_slide;
-    u64 gVirtBase;
-    u64 gPhysBase;
-    u64 gPhysSize;
-    struct {
-        u64 pa;
-        u64 va;
-    } ttbr[2];
-    struct ptov_table_entry {
-        u64 pa;
-        u64 va;
-        u64 len;
-    } ptov_table[8];
-    struct {
-        u64 kaddr;
-        u64 paddr;
-        u64 uaddr;
-        u64 size;
-    } shared_page;
-    struct {
-        i32 fd;
-        u32 si_rdev_buffer[2];
-        u64 si_rdev_kaddr;
-    } dev;
-    void (*saved_kread)(struct kfd*, u64, void*, u64);
-    void (*saved_kwrite)(struct kfd*, void*, u64, u64);
-};
-
 struct puaf {
     u64 number_of_puaf_pages;
     u64* puaf_pages_uaddr;
@@ -136,7 +107,6 @@ struct krkw {
 
 struct kfd {
     struct info info;
-    struct perf perf;
     struct puaf puaf;
     struct krkw kread;
     struct krkw kwrite;
@@ -145,7 +115,6 @@ struct kfd {
 #include "libkfd/info.h"
 #include "libkfd/puaf.h"
 #include "libkfd/krkw.h"
-#include "libkfd/perf.h"
 
 struct kfd* kfd_init(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method)
 {
@@ -153,13 +122,11 @@ struct kfd* kfd_init(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwri
     info_init(kfd);
     puaf_init(kfd, puaf_pages, puaf_method);
     krkw_init(kfd, kread_method, kwrite_method);
-    perf_init(kfd);
     return kfd;
 }
 
 void kfd_free(struct kfd* kfd)
 {
-    perf_free(kfd);
     krkw_free(kfd);
     puaf_free(kfd);
     info_free(kfd);
@@ -182,7 +149,6 @@ u64 kopen(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method)
     puaf_run(kfd);
     krkw_run(kfd);
     info_run(kfd);
-    perf_run(kfd);
     puaf_cleanup(kfd);
 
     timer_end();
