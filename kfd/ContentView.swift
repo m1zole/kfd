@@ -7,63 +7,85 @@ import SwiftUI
 struct ContentView: View {
     @State private var kfd: UInt64 = 0
 
-    private var puaf_pages_options = [16, 32, 64, 128, 256, 512, 1024, 2048]
-    @State private var puaf_pages_index = 7
-    @State private var puaf_pages = 0
+    private var puafPagesOptions = [16, 32, 64, 128, 256, 512, 1024, 2048]
+    @State private var puafPagesIndex = 7
+    @State private var puafPages = 0
 
-    private var puaf_method_options = ["physpuppet", "smith"]
-    @State private var puaf_method = 1
+    private var puafMethodOptions = ["physpuppet", "smith"]
+    @State private var puafMethod = 1
 
-    private var kread_method_options = ["kqueue_workloop_ctl", "sem_open"]
-    @State private var kread_method = 1
+    private var kreadMethodOptions = ["kqueue_workloop_ctl", "sem_open"]
+    @State private var kreadMethod = 1
 
-    private var kwrite_method_options = ["dup", "sem_open"]
-    @State private var kwrite_method = 1
+    private var kwriteMethodOptions = ["dup", "sem_open"]
+    @State private var kwriteMethod = 1
 
     var body: some View {
         NavigationView {
             Form {
                 Section {
-                    Picker(selection: $puaf_pages_index, label: Text("puaf pages:")) {
-                        ForEach(0 ..< puaf_pages_options.count, id: \.self) {
-                            Text(String(self.puaf_pages_options[$0]))
+                    Picker(selection: $puafPagesIndex, label: Text("puaf pages:")) {
+                        ForEach(0 ..< puafPagesOptions.count, id: \.self) {
+                            Text(String(self.puafPagesOptions[$0]))
                         }
                     }.disabled(kfd != 0)
                 }
+
                 Section {
-                    Picker(selection: $puaf_method, label: Text("puaf method:")) {
-                        ForEach(0 ..< puaf_method_options.count, id: \.self) {
-                            Text(self.puaf_method_options[$0])
+                    Picker(selection: $puafMethod, label: Text("puaf method:")) {
+                        ForEach(0 ..< puafMethodOptions.count, id: \.self) {
+                            Text(self.puafMethodOptions[$0])
                         }
                     }.disabled(kfd != 0)
                 }
+
                 Section {
-                    Picker(selection: $kread_method, label: Text("kread method:")) {
-                        ForEach(0 ..< kread_method_options.count, id: \.self) {
-                            Text(self.kread_method_options[$0])
+                    Picker(selection: $kreadMethod, label: Text("kread method:")) {
+                        ForEach(0 ..< kreadMethodOptions.count, id: \.self) {
+                            Text(self.kreadMethodOptions[$0])
                         }
                     }.disabled(kfd != 0)
                 }
+
                 Section {
-                    Picker(selection: $kwrite_method, label: Text("kwrite method:")) {
-                        ForEach(0 ..< kwrite_method_options.count, id: \.self) {
-                            Text(self.kwrite_method_options[$0])
+                    Picker(selection: $kwriteMethod, label: Text("kwrite method:")) {
+                        ForEach(0 ..< kwriteMethodOptions.count, id: \.self) {
+                            Text(self.kwriteMethodOptions[$0])
                         }
                     }.disabled(kfd != 0)
                 }
+
                 Section {
                     HStack {
-                        Button("kopen") {
-                            puaf_pages = puaf_pages_options[puaf_pages_index]
-                            kfd = kopen(UInt64(puaf_pages), UInt64(puaf_method), UInt64(kread_method), UInt64(kwrite_method))
-                        }.disabled(kfd != 0).frame(minWidth: 0, maxWidth: .infinity)
-                        Button("kclose") {
-                            kclose(kfd)
-                            puaf_pages = 0
+                        Button("Open Kernel") {
+                            puafPages = puafPagesOptions[puafPagesIndex]
+                            kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
+                            do_fun(kfd)
+//                            execCmd(args: [CommandLine.arguments[0], "whoami"])
+                        }.disabled(kfd != 0)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+
+                        Button("Close Kernel") {
+                            do_kclose(kfd)
+                            puafPages = 0
                             kfd = 0
-                        }.disabled(kfd == 0).frame(minWidth: 0, maxWidth: .infinity)
+                        }.disabled(kfd == 0)
+                        .frame(minWidth: 0, maxWidth: .infinity)
                     }.buttonStyle(.bordered)
                 }.listRowBackground(Color.clear)
+
+                Button("Respring") {
+                    puafPages = 0
+                    kfd = 0
+                    do_respring()
+                }.frame(minWidth: 0, maxWidth: .infinity)
+
+                Button("Backboard respring") {
+                    puafPages = 0
+                    kfd = 0
+                    do_bbrespring()
+                }.frame(minWidth: 0, maxWidth: .infinity)
+
                 if kfd != 0 {
                     Section {
                         VStack {

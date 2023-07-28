@@ -11,6 +11,12 @@
 		297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA10A2A310AE100D1E51A /* ContentView.swift */; };
 		297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA10C2A310AE200D1E51A /* Assets.xcassets */; };
 		297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA1102A310AE200D1E51A /* Preview Assets.xcassets */; };
+		C806988E2A71436A001A593E /* helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = C806988A2A71436A001A593E /* helpers.m */; };
+		C806988F2A71436A001A593E /* AAAA.bin in Resources */ = {isa = PBXBuildFile; fileRef = C806988C2A71436A001A593E /* AAAA.bin */; };
+		C80698902A71436A001A593E /* fun.m in Sources */ = {isa = PBXBuildFile; fileRef = C806988D2A71436A001A593E /* fun.m */; };
+		C872D7DB2A723E9D006BEC32 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = C872D7DA2A723E9D006BEC32 /* test.swift */; };
+		C8843C232A724AA900CA0DC9 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = C8843C222A724AA900CA0DC9 /* SwiftUtils */; };
+		C8843C262A724BC100CA0DC9 /* CBindings in Resources */ = {isa = PBXBuildFile; fileRef = C8843C252A724BC100CA0DC9 /* CBindings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +41,14 @@
 		29A765292A393FCB006617E8 /* perf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = perf.h; sourceTree = "<group>"; };
 		29E9572E2A6AFDA9005C43C0 /* static_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = static_info.h; sourceTree = "<group>"; };
 		29E9572F2A6AFDB6005C43C0 /* dynamic_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dynamic_info.h; sourceTree = "<group>"; };
+		658C54B52A7419310003EA04 /* com.apple.MobileGestalt.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = com.apple.MobileGestalt.plist; sourceTree = "<group>"; };
+		C80698892A71436A001A593E /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
+		C806988A2A71436A001A593E /* helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = helpers.m; sourceTree = "<group>"; };
+		C806988C2A71436A001A593E /* AAAA.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = AAAA.bin; sourceTree = "<group>"; };
+		C806988D2A71436A001A593E /* fun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = fun.m; sourceTree = "<group>"; };
+		C80698912A714947001A593E /* fun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fun.h; sourceTree = "<group>"; };
+		C872D7DA2A723E9D006BEC32 /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
+		C8843C252A724BC100CA0DC9 /* CBindings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CBindings; path = kfd/CBindings; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8843C232A724AA900CA0DC9 /* SwiftUtils in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,6 +66,13 @@
 		2948BA6A2A3162C600B2ED3C /* libkfd */ = {
 			isa = PBXGroup;
 			children = (
+				658C54B52A7419310003EA04 /* com.apple.MobileGestalt.plist */,
+				C8843C252A724BC100CA0DC9 /* CBindings */,
+				C80698912A714947001A593E /* fun.h */,
+				C806988C2A71436A001A593E /* AAAA.bin */,
+				C806988D2A71436A001A593E /* fun.m */,
+				C80698892A71436A001A593E /* helpers.h */,
+				C806988A2A71436A001A593E /* helpers.m */,
 				2948BA6E2A3162FD00B2ED3C /* common.h */,
 				2948BA6B2A3162DE00B2ED3C /* info */,
 				2948BA6F2A31630800B2ED3C /* info.h */,
@@ -132,6 +154,7 @@
 				2965065D2A31565B0025D1A7 /* kfd-Bridging-Header.h */,
 				297BA10E2A310AE200D1E51A /* kfd.entitlements */,
 				297BA1082A310AE100D1E51A /* kfdApp.swift */,
+				C872D7DA2A723E9D006BEC32 /* test.swift */,
 				2948BA6A2A3162C600B2ED3C /* libkfd */,
 				2965065E2A31565B0025D1A7 /* libkfd.h */,
 				297BA10F2A310AE200D1E51A /* Preview Content */,
@@ -163,6 +186,9 @@
 			dependencies = (
 			);
 			name = kfd;
+			packageProductDependencies = (
+				C8843C222A724AA900CA0DC9 /* SwiftUtils */,
+			);
 			productName = kfd;
 			productReference = 297BA1052A310AE100D1E51A /* kfd.app */;
 			productType = "com.apple.product-type.application";
@@ -175,7 +201,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					297BA1042A310AE100D1E51A = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -192,6 +218,9 @@
 				Base,
 			);
 			mainGroup = 297BA0FC2A310AE100D1E51A;
+			packageReferences = (
+				C8843C212A724AA900CA0DC9 /* XCRemoteSwiftPackageReference "SwiftUtils" */,
+			);
 			productRefGroup = 297BA1062A310AE100D1E51A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -208,6 +237,8 @@
 			files = (
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
+				C8843C262A724BC100CA0DC9 /* CBindings in Resources */,
+				C806988F2A71436A001A593E /* AAAA.bin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,7 +250,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */,
+				C80698902A71436A001A593E /* fun.m in Sources */,
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,
+				C872D7DB2A723E9D006BEC32 /* test.swift in Sources */,
+				C806988E2A71436A001A593E /* helpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,9 +293,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -317,9 +353,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -344,9 +382,11 @@
 				CODE_SIGN_ENTITLEMENTS = kfd/kfd.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"kfd/Preview Content\"";
 				DEVELOPMENT_TEAM = 8PHCD4D6H9;
 				ENABLE_HARDENED_RUNTIME = YES;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -359,6 +399,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -385,9 +426,11 @@
 				CODE_SIGN_ENTITLEMENTS = kfd/kfd.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"kfd/Preview Content\"";
 				DEVELOPMENT_TEAM = 8PHCD4D6H9;
 				ENABLE_HARDENED_RUNTIME = YES;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -400,6 +443,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -438,6 +482,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C8843C212A724AA900CA0DC9 /* XCRemoteSwiftPackageReference "SwiftUtils" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pinauten/SwiftUtils";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C8843C222A724AA900CA0DC9 /* SwiftUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C8843C212A724AA900CA0DC9 /* XCRemoteSwiftPackageReference "SwiftUtils" */;
+			productName = SwiftUtils;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 297BA0FD2A310AE100D1E51A /* Project object */;
 }
