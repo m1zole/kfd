@@ -181,7 +181,7 @@ const struct dynamic_info kern_versions[] = {
         .kernelcache__vm_pages = 0xfffffff007107e90,
         .kernelcache__vm_page_array_beginning_addr = 0xfffffff0071098f8,
         .kernelcache__vm_page_array_ending_addr = 0xfffffff007892b28,
-        .kernelcache__vn_kqfilter = 0xfffffff0014db03c,
+        .kernelcache__vn_kqfilter = 0xfffffff007378b70,
     },
 };
 

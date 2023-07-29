@@ -12,6 +12,7 @@
  * Note that these macros assume that the kfd pointer is in scope.
  */
 #define kfd_offset(field_name) (kern_versions[kfd->info.env.vid].field_name)
+#define kfd_offset_test(field_name) (kern_versions[0].field_name)
 
 #define kget_u64(field_name, object_kaddr)                                        \
     ({                                                                            \
@@ -96,8 +97,10 @@ void info_init(struct kfd* kfd)
             return;
         }
     }
-
-    //assert_false("unsupported osversion");
+    kfd->info.env.vid = 0;
+    print_u64(kfd->info.env.vid);
+    return;
+//    assert_false("unsupported osversion");
 }
 
 void info_run(struct kfd* kfd)

