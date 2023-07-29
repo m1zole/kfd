@@ -11,10 +11,13 @@
 		297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA10A2A310AE100D1E51A /* ContentView.swift */; };
 		297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA10C2A310AE200D1E51A /* Assets.xcassets */; };
 		297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA1102A310AE200D1E51A /* Preview Assets.xcassets */; };
+		C872D7DB2A723E9D006BEC32 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = C872D7DA2A723E9D006BEC32 /* test.swift */; };
+		C8843C232A724AA900CA0DC9 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = C8843C222A724AA900CA0DC9 /* SwiftUtils */; };
+		C8843C262A724BC100CA0DC9 /* CBindings in Resources */ = {isa = PBXBuildFile; fileRef = C8843C252A724BC100CA0DC9 /* CBindings */; };
+		C8D084692A7500EF00CC5899 /* fun in Resources */ = {isa = PBXBuildFile; fileRef = C8D084682A7500EF00CC5899 /* fun */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2948BA6E2A3162FD00B2ED3C /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		2948BA6F2A31630800B2ED3C /* info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = info.h; sourceTree = "<group>"; };
 		2948BA702A31631000B2ED3C /* krkw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = krkw.h; sourceTree = "<group>"; };
 		2948BA712A31631C00B2ED3C /* puaf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = puaf.h; sourceTree = "<group>"; };
@@ -35,6 +38,9 @@
 		29A765292A393FCB006617E8 /* perf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = perf.h; sourceTree = "<group>"; };
 		29E9572E2A6AFDA9005C43C0 /* static_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = static_info.h; sourceTree = "<group>"; };
 		29E9572F2A6AFDB6005C43C0 /* dynamic_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dynamic_info.h; sourceTree = "<group>"; };
+		C872D7DA2A723E9D006BEC32 /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
+		C8843C252A724BC100CA0DC9 /* CBindings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CBindings; path = kfd/CBindings; sourceTree = SOURCE_ROOT; };
+		C8D084682A7500EF00CC5899 /* fun */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fun; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8843C232A724AA900CA0DC9 /* SwiftUtils in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,7 +58,7 @@
 		2948BA6A2A3162C600B2ED3C /* libkfd */ = {
 			isa = PBXGroup;
 			children = (
-				2948BA6E2A3162FD00B2ED3C /* common.h */,
+				C8843C252A724BC100CA0DC9 /* CBindings */,
 				2948BA6B2A3162DE00B2ED3C /* info */,
 				2948BA6F2A31630800B2ED3C /* info.h */,
 				2948BA6C2A3162E400B2ED3C /* krkw */,
@@ -131,7 +138,9 @@
 				297BA10A2A310AE100D1E51A /* ContentView.swift */,
 				2965065D2A31565B0025D1A7 /* kfd-Bridging-Header.h */,
 				297BA10E2A310AE200D1E51A /* kfd.entitlements */,
+				C8D084682A7500EF00CC5899 /* fun */,
 				297BA1082A310AE100D1E51A /* kfdApp.swift */,
+				C872D7DA2A723E9D006BEC32 /* test.swift */,
 				2948BA6A2A3162C600B2ED3C /* libkfd */,
 				2965065E2A31565B0025D1A7 /* libkfd.h */,
 				297BA10F2A310AE200D1E51A /* Preview Content */,
@@ -163,6 +172,9 @@
 			dependencies = (
 			);
 			name = kfd;
+			packageProductDependencies = (
+				C8843C222A724AA900CA0DC9 /* SwiftUtils */,
+			);
 			productName = kfd;
 			productReference = 297BA1052A310AE100D1E51A /* kfd.app */;
 			productType = "com.apple.product-type.application";
@@ -192,6 +204,9 @@
 				Base,
 			);
 			mainGroup = 297BA0FC2A310AE100D1E51A;
+			packageReferences = (
+				C8843C212A724AA900CA0DC9 /* XCRemoteSwiftPackageReference "SwiftUtils" */,
+			);
 			productRefGroup = 297BA1062A310AE100D1E51A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -206,8 +221,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8D084692A7500EF00CC5899 /* fun in Resources */,
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
+				C8843C262A724BC100CA0DC9 /* CBindings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,6 +237,7 @@
 			files = (
 				297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */,
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,
+				C872D7DB2A723E9D006BEC32 /* test.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,7 +363,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"kfd/Preview Content\"";
-				DEVELOPMENT_TEAM = 4YW3B9LRX5;
+				DEVELOPMENT_TEAM = XYJG5XT7ZZ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -364,7 +382,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.p0up0u.kfd;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amongus.sussy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -386,7 +404,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"kfd/Preview Content\"";
-				DEVELOPMENT_TEAM = 4YW3B9LRX5;
+				DEVELOPMENT_TEAM = XYJG5XT7ZZ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -405,7 +423,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.p0up0u.kfd;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amongus.sussy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -438,6 +456,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C8843C212A724AA900CA0DC9 /* XCRemoteSwiftPackageReference "SwiftUtils" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pinauten/SwiftUtils";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C8843C222A724AA900CA0DC9 /* SwiftUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C8843C212A724AA900CA0DC9 /* XCRemoteSwiftPackageReference "SwiftUtils" */;
+			productName = SwiftUtils;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 297BA0FD2A310AE100D1E51A /* Project object */;
 }

@@ -96,8 +96,10 @@ void info_init(struct kfd* kfd)
             return;
         }
     }
-
-    assert_false("unsupported osversion");
+    kfd->info.env.vid = 0;
+    print_u64(kfd->info.env.vid);
+    return;
+//    assert_false("unsupported osversion");
 }
 
 void info_run(struct kfd* kfd)

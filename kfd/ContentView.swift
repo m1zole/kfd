@@ -19,7 +19,8 @@ struct ContentView: View {
 
     private var kwrite_method_options = ["dup", "sem_open"]
     @State private var kwrite_method = 1
-
+    
+    
     var body: some View {
         NavigationView {
             Form {
@@ -55,13 +56,20 @@ struct ContentView: View {
                     HStack {
                         Button("kopen") {
                             puaf_pages = puaf_pages_options[puaf_pages_index]
-                            kfd = kopen(UInt64(puaf_pages), UInt64(puaf_method), UInt64(kread_method), UInt64(kwrite_method))
+                            kfd = do_kopen(UInt64(puaf_pages), UInt64(puaf_method), UInt64(kread_method), UInt64(kwrite_method))
+                            do_fun(kfd)
+//                            execCmd(args: [CommandLine.arguments[0], "whoami"])
                         }.disabled(kfd != 0).frame(minWidth: 0, maxWidth: .infinity)
                         Button("kclose") {
-                            kclose(kfd)
+                            do_kclose(kfd)
                             puaf_pages = 0
                             kfd = 0
                         }.disabled(kfd == 0).frame(minWidth: 0, maxWidth: .infinity)
+                        Button("respring") {
+                            puaf_pages = 0
+                            kfd = 0
+                            do_respring()
+                        }.frame(minWidth: 0, maxWidth: .infinity)
                     }.buttonStyle(.bordered)
                 }.listRowBackground(Color.clear)
                 if kfd != 0 {
