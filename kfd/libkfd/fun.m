@@ -37,7 +37,8 @@ uint64_t do_kopen(uint64_t puaf_pages, uint64_t puaf_method, uint64_t kread_meth
 
 void do_kclose(u64 kfd)
 {
-    kclose((struct kfd*)(kfd));
+    printf("kclosed");
+    //kclose((struct kfd*)(kfd));
 }
 
 void do_respring()
