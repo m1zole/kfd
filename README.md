@@ -1,4 +1,8 @@
-# kfd
+# arm64 kfd
+
+### Warning, this branch is a mess
+Tested, Working on the iPhone X (iPhone10,6)
+
 
 kfd, short for kernel file descriptor, is a project to read and write kernel memory on Apple
 devices. It leverages various vulnerabilities that can be exploited to obtain dangling PTEs, which
