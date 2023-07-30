@@ -10,6 +10,6 @@
 
 #include <stdio.h>
 
-int do_fun(uint64_t kfd);
+int do_fun(void);
 
 #endif /* fun_h */

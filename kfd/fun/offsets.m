@@ -44,8 +44,9 @@ uint32_t off_cr_gmuid = 0;
 uint32_t off_cr_flags = 0;
 uint32_t off_task_t_flags = 0;
 uint32_t off_fd_ofiles = 0;
-uint32_t off_fp_fglob = 0;
+uint32_t off_fp_glob = 0;
 uint32_t off_fg_data = 0;
+uint32_t off_fg_flag = 0;
 uint32_t off_vnode_v_iocount = 0;
 uint32_t off_vnode_v_usecount = 0;
 uint32_t off_vnode_v_flag = 0;
@@ -57,11 +58,6 @@ uint32_t off_vnode_v_references = 0;
 uint32_t off_vnode_v_parent = 0;
 uint32_t off_vnode_v_label = 0;
 uint32_t off_vnode_v_cred = 0;
-uint32_t off_vnode_vu_mountedhere = 0;
-uint32_t off_vnode_vu_socket = 0;
-uint32_t off_vnode_vu_specinfo = 0;
-uint32_t off_vnode_vu_fifoinfo = 0;
-uint32_t off_vnode_vu_ubcinfo = 0;
 uint32_t off_vnode_v_writecount = 0;
 uint32_t off_vnode_v_type = 0;
 uint32_t off_mount_mnt_data = 0;
@@ -70,17 +66,16 @@ uint32_t off_mount_mnt_fsgroup = 0;
 uint32_t off_mount_mnt_devvp = 0;
 uint32_t off_mount_mnt_flag = 0;
 uint32_t off_specinfo_si_flags = 0;
-uint32_t off_fg_flag = 0;
 
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 
 void _offsets_init(void) {
-    if (SYSTEM_VERSION_EQUAL_TO(@"16.1.2")) {
-        printf("[i] offsets selected for iOS 16.1.2\n");
+//    if (SYSTEM_VERSION_EQUAL_TO(@"16.1.2")) {
+//        printf("[i] offsets selected for iOS 16.1.2\n");
         //iPhone 14 Pro 16.1.2 offsets
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/proc_internal.h#L273
-        //https://github.com/apple/darwin-xnu/blob/main/bsd/sys/queue.h#L485
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/queue.h#L487
         off_p_list_le_prev = 0x8;
         off_p_proc_ro = 0x18;
         off_p_ppid = 0x20;
@@ -124,9 +119,17 @@ void _offsets_init(void) {
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/osfmk/kern/task.h#L280
         off_task_t_flags = 0x3D0;
         
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/filedesc.h#L138
         off_fd_ofiles = 0;
-        off_fp_fglob = 0x10;
+        
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/file_internal.h#L125
+        off_fp_glob = 0x10;
+        
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/file_internal.h#L179
         off_fg_data = 0x38;
+        off_fg_flag = 0x10;
+        
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/vnode_internal.h#L158
         off_vnode_v_iocount = 0x64;
         off_vnode_v_usecount = 0x60;
         off_vnode_v_flag = 0x54;
@@ -138,25 +141,21 @@ void _offsets_init(void) {
         off_vnode_v_parent = 0xc0;
         off_vnode_v_label = 0xe8;
         off_vnode_v_cred = 0x98;
-        off_vnode_vu_mountedhere = 0x68;
-        off_vnode_vu_socket = 0x70;
-        off_vnode_vu_specinfo = 0x78;
-        off_vnode_vu_fifoinfo = 0x80;
-        off_vnode_vu_ubcinfo = 0x88;
         off_vnode_v_writecount = 0xb0;
         off_vnode_v_type = 0x70;
         
+        //https://github.com/apple-oss-distributions/xnu/blob/main/bsd/sys/mount_internal.h#L108
         off_mount_mnt_data = 0x11F;
         off_mount_mnt_fsowner = 0x9c0;
         off_mount_mnt_fsgroup = 0x9c4;
         off_mount_mnt_devvp = 0x980;
         off_mount_mnt_flag = 0x70;
         
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/miscfs/specfs/specdev.h#L77
         off_specinfo_si_flags = 0x10;
-        off_fg_flag = 0x10;
         
-    } else {
-        printf("[-] No matching offsets.\n");
-        exit(EXIT_FAILURE);
+//    } else {
+//        printf("[-] No matching offsets.\n");
+//        exit(EXIT_FAILURE);
     }
-}
+//}
