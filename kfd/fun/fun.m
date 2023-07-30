@@ -179,9 +179,11 @@ int do_fun(void) {
     
     funUcred(selfProc);
     funProc(selfProc);
-    funVnodeHide("/System/Library/Audio/UISounds/photoShutter.caf");
+//    funVnodeHide("/System/Library/Audio/UISounds/photoShutter.caf");
     printf("vineboom lock sound?");
-    funVnodeOverwrite2("/System/Library/Audio/UISounds/lock.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/vineboom.mp3"].UTF8String);
+//    funVnodeOverwrite2("/System/Library/Audio/UISounds/lock.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/vineboom.mp3"].UTF8String);
+    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/photoShutter.caf", 1, 1, 1, true);
+    
     printf("hiding home bar\n");
     funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
     printf("hiding dock background\n");

