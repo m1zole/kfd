@@ -13,7 +13,6 @@
 		212762C22A7574040070E6A5 /* thanks_opa334dev_htrowii.m in Sources */ = {isa = PBXBuildFile; fileRef = 212762B72A7574040070E6A5 /* thanks_opa334dev_htrowii.m */; };
 		212762C32A7574040070E6A5 /* krw.c in Sources */ = {isa = PBXBuildFile; fileRef = 212762B82A7574040070E6A5 /* krw.c */; };
 		212762C42A7574040070E6A5 /* offsets.m in Sources */ = {isa = PBXBuildFile; fileRef = 212762B92A7574040070E6A5 /* offsets.m */; };
-		212762C52A7574040070E6A5 /* vnode.c in Sources */ = {isa = PBXBuildFile; fileRef = 212762BA2A7574040070E6A5 /* vnode.c */; };
 		212762C62A7574040070E6A5 /* proc.c in Sources */ = {isa = PBXBuildFile; fileRef = 212762BB2A7574040070E6A5 /* proc.c */; };
 		297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA1082A310AE100D1E51A /* kfdApp.swift */; };
 		297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA10A2A310AE100D1E51A /* ContentView.swift */; };
@@ -25,6 +24,9 @@
 		C8C194872A759CE500ABE8BF /* mainbrightness.caml in Resources */ = {isa = PBXBuildFile; fileRef = C8C194842A759CE500ABE8BF /* mainbrightness.caml */; };
 		C8C194892A759F1700ABE8BF /* vineboom.caf in Resources */ = {isa = PBXBuildFile; fileRef = C8C194882A759F1700ABE8BF /* vineboom.caf */; };
 		C8C1948D2A75A5B000ABE8BF /* vineboom.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C8C1948C2A75A5B000ABE8BF /* vineboom.mp3 */; };
+		C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = C8843C222A724AA900CA0DC9 /* SwiftUtils */; };
+		C8EAC7D22A7690E2005FB878 /* vnode.m in Sources */ = {isa = PBXBuildFile; fileRef = C8EAC7D12A7690E2005FB878 /* vnode.m */; };
+		C8EAC7D52A769100005FB878 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C8EAC7D42A769100005FB878 /* utils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +43,6 @@
 		212762B72A7574040070E6A5 /* thanks_opa334dev_htrowii.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = thanks_opa334dev_htrowii.m; sourceTree = "<group>"; };
 		212762B82A7574040070E6A5 /* krw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = krw.c; sourceTree = "<group>"; };
 		212762B92A7574040070E6A5 /* offsets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = offsets.m; sourceTree = "<group>"; };
-		212762BA2A7574040070E6A5 /* vnode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vnode.c; sourceTree = "<group>"; };
 		212762BB2A7574040070E6A5 /* proc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = proc.c; sourceTree = "<group>"; };
 		212762BC2A7574040070E6A5 /* fun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fun.h; sourceTree = "<group>"; };
 		212762BD2A7574040070E6A5 /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
@@ -71,6 +72,9 @@
 		C8C194842A759CE500ABE8BF /* mainbrightness.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = mainbrightness.caml; sourceTree = "<group>"; };
 		C8C194882A759F1700ABE8BF /* vineboom.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = vineboom.caf; sourceTree = "<group>"; };
 		C8C1948C2A75A5B000ABE8BF /* vineboom.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = vineboom.mp3; sourceTree = "<group>"; };
+		C8EAC7D12A7690E2005FB878 /* vnode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = vnode.m; sourceTree = "<group>"; };
+		C8EAC7D32A769100005FB878 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		C8EAC7D42A769100005FB878 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C8843C232A724AA900CA0DC9 /* SwiftUtils in Frameworks */,
+				C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,6 +102,8 @@
 			isa = PBXGroup;
 			children = (
 				212762AF2A7574040070E6A5 /* thanks_opa334dev_htrowii.h */,
+				C8EAC7D32A769100005FB878 /* utils.h */,
+				C8EAC7D42A769100005FB878 /* utils.m */,
 				212762B02A7574040070E6A5 /* vnode.h */,
 				212762B12A7574040070E6A5 /* proc.h */,
 				212762B22A7574040070E6A5 /* offsets.h */,
@@ -108,7 +114,7 @@
 				212762B72A7574040070E6A5 /* thanks_opa334dev_htrowii.m */,
 				212762B82A7574040070E6A5 /* krw.c */,
 				212762B92A7574040070E6A5 /* offsets.m */,
-				212762BA2A7574040070E6A5 /* vnode.c */,
+				C8EAC7D12A7690E2005FB878 /* vnode.m */,
 				212762BB2A7574040070E6A5 /* proc.c */,
 				212762BC2A7574040070E6A5 /* fun.h */,
 				212762BD2A7574040070E6A5 /* helpers.h */,
@@ -197,7 +203,6 @@
 				297BA10A2A310AE100D1E51A /* ContentView.swift */,
 				2965065D2A31565B0025D1A7 /* kfd-Bridging-Header.h */,
 				297BA10E2A310AE200D1E51A /* kfd.entitlements */,
-				C8D084682A7500EF00CC5899 /* fun */,
 				297BA1082A310AE100D1E51A /* kfdApp.swift */,
 				212762AE2A7574040070E6A5 /* fun */,
 				2948BA6A2A3162C600B2ED3C /* libkfd */,
@@ -300,12 +305,13 @@
 			files = (
 				212762C02A7574040070E6A5 /* grant_full_disk_access.m in Sources */,
 				212762BF2A7574040070E6A5 /* fun.m in Sources */,
+				C8EAC7D52A769100005FB878 /* utils.m in Sources */,
 				297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */,
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,
 				212762C12A7574040070E6A5 /* helpers.m in Sources */,
 				212762C62A7574040070E6A5 /* proc.c in Sources */,
+				C8EAC7D22A7690E2005FB878 /* vnode.m in Sources */,
 				212762C32A7574040070E6A5 /* krw.c in Sources */,
-				212762C52A7574040070E6A5 /* vnode.c in Sources */,
 				212762C42A7574040070E6A5 /* offsets.m in Sources */,
 				212762C22A7574040070E6A5 /* thanks_opa334dev_htrowii.m in Sources */,
 			);
