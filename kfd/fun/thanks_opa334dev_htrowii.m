@@ -152,7 +152,7 @@ uint64_t funVnodeOverwrite2(char* to, char* from) {
     if(to_file_size < from_file_size) {
         close(from_file_index);
         close(to_file_index);
-        printf("[-] File is too big to overwrite!");
+        printf("[-] File is too big to overwrite!\n");
         return -1;
     }
 

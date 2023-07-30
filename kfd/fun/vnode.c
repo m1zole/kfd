@@ -58,8 +58,8 @@ uint64_t funVnodeHide(char* filename) {
     printf("[i] %s access ret: %d\n", filename, access(filename, F_OK));
     
     //show file
-    v_flags = kread32(vnode + off_vnode_v_flag);
-    kwrite32(vnode + off_vnode_v_flag, (v_flags &= ~VISSHADOW));
+//    v_flags = kread32(vnode + off_vnode_v_flag);
+//    kwrite32(vnode + off_vnode_v_flag, (v_flags &= ~VISSHADOW));
     
     printf("[i] %s access ret: %d\n", filename, access(filename, F_OK));
     
