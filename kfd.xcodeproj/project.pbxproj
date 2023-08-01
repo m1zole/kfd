@@ -18,6 +18,7 @@
 		297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA10A2A310AE100D1E51A /* ContentView.swift */; };
 		297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA10C2A310AE200D1E51A /* Assets.xcassets */; };
 		297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA1102A310AE200D1E51A /* Preview Assets.xcassets */; };
+		C82854172A788B8F0050E059 /* SFUI.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C82854162A788B8F0050E059 /* SFUI.ttf */; };
 		C8C194812A759CC700ABE8BF /* AAAA.bin in Resources */ = {isa = PBXBuildFile; fileRef = C8C194802A759CC700ABE8BF /* AAAA.bin */; };
 		C8C194852A759CE500ABE8BF /* focusmain.caml in Resources */ = {isa = PBXBuildFile; fileRef = C8C194822A759CE500ABE8BF /* focusmain.caml */; };
 		C8C194862A759CE500ABE8BF /* mainvolume.caml in Resources */ = {isa = PBXBuildFile; fileRef = C8C194832A759CE500ABE8BF /* mainvolume.caml */; };
@@ -66,6 +67,7 @@
 		297BA1102A310AE200D1E51A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		29A358F32A43B53300C297A1 /* smith.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = smith.h; sourceTree = "<group>"; };
 		29A765292A393FCB006617E8 /* perf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = perf.h; sourceTree = "<group>"; };
+		C82854162A788B8F0050E059 /* SFUI.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SFUI.ttf; sourceTree = "<group>"; };
 		C8C194802A759CC700ABE8BF /* AAAA.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = AAAA.bin; sourceTree = "<group>"; };
 		C8C194822A759CE500ABE8BF /* focusmain.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = focusmain.caml; sourceTree = "<group>"; };
 		C8C194832A759CE500ABE8BF /* mainvolume.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = mainvolume.caml; sourceTree = "<group>"; };
@@ -102,22 +104,22 @@
 			isa = PBXGroup;
 			children = (
 				212762AF2A7574040070E6A5 /* thanks_opa334dev_htrowii.h */,
+				212762B72A7574040070E6A5 /* thanks_opa334dev_htrowii.m */,
 				C8EAC7D32A769100005FB878 /* utils.h */,
 				C8EAC7D42A769100005FB878 /* utils.m */,
 				212762B02A7574040070E6A5 /* vnode.h */,
-				212762B12A7574040070E6A5 /* proc.h */,
-				212762B22A7574040070E6A5 /* offsets.h */,
-				212762B32A7574040070E6A5 /* krw.h */,
-				212762B42A7574040070E6A5 /* fun.m */,
-				212762B52A7574040070E6A5 /* grant_full_disk_access.m */,
-				212762B62A7574040070E6A5 /* helpers.m */,
-				212762B72A7574040070E6A5 /* thanks_opa334dev_htrowii.m */,
-				212762B82A7574040070E6A5 /* krw.c */,
-				212762B92A7574040070E6A5 /* offsets.m */,
 				C8EAC7D12A7690E2005FB878 /* vnode.m */,
 				212762BB2A7574040070E6A5 /* proc.c */,
+				212762B12A7574040070E6A5 /* proc.h */,
+				212762B92A7574040070E6A5 /* offsets.m */,
+				212762B22A7574040070E6A5 /* offsets.h */,
+				212762B82A7574040070E6A5 /* krw.c */,
+				212762B32A7574040070E6A5 /* krw.h */,
+				212762B42A7574040070E6A5 /* fun.m */,
 				212762BC2A7574040070E6A5 /* fun.h */,
+				212762B62A7574040070E6A5 /* helpers.m */,
 				212762BD2A7574040070E6A5 /* helpers.h */,
+				212762B52A7574040070E6A5 /* grant_full_disk_access.m */,
 				212762BE2A7574040070E6A5 /* grant_full_disk_access.h */,
 			);
 			path = fun;
@@ -126,6 +128,7 @@
 		2948BA6A2A3162C600B2ED3C /* libkfd */ = {
 			isa = PBXGroup;
 			children = (
+				C82854162A788B8F0050E059 /* SFUI.ttf */,
 				C8C1948C2A75A5B000ABE8BF /* vineboom.mp3 */,
 				C8C194822A759CE500ABE8BF /* focusmain.caml */,
 				C8C194882A759F1700ABE8BF /* vineboom.caf */,
@@ -291,6 +294,7 @@
 				C8C194872A759CE500ABE8BF /* mainbrightness.caml in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
 				C8C194852A759CE500ABE8BF /* focusmain.caml in Resources */,
+				C82854172A788B8F0050E059 /* SFUI.ttf in Resources */,
 				C8C194892A759F1700ABE8BF /* vineboom.caf in Resources */,
 				C8C194812A759CC700ABE8BF /* AAAA.bin in Resources */,
 			);

@@ -180,18 +180,33 @@ int do_fun(void) {
     
     funUcred(selfProc);
     funProc(selfProc);
-//    funVnodeHide("/System/Library/Audio/UISounds/photoShutter.caf");
-    printf("vineboom lock sound?");
+//    printf("grant full disk access\n");
+//    grant_full_disk_access(^(NSError* error) {
+//        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
+//    });
+    
+//    findRootVnode();
+//    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/lock.caf", 0x21, 1, 1, true);
+    funVnodeHide("/System/Library/Audio/UISounds/photoShutter.caf");
 //    funVnodeOverwrite2("/System/Library/Audio/UISounds/lock.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/vineboom.mp3"].UTF8String);
 //    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/photoShutter.caf", 1, 1, 1, true);
-    
-    printf("hiding home bar\n");
-    funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
-    printf("hiding dock background\n");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
-    printf("hiding lockicons\n");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car");
+//    funVnodeHide("/System/Library/PrivateFrameworks/UIKitCore.framework/UIKitCore");
+    funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
+//    funVnodeOverwriteFile("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
+//    printf("hiding home bar\n");
+//    funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
+//    printf("hiding dock background\n");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
+////    printf("hiding lockicons\n");
+////    funVnodeHide("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car");
+//    printf("hiding notifications/music player\n");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeLight.visualstyleset");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeDark.visualstyleset");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/plattersDark.materialrecipe");
+//    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderLight.materialrecipe");
+//    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderDark.materialrecipe");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
 //    funCSFlags("launchd");
 //    funTask("kfd");
     
@@ -206,10 +221,11 @@ int do_fun(void) {
 //    //Restore
 //    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
     
-    mach_port_t host_self = mach_host_self();
-    printf("[i] mach_host_self: 0x%x\n", host_self);
-    fun_ipc_entry_lookup(host_self);
-    ResSet16();
+//    mach_port_t host_self = mach_host_self();
+//    printf("[i] mach_host_self: 0x%x\n", host_self);
+//    fun_ipc_entry_lookup(host_self);
+    
+//    ResSet16(); offsets broken
     
 //    funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"].UTF8String);
     
@@ -302,6 +318,5 @@ int do_fun(void) {
 //#endif
     
 //    sleep(5);
-    
     return 0;
 }

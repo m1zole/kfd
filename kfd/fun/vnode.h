@@ -13,9 +13,11 @@
 uint64_t getVnodeAtPath(char* filename);
 uint64_t findRootVnode(void);
 uint64_t getVnodeVar(void);
+uint64_t getVnodeVarContainers(void); // /var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist
 uint64_t getVnodeVarMobile(void);
 uint64_t getVnodeVarTmp(void);
 uint64_t getVnodePreferences(void);
+uint64_t getVnodeLibrary(void);
 uint64_t findChildVnodeByVnode(uint64_t vnode, char* childname);
 
 /*

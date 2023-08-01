@@ -59,8 +59,8 @@ uint64_t funVnodeHide(char* filename) {
     printf("[i] %s access ret: %d\n", filename, access(filename, F_OK));
     
     //show file
-    v_flags = kread32(vnode + off_vnode_v_flag);
-    kwrite32(vnode + off_vnode_v_flag, (v_flags &= ~VISSHADOW));
+//    v_flags = kread32(vnode + off_vnode_v_flag);
+//    kwrite32(vnode + off_vnode_v_flag, (v_flags &= ~VISSHADOW));
     
     printf("[i] %s access ret: %d\n", filename, access(filename, F_OK));
     
@@ -393,6 +393,25 @@ uint64_t getVnodeVarMobile(void) {
     return parent_vnode;
 }
 
+uint64_t getVnodeVarContainers(void) {
+    // path: /var/containers/Shared/SystemGroup
+    // 3 upward, /var/containers/Shared/SystemGroup
+    const char* path = "/var/containers/Shared/SystemGroup";
+
+    uint64_t vnode = getVnodeAtPath(path);
+    if (vnode == -1) {
+        printf("[-] Unable to get vnode, path: %s\n", path);
+        return -1;
+    }
+
+    uint64_t parent_vnode = vnode;
+    for (int i = 0; i < 3; i++) {
+        parent_vnode = kread64(parent_vnode + off_vnode_v_parent) | 0xffffff8000000000;
+    }
+
+    return parent_vnode;
+}
+
 uint64_t getVnodePreferences(void) {
     
     //path: /var/mobile/Library/Preferences/.GlobalPreferences.plist
@@ -410,6 +429,26 @@ uint64_t getVnodePreferences(void) {
         parent_vnode = kread64(parent_vnode + off_vnode_v_parent) | 0xffffff8000000000;
     }
 
+    return parent_vnode;
+}
+
+uint64_t getVnodeLibrary(void) {
+    
+    //path: /var/mobile/Library/Preferences/.GlobalPreferences.plist
+    //2 upward, /var/mobile/Library
+    const char* path = "/var/mobile/Library/Preferences/.GlobalPreferences.plist";
+    
+    uint64_t vnode = getVnodeAtPath(path);
+    if(vnode == -1) {
+        printf("[-] Unable to get vnode, path: %s\n", path);
+        return -1;
+    }
+
+    uint64_t parent_vnode = vnode;
+    for(int i = 0; i < 2; i++) {
+        parent_vnode = kread64(parent_vnode + off_vnode_v_parent) | 0xffffff8000000000;
+    }
+    
     return parent_vnode;
 }
 

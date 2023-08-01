@@ -68,4 +68,12 @@ extern uint32_t off_specinfo_si_flags;
 extern uint32_t off_namecache_nc_vp;
 extern uint32_t off_namecache_nc_child_tqe_prev;
 
+//uint32_t off_p_pfd = 0xf8;
+//uint32_t off_fd_ofiles = 0;
+//uint32_t off_fp_fglob = 0x10;
+//uint32_t off_fg_data = 0x38;
+//uint32_t off_vnode_iocount = 0x64;
+//uint32_t off_vnode_usecount = 0x60;
+//uint32_t off_vnode_vflags = 0x54;
+
 void _offsets_init(void);
