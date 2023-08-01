@@ -17,6 +17,7 @@
 
 #include "krkw/kread/kread_kqueue_workloop_ctl.h"
 #include "krkw/kread/kread_sem_open.h"
+#include "krkw/kread/kread_IOSurface.h"
 
 #define kwrite_from_method(type, method)                                       \
     do {                                                                       \
@@ -30,6 +31,7 @@
 
 #include "krkw/kwrite/kwrite_dup.h"
 #include "krkw/kwrite/kwrite_sem_open.h"
+#include "krkw/kwrite/kwrite_IOSurface.h"
 
 // Forward declarations for helper functions.
 void krkw_helper_init(struct kfd* kfd, struct krkw* krkw);
@@ -73,11 +75,13 @@ void krkw_init(struct kfd* kfd, u64 kread_method, u64 kwrite_method)
     switch (kread_method) {
         kread_method_case(kread_kqueue_workloop_ctl)
         kread_method_case(kread_sem_open)
+        kread_method_case(kread_IOSurface)
     }
 
     switch (kwrite_method) {
         kwrite_method_case(kwrite_dup)
         kwrite_method_case(kwrite_sem_open)
+        kwrite_method_case(kwrite_IOSurface)
     }
 
     krkw_helper_init(kfd, &kfd->kread);

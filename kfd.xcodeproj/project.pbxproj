@@ -11,6 +11,25 @@
 		297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA10A2A310AE100D1E51A /* ContentView.swift */; };
 		297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA10C2A310AE200D1E51A /* Assets.xcassets */; };
 		297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA1102A310AE200D1E51A /* Preview Assets.xcassets */; };
+		65F3CAA92A7920BA00256200 /* kread_IOSurface.h in Resources */ = {isa = PBXBuildFile; fileRef = 65F3CAA72A791EC000256200 /* kread_IOSurface.h */; };
+		65F3CAAA2A7920C400256200 /* kwrite_IOSurface.h in Resources */ = {isa = PBXBuildFile; fileRef = 65F3CAA82A791EDB00256200 /* kwrite_IOSurface.h */; };
+		65F3CAAB2A7920C700256200 /* IOSurface_shared.h in Resources */ = {isa = PBXBuildFile; fileRef = 65F3CAA42A79182100256200 /* IOSurface_shared.h */; };
+		65F3CAAD2A79217100256200 /* libkfd.h in Resources */ = {isa = PBXBuildFile; fileRef = 2965065E2A31565B0025D1A7 /* libkfd.h */; };
+		65F3CAAE2A79217500256200 /* puaf.h in Resources */ = {isa = PBXBuildFile; fileRef = 2948BA712A31631C00B2ED3C /* puaf.h */; };
+		65F3CAAF2A79217800256200 /* perf.h in Resources */ = {isa = PBXBuildFile; fileRef = 29A765292A393FCB006617E8 /* perf.h */; };
+		65F3CAB02A79217A00256200 /* krkw.h in Resources */ = {isa = PBXBuildFile; fileRef = 2948BA702A31631000B2ED3C /* krkw.h */; };
+		65F3CAB12A79217D00256200 /* kwrite_dup.h in Resources */ = {isa = PBXBuildFile; fileRef = 2948BA782A3163C500B2ED3C /* kwrite_dup.h */; };
+		65F3CAB22A79218100256200 /* kwrite_sem_open.h in Resources */ = {isa = PBXBuildFile; fileRef = 2948BA792A3163D200B2ED3C /* kwrite_sem_open.h */; };
+		65F3CAB32A79218800256200 /* kread_sem_open.h in Resources */ = {isa = PBXBuildFile; fileRef = 2948BA772A3163B900B2ED3C /* kread_sem_open.h */; };
+		65F3CAB42A79218B00256200 /* kread_kqueue_workloop_ctl.h in Resources */ = {isa = PBXBuildFile; fileRef = 2948BA762A3163AB00B2ED3C /* kread_kqueue_workloop_ctl.h */; };
+		65F3CAB52A79218F00256200 /* dynamic_info.h in Resources */ = {isa = PBXBuildFile; fileRef = 29E9572F2A6AFDB6005C43C0 /* dynamic_info.h */; };
+		65F3CAB62A79219000256200 /* static_info.h in Resources */ = {isa = PBXBuildFile; fileRef = 29E9572E2A6AFDA9005C43C0 /* static_info.h */; };
+		65F3CAB72A79219200256200 /* IOSurface.h in Resources */ = {isa = PBXBuildFile; fileRef = 65F3CAA22A79180F00256200 /* IOSurface.h */; };
+		65F3CAB82A79219400256200 /* info.h in Resources */ = {isa = PBXBuildFile; fileRef = 2948BA6F2A31630800B2ED3C /* info.h */; };
+		65F3CAB92A79219500256200 /* common.h in Resources */ = {isa = PBXBuildFile; fileRef = 2948BA6E2A3162FD00B2ED3C /* common.h */; };
+		65F3CABA2A79219700256200 /* helpers.h in Resources */ = {isa = PBXBuildFile; fileRef = C80698892A71436A001A593E /* helpers.h */; };
+		65F3CABB2A79219900256200 /* fun.h in Resources */ = {isa = PBXBuildFile; fileRef = C80698912A714947001A593E /* fun.h */; };
+		65F3CABC2A79219C00256200 /* kfd-Bridging-Header.h in Resources */ = {isa = PBXBuildFile; fileRef = 2965065D2A31565B0025D1A7 /* kfd-Bridging-Header.h */; };
 		C806988E2A71436A001A593E /* helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = C806988A2A71436A001A593E /* helpers.m */; };
 		C806988F2A71436A001A593E /* AAAA.bin in Resources */ = {isa = PBXBuildFile; fileRef = C806988C2A71436A001A593E /* AAAA.bin */; };
 		C80698902A71436A001A593E /* fun.m in Sources */ = {isa = PBXBuildFile; fileRef = C806988D2A71436A001A593E /* fun.m */; };
@@ -41,6 +60,10 @@
 		29A765292A393FCB006617E8 /* perf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = perf.h; sourceTree = "<group>"; };
 		29E9572E2A6AFDA9005C43C0 /* static_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = static_info.h; sourceTree = "<group>"; };
 		29E9572F2A6AFDB6005C43C0 /* dynamic_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dynamic_info.h; sourceTree = "<group>"; };
+		65F3CAA22A79180F00256200 /* IOSurface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IOSurface.h; path = "../../../../../../../Downloads/kfd-main-2/kfd/libkfd/info/dynamic_types/IOSurface.h"; sourceTree = "<group>"; };
+		65F3CAA42A79182100256200 /* IOSurface_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSurface_shared.h; sourceTree = "<group>"; };
+		65F3CAA72A791EC000256200 /* kread_IOSurface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kread_IOSurface.h; sourceTree = "<group>"; };
+		65F3CAA82A791EDB00256200 /* kwrite_IOSurface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kwrite_IOSurface.h; sourceTree = "<group>"; };
 		C80698892A71436A001A593E /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
 		C806988A2A71436A001A593E /* helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = helpers.m; sourceTree = "<group>"; };
 		C806988C2A71436A001A593E /* AAAA.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = AAAA.bin; sourceTree = "<group>"; };
@@ -86,6 +109,7 @@
 		2948BA6B2A3162DE00B2ED3C /* info */ = {
 			isa = PBXGroup;
 			children = (
+				65F3CAA12A7917FC00256200 /* dynamic_types */,
 				29E9572F2A6AFDB6005C43C0 /* dynamic_info.h */,
 				29E9572E2A6AFDA9005C43C0 /* static_info.h */,
 			);
@@ -95,6 +119,7 @@
 		2948BA6C2A3162E400B2ED3C /* krkw */ = {
 			isa = PBXGroup;
 			children = (
+				65F3CAA42A79182100256200 /* IOSurface_shared.h */,
 				2948BA742A31639800B2ED3C /* kread */,
 				2948BA752A31639D00B2ED3C /* kwrite */,
 			);
@@ -115,6 +140,7 @@
 			children = (
 				2948BA762A3163AB00B2ED3C /* kread_kqueue_workloop_ctl.h */,
 				2948BA772A3163B900B2ED3C /* kread_sem_open.h */,
+				65F3CAA72A791EC000256200 /* kread_IOSurface.h */,
 			);
 			path = kread;
 			sourceTree = "<group>";
@@ -122,6 +148,7 @@
 		2948BA752A31639D00B2ED3C /* kwrite */ = {
 			isa = PBXGroup;
 			children = (
+				65F3CAA82A791EDB00256200 /* kwrite_IOSurface.h */,
 				2948BA782A3163C500B2ED3C /* kwrite_dup.h */,
 				2948BA792A3163D200B2ED3C /* kwrite_sem_open.h */,
 			);
@@ -166,6 +193,14 @@
 				297BA1102A310AE200D1E51A /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		65F3CAA12A7917FC00256200 /* dynamic_types */ = {
+			isa = PBXGroup;
+			children = (
+				65F3CAA22A79180F00256200 /* IOSurface.h */,
+			);
+			path = dynamic_types;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,10 +268,29 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65F3CAAB2A7920C700256200 /* IOSurface_shared.h in Resources */,
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
+				65F3CABC2A79219C00256200 /* kfd-Bridging-Header.h in Resources */,
 				C8843C262A724BC100CA0DC9 /* CBindings in Resources */,
+				65F3CABA2A79219700256200 /* helpers.h in Resources */,
+				65F3CAB92A79219500256200 /* common.h in Resources */,
+				65F3CABB2A79219900256200 /* fun.h in Resources */,
+				65F3CAA92A7920BA00256200 /* kread_IOSurface.h in Resources */,
+				65F3CAB72A79219200256200 /* IOSurface.h in Resources */,
 				C806988F2A71436A001A593E /* AAAA.bin in Resources */,
+				65F3CAB82A79219400256200 /* info.h in Resources */,
+				65F3CAB52A79218F00256200 /* dynamic_info.h in Resources */,
+				65F3CAB42A79218B00256200 /* kread_kqueue_workloop_ctl.h in Resources */,
+				65F3CAB62A79219000256200 /* static_info.h in Resources */,
+				65F3CAB32A79218800256200 /* kread_sem_open.h in Resources */,
+				65F3CAAD2A79217100256200 /* libkfd.h in Resources */,
+				65F3CAB02A79217A00256200 /* krkw.h in Resources */,
+				65F3CAB12A79217D00256200 /* kwrite_dup.h in Resources */,
+				65F3CAAF2A79217800256200 /* perf.h in Resources */,
+				65F3CAAA2A7920C400256200 /* kwrite_IOSurface.h in Resources */,
+				65F3CAB22A79218100256200 /* kwrite_sem_open.h in Resources */,
+				65F3CAAE2A79217500256200 /* puaf.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,7 +450,11 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lrdsnow.test;
+				OTHER_LDFLAGS = (
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lrdsnow.kfd;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -437,7 +495,11 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lrdsnow.test;
+				OTHER_LDFLAGS = (
+					"-framework",
+					IOKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.lrdsnow.kfd;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
