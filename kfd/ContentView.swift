@@ -60,8 +60,10 @@ struct ContentView: View {
                         Button("kopen") {
                             puaf_pages = puaf_pages_options[puaf_pages_index]
                             kfd = do_kopen(UInt64(puaf_pages), UInt64(puaf_method), UInt64(kread_method), UInt64(kwrite_method))
-                            do_fun()
                         }.disabled(kfd != 0).frame(minWidth: 0, maxWidth: .infinity)
+                        Button("do the fun!") {
+                            do_fun()
+                        }.disabled(kfd == 0).frame(minWidth: 0, maxWidth: .infinity)
                         Button("kclose") {
                             do_kclose()
                             puaf_pages = 0

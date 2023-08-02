@@ -139,11 +139,16 @@ uint64_t task_get_vm_map(uint64_t task_ptr)
 #pragma mark overwrite2
 uint64_t funVnodeOverwrite2(char* to, char* from) {
     printf("attempting opa's method\n");
-    
+    printf("writing to %s", to);
     int to_file_index = open(to, O_RDONLY);
-    if (to_file_index == -1) return -1;
+    if (to_file_index == -1)  {
+        printf("to file nonexistent\n)");
+        return -1;
+    }
+    
     off_t to_file_size = lseek(to_file_index, 0, SEEK_END);
     
+    printf(" from %s\n", from);
     int from_file_index = open(from, O_RDONLY);
     if (from_file_index == -1) return -1;
     off_t from_file_size = lseek(from_file_index, 0, SEEK_END);

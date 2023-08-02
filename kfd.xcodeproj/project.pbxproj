@@ -19,12 +19,14 @@
 		297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA10C2A310AE200D1E51A /* Assets.xcassets */; };
 		297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA1102A310AE200D1E51A /* Preview Assets.xcassets */; };
 		C82854172A788B8F0050E059 /* SFUI.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C82854162A788B8F0050E059 /* SFUI.ttf */; };
+		C82B14052A7AA12E0002A0DE /* modules.materialrecipe in Resources */ = {isa = PBXBuildFile; fileRef = C82B14042A7AA12E0002A0DE /* modules.materialrecipe */; };
+		C82B14072A7AA3DB0002A0DE /* ios16.car in Resources */ = {isa = PBXBuildFile; fileRef = C82B14062A7AA3DB0002A0DE /* ios16.car */; };
 		C8C194812A759CC700ABE8BF /* AAAA.bin in Resources */ = {isa = PBXBuildFile; fileRef = C8C194802A759CC700ABE8BF /* AAAA.bin */; };
 		C8C194852A759CE500ABE8BF /* focusmain.caml in Resources */ = {isa = PBXBuildFile; fileRef = C8C194822A759CE500ABE8BF /* focusmain.caml */; };
 		C8C194862A759CE500ABE8BF /* mainvolume.caml in Resources */ = {isa = PBXBuildFile; fileRef = C8C194832A759CE500ABE8BF /* mainvolume.caml */; };
 		C8C194872A759CE500ABE8BF /* mainbrightness.caml in Resources */ = {isa = PBXBuildFile; fileRef = C8C194842A759CE500ABE8BF /* mainbrightness.caml */; };
-		C8C43BF62A797802008B08F9 /* main.caml in Resources */ = {isa = PBXBuildFile; fileRef = C8C43BF52A797802008B08F9 /* main.caml */; };
 		C8C43BF82A797848008B08F9 /* lock.caf in Resources */ = {isa = PBXBuildFile; fileRef = C8C43BF72A797848008B08F9 /* lock.caf */; };
+		C8C43BFA2A7A0F08008B08F9 /* lock.caml in Resources */ = {isa = PBXBuildFile; fileRef = C8C43BF92A7A0F08008B08F9 /* lock.caml */; };
 		C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = C8843C222A724AA900CA0DC9 /* SwiftUtils */; };
 		C8EAC7D22A7690E2005FB878 /* vnode.m in Sources */ = {isa = PBXBuildFile; fileRef = C8EAC7D12A7690E2005FB878 /* vnode.m */; };
 		C8EAC7D52A769100005FB878 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C8EAC7D42A769100005FB878 /* utils.m */; };
@@ -68,12 +70,14 @@
 		29A358F32A43B53300C297A1 /* smith.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = smith.h; sourceTree = "<group>"; };
 		29A765292A393FCB006617E8 /* perf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = perf.h; sourceTree = "<group>"; };
 		C82854162A788B8F0050E059 /* SFUI.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SFUI.ttf; sourceTree = "<group>"; };
+		C82B14042A7AA12E0002A0DE /* modules.materialrecipe */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = modules.materialrecipe; sourceTree = "<group>"; };
+		C82B14062A7AA3DB0002A0DE /* ios16.car */ = {isa = PBXFileReference; lastKnownFileType = file; path = ios16.car; sourceTree = "<group>"; };
 		C8C194802A759CC700ABE8BF /* AAAA.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = AAAA.bin; sourceTree = "<group>"; };
 		C8C194822A759CE500ABE8BF /* focusmain.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = focusmain.caml; sourceTree = "<group>"; };
 		C8C194832A759CE500ABE8BF /* mainvolume.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = mainvolume.caml; sourceTree = "<group>"; };
 		C8C194842A759CE500ABE8BF /* mainbrightness.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = mainbrightness.caml; sourceTree = "<group>"; };
-		C8C43BF52A797802008B08F9 /* main.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.caml; sourceTree = "<group>"; };
 		C8C43BF72A797848008B08F9 /* lock.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = lock.caf; sourceTree = "<group>"; };
+		C8C43BF92A7A0F08008B08F9 /* lock.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = lock.caml; sourceTree = "<group>"; };
 		C8EAC7D12A7690E2005FB878 /* vnode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = vnode.m; sourceTree = "<group>"; };
 		C8EAC7D32A769100005FB878 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		C8EAC7D42A769100005FB878 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
@@ -128,12 +132,14 @@
 		2948BA6A2A3162C600B2ED3C /* libkfd */ = {
 			isa = PBXGroup;
 			children = (
+				C82B14062A7AA3DB0002A0DE /* ios16.car */,
+				C82B14042A7AA12E0002A0DE /* modules.materialrecipe */,
 				C82854162A788B8F0050E059 /* SFUI.ttf */,
+				C8C43BF92A7A0F08008B08F9 /* lock.caml */,
 				C8C194822A759CE500ABE8BF /* focusmain.caml */,
 				C8C194842A759CE500ABE8BF /* mainbrightness.caml */,
 				C8C194832A759CE500ABE8BF /* mainvolume.caml */,
 				C8C43BF72A797848008B08F9 /* lock.caf */,
-				C8C43BF52A797802008B08F9 /* main.caml */,
 				C8C194802A759CC700ABE8BF /* AAAA.bin */,
 				2948BA6E2A3162FD00B2ED3C /* common.h */,
 				2948BA6F2A31630800B2ED3C /* info.h */,
@@ -290,10 +296,12 @@
 			files = (
 				C8C43BF82A797848008B08F9 /* lock.caf in Resources */,
 				C8C194862A759CE500ABE8BF /* mainvolume.caml in Resources */,
+				C82B14052A7AA12E0002A0DE /* modules.materialrecipe in Resources */,
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
-				C8C43BF62A797802008B08F9 /* main.caml in Resources */,
 				C8C194872A759CE500ABE8BF /* mainbrightness.caml in Resources */,
+				C8C43BFA2A7A0F08008B08F9 /* lock.caml in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
+				C82B14072A7AA3DB0002A0DE /* ios16.car in Resources */,
 				C8C194852A759CE500ABE8BF /* focusmain.caml in Resources */,
 				C82854172A788B8F0050E059 /* SFUI.ttf in Resources */,
 				C8C194812A759CC700ABE8BF /* AAAA.bin in Resources */,

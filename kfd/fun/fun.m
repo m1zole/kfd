@@ -187,26 +187,47 @@ int do_fun(void) {
     
 //    findRootVnode();
 //    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/lock.caf", 0x21, 1, 1, true);
-    funVnodeHide("/System/Library/Audio/UISounds/photoShutter.caf");
+    funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/lock.caf"].UTF8String);
 //    funVnodeOverwrite2("/System/Library/Audio/UISounds/lock.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/vineboom.mp3"].UTF8String);
 //    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/photoShutter.caf", 1, 1, 1, true);
 //    funVnodeHide("/System/Library/PrivateFrameworks/UIKitCore.framework/UIKitCore");
 //    funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
+    printf("theming cc... focus is broken\n");
     funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/DisplayModule.bundle/Brightness.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbrightness.caml"].UTF8String);
+    
+    funVnodeOverwrite2("/System/Library/PrivateFrameworks/MediaControls.framework/Volume.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainvolume.caml"].UTF8String);
+    
+    funVnodeOverwrite2("/System/Library/PrivateFrameworks/FocusUI.framework/dnd_cg_02.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/focusmain.caml"].UTF8String);
+    
+
+//    printf("whitelist\n");
+//    funVnodeHide("/var/db/MobileIdentityData/Rejections.plist");
+//    funVnodeHide("/var/db/MobileIdentityData/AuthListBannedUpps.plist");
+//    funVnodeHide("/var/db/MobileIdentityData/AuthListBannedCdHashes.plist");
+    
     printf("hiding home bar\n");
     funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
     printf("hiding dock background\n");
     funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
     funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
-////    printf("hiding lockicons\n");
-////    funVnodeHide("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car");
-    printf("hiding notifications/music player\n");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeLight.visualstyleset");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeDark.visualstyleset");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/plattersDark.materialrecipe");
-    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderLight.materialrecipe");
-    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderDark.materialrecipe");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
+    printf("replacing lockicons\n");
+    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/ios16.car"].UTF8String);
+    
+//    printf("hiding notifications/music player\n");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeLight.visualstyleset");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeDark.visualstyleset");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/plattersDark.materialrecipe");
+//    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderLight.materialrecipe");
+//    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderDark.materialrecipe");
+//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
+    
+   //cc coloring
+    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modules.materialrecipe"].UTF8String);
+//    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/moduleFill.visualstyleset", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/moduleFill.visualstyleset"].UTF8String);
+    //System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe
+    //System/Library/PrivateFrameworks/CoreMaterial.framework/modulesBackground.materialrecipe
+    
+    
 //    funCSFlags("launchd");
 //    funTask("kfd");
     
@@ -236,16 +257,10 @@ int do_fun(void) {
 //    });
 //    patch_installd();
 
-        
 //    Redirect Folders: NSHomeDirectory() + @"/Documents/mounted" -> "/var/mobile/Library/Caches/com.apple.keyboards"
-//    NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
-//    [[NSFileManager defaultManager] removeItemAtPath:mntPath error:nil];
-//    [[NSFileManager defaultManager] createDirectoryAtPath:mntPath withIntermediateDirectories:NO attributes:nil error:nil];
-//    funVnodeRedirectFolder(mntPath.UTF8String, "/System/Library"); //<- should NOT be work.
-//    funVnodeRedirectFolder(mntPath.UTF8String, "/var/mobile/Library/Caches/com.apple.keyboards"); //<- should be work.
-//    NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
-//    NSLog(@"mntPath directory list: %@", dirs);
+    clearUICache();
     
+//    ResSet16();
 //#if 0
 //    Redirect Folders: NSHomeDirectory() + @"/Documents/mounted" -> /var/mobile
 //    funVnodeResearch(mntPath.UTF8String, mntPath.UTF8String);

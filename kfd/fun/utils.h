@@ -7,3 +7,4 @@
 
 #include <stdio.h>
 int ResSet16(void);
+int clearUICache(void);
