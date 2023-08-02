@@ -2,7 +2,7 @@
 <caml
     xmlns="http://www.apple.com/CoreAnimation/1.0">
     <CALayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 48 48" contentsFormat="RGBA8" name="Root Layer" position="24 24" opacity="0.5">
-        <backgroundColor opacity="1" value="0.07 0.07 0.11"/>
+        <backgroundColor opacity="0" value="0.07 0.07 0.11"/>
         <sublayers>
             <CATransformLayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 52 52" contentsFormat="RGBA8" name="Transform Layer 2" position="23.5 24" transform="scale(0.4, 0.4, 1)">
                 <sublayers>

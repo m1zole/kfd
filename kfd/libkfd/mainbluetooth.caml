@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <caml xmlns="http://www.apple.com/CoreAnimation/1.0">
-  <CALayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 40 40" contentsFormat="RGBA8" hidden="0" name="volglyph" position="11.5 12.7" transform="scale(0.6, 0.6, 0.6)">
+  <CALayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 40 40" contentsFormat="RGBA8" hidden="0" name="volglyph" position="11.5 13.5" transform="scale(0.6, 0.6, 0.6)">
     <backgroundColor opacity="0" value="0.9797 0.06809 0.3118 0"/>
     <sublayers>
       <CATransformLayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 50 50" contentsFormat="RGBA8" geometryFlipped="1" name="volume" position="25.700000762939 22" transform="scale(1, 1, 1)">
