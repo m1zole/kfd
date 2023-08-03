@@ -21,8 +21,7 @@
 #include "grant_full_disk_access.h"
 #include "thanks_opa334dev_htrowii.h"
 #include "utils.h"
-
-
+#include "helpers.h"
 int funUcred(uint64_t proc) {
     uint64_t proc_ro = kread64(proc + off_p_proc_ro);
     uint64_t ucreds = kread64(proc_ro + off_p_ro_p_ucred);
@@ -134,36 +133,50 @@ uint64_t fun_ipc_entry_lookup(mach_port_name_t port_name) {
     uint64_t itk_space_pac = kread64(pr_task + 0x300);
     uint64_t itk_space = itk_space_pac | 0xffffff8000000000;
     printf("[i] self task->itk_space: 0x%llx\n", itk_space);
-    //NEED TO FIGURE OUT SMR POINTER!!!
-    
-//    uint32_t table_size = kread32(itk_space + 0x14);
-//    printf("[i] self task->itk_space table_size: 0x%x\n", table_size);
-//    uint32_t port_index = MACH_PORT_INDEX(port_name);
-//    if (port_index >= table_size) {
-//        printf("[!] invalid port name: 0x%x", port_name);
-//        return -1;
-//    }
-//
-//    uint64_t is_table_pac = kread64(itk_space + 0x20);
-//    uint64_t is_table = is_table_pac | 0xffffff8000000000;
-//    printf("[i] self task->itk_space->is_table: 0x%llx\n", is_table);
-//    printf("[i] self task->itk_space->is_table read: 0x%llx\n", kread64(is_table));
-//
-//    const int sizeof_ipc_entry_t = 0x18;
-//    uint64_t ipc_entry = is_table + sizeof_ipc_entry_t * port_index;
-//    printf("[i] self task->itk_space->is_table->ipc_entry: 0x%llx\n", ipc_entry);
-//
-//    uint64_t ie_object = kread64(ipc_entry + 0x0);
-//    printf("[i] self task->itk_space->is_table->ipc_entry->ie_object: 0x%llx\n", ie_object);
-//
-//    sleep(1);
-    
-    
-    
+    uint32_t port_index = MACH_PORT_INDEX(port_name);
+    uint32_t table_size = kread32(itk_space + 0x14);
+    printf("[i] table_size: 0x%x, port_index: 0x%x\n", table_size, port_index);
+    if (port_index >= table_size) {
+        printf("[-] invalid port name 0x%x\n", port_name);
+    }
+
+    //0x20 = IPC_SPACE_IS_TABLE_OFF
+    uint64_t is_table = kread64_smr(itk_space + 0x20);
+    printf("[i] self task->itk_space->is_table: 0x%llx\n", is_table);
+
+    uint64_t entry = is_table + port_index * 0x18/*SIZE(ipc_entry)*/;
+    printf("[i] entry: 0x%llx\n", entry);
+
+    uint64_t object_pac = kread64(entry + 0x0/*OFFSET(ipc_entry, ie_object)*/);
+    uint64_t object = object_pac | 0xffffff8000000000;
+    uint32_t ip_bits = kread32(object + 0x0/*OFFSET(ipc_port, ip_bits)*/);
+    uint32_t ip_refs = kread32(object + 0x4/*OFFSET(ipc_port, ip_references)*/);
+    uint64_t kobject_pac = kread64(object + 0x48/*OFFSET(ipc_port, ip_kobject)*/);
+    uint64_t kobject = kobject_pac | 0xffffff8000000000;
+    printf("[i] ipc_port: ip_bits 0x%x, ip_refs 0x%x\n", ip_bits, ip_refs);
+    printf("[i] ip_kobject: 0x%llx\n", kobject);
+
     return 0;
 }
 
-int do_fun(void) {
+// Function to find files with specific extensions in a directory, doesn't work??? wtf?
+NSArray<NSString *> *findFilesWithExtensions(NSArray<NSString *> *extensions, NSString *directory) {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSArray<NSString *> *fileNames = [fileManager contentsOfDirectoryAtPath:directory error:nil];
+    
+    NSMutableArray<NSString *> *filePaths = [NSMutableArray array];
+    for (NSString *fileName in fileNames) {
+        if ([extensions containsObject:fileName.pathExtension]) {
+            [filePaths addObject:[directory stringByAppendingPathComponent:fileName]];
+        }
+    }
+    
+    return filePaths;
+}
+
+//clearUICache();
+
+int do_fun(char** enabledTweaks, int numTweaks) {
     
     _offsets_init();
     
@@ -180,162 +193,55 @@ int do_fun(void) {
     
     funUcred(selfProc);
     funProc(selfProc);
-//    printf("grant full disk access\n");
-//    grant_full_disk_access(^(NSError* error) {
-//        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
-//    });
     
-//    findRootVnode();
-//    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/lock.caf", 0x21, 1, 1, true);
-    funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/lock.caf"].UTF8String);
-//    funVnodeOverwrite2("/System/Library/Audio/UISounds/lock.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/vineboom.mp3"].UTF8String);
-//    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/photoShutter.caf", 1, 1, 1, true);
-//    funVnodeHide("/System/Library/PrivateFrameworks/UIKitCore.framework/UIKitCore");
-//    funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
-    printf("theming cc... focus is broken\n");
-    funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/DisplayModule.bundle/Brightness.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbrightness.caml"].UTF8String);
     
-    funVnodeOverwrite2("/System/Library/PrivateFrameworks/MediaControls.framework/Volume.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainvolume.caml"].UTF8String);
+    for (int i = 0; i < numTweaks; i++) {
+        char *tweak = enabledTweaks[i];
+        if (strcmp(tweak, "HideDock") == 0) {
+            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
+            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
+        }
+        if (strcmp(tweak, "enableHideHomebar") == 0) {
+            funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
+        }
+        if (strcmp(tweak, "enableResSet") == 0) {
+            ResSet16();
+        }
+        if (strcmp(tweak, "enableCCTweaks") == 0) {
+            funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/DisplayModule.bundle/Brightness.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbrightness.caml"].UTF8String);
+            funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/ConnectivityModule.bundle/Assets.car", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/PlampyWifi.car"].UTF8String);
+            funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/ConnectivityModule.bundle/Bluetooth.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbluetooth.caml"].UTF8String);
+            funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/ConnectivityModule.bundle/WiFi.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainwifi.caml"].UTF8String);
+            funVnodeOverwrite2("/System/Library/PrivateFrameworks/MediaControls.framework/Volume.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainvolume.caml"].UTF8String);
+            funVnodeOverwrite2("/System/Library/PrivateFrameworks/FocusUI.framework/dnd_cg_02.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/focusmain.caml"].UTF8String);
+            funVnodeOverwrite2("/System/Library/PrivateFrameworks/MediaControls.framework/ForwardBackward.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainforwardbackward.caml"].UTF8String);
+            funVnodeOverwrite2("/System/Library/PrivateFrameworks/MediaControls.framework/PlayPauseStop.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainplaypausestop.caml"].UTF8String);
+        }
+        if (strcmp(tweak, "enableCustomFont") == 0) {
+            funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
+        }
+        if (strcmp(tweak, "enableLSTweaks") == 0) {
+            funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/ios16.car"].UTF8String);
+        }
+        if (strcmp(tweak, "enableHideNotifs") == 0) {
+            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeLight.visualstyleset");
+            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeDark.visualstyleset");
+            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/plattersDark.materialrecipe");
+            funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderLight.materialrecipe");
+            funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderDark.materialrecipe");
+            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
+        }
+        if (i == numTweaks - 1) {
+            // Call do_respring() after applying the last tweak
+            clearUICache();
+            do_kclose();
+            restartFrontboard();
+        }
+    }
     
-    funVnodeOverwrite2("/System/Library/PrivateFrameworks/FocusUI.framework/dnd_cg_02.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/focusmain.caml"].UTF8String);
-    
+//    /private/var/containers/Bundle/Application/839145FE-4A56-4D3C-9434-3573B846AB0C/
 
-//    printf("whitelist\n");
-//    funVnodeHide("/var/db/MobileIdentityData/Rejections.plist");
-//    funVnodeHide("/var/db/MobileIdentityData/AuthListBannedUpps.plist");
-//    funVnodeHide("/var/db/MobileIdentityData/AuthListBannedCdHashes.plist");
-    
-    printf("hiding home bar\n");
-    funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
-    printf("hiding dock background\n");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
-    printf("replacing lockicons\n");
-    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/ios16.car"].UTF8String);
-    printf("replacing cc connectivity icons\n");
-    funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/ConnectivityModule.bundle/Assets.car", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/PlampyWifi.car"].UTF8String);
-    funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/ConnectivityModule.bundle/Bluetooth.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbluetooth.caml"].UTF8String);
-    funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/ConnectivityModule.bundle/WiFi.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainwifi.caml"].UTF8String);
-    
-//    printf("hiding notifications/music player\n");
-//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeLight.visualstyleset");
-//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeDark.visualstyleset");
-//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/plattersDark.materialrecipe");
-//    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderLight.materialrecipe");
-//    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderDark.materialrecipe");
-//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
-    
-   //cc coloring
-//    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modules.materialrecipe"].UTF8String);
-//    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/moduleFill.visualstyleset", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/moduleFill.visualstyleset"].UTF8String);
-    //System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe
-    //System/Library/PrivateFrameworks/CoreMaterial.framework/modulesBackground.materialrecipe
-    
-    
-//    funCSFlags("launchd");
-//    funTask("kfd");
-    
-    //Patch
-//    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 501, 501);
-//    //Restore
-//    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0, 0);
-//
-//
-//    //Patch
-//    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0107777);
-//    //Restore
-//    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
-    
-//    mach_port_t host_self = mach_host_self();
-//    printf("[i] mach_host_self: 0x%x\n", host_self);
-//    fun_ipc_entry_lookup(host_self);
-    
-//    ResSet16(); offsets broken
-    
-//    funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"].UTF8String);
-    
-//    funVnodeOverwriteFile("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"].UTF8String);
-//
-//    grant_full_disk_access(^(NSError* error) {
-//        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
-//    });
-//    patch_installd();
+    //            funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/lock.caf"].UTF8String);
 
-//    Redirect Folders: NSHomeDirectory() + @"/Documents/mounted" -> "/var/mobile/Library/Caches/com.apple.keyboards"
-    clearUICache();
-    
-//    ResSet16();
-//#if 0
-//    Redirect Folders: NSHomeDirectory() + @"/Documents/mounted" -> /var/mobile
-//    funVnodeResearch(mntPath.UTF8String, mntPath.UTF8String);
-//    dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
-//    NSLog(@"[i] /var/mobile dirs: %@", dirs);
-//
-//
-//
-//
-//    funVnodeOverwriteFile(mntPath.UTF8String, "/var/mobile/Library/Caches/com.apple.keyboards");
-//    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"] toPath:[NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted/images/BBBB.bin"] error:nil];
-//
-//    symlink("/System/Library/PrivateFrameworks/TCC.framework/Support/", [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/Support"].UTF8String);
-//    mount("/System/Library/PrivateFrameworks/TCC.framework/Support/", mntPath, NULL, MS_BIND | MS_REC, NULL);
-//    printf("mount ret: %d\n", mount("apfs", mntpath, 0, &mntargs))
-//    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/", 501, 501);
-//    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/", 0107777);
-//
-//    funVnodeOverwriteFile(mntPath.UTF8String, "/");
-//
-//
-//    for(NSString *dir in dirs) {
-//        NSString *mydir = [mntPath stringByAppendingString:@"/"];
-//        mydir = [mydir stringByAppendingString:dir];
-//        int fd_open = open(mydir.UTF8String, O_RDONLY);
-//        printf("open %s, ret: %d\n", mydir.UTF8String, fd_open);
-//        if(fd_open != -1) {
-//            NSArray* dirs2 = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mydir error:NULL];
-//            NSLog(@"/var/%@ directory: %@", dir, dirs2);
-//        }
-//        close(fd_open);
-//    }
-//    printf("open ret: %d\n", open([mntPath stringByAppendingString:@"/mobile/Library"].UTF8String, O_RDONLY));
-//    printf("open ret: %d\n", open([mntPath stringByAppendingString:@"/containers"].UTF8String, O_RDONLY));
-//    printf("open ret: %d\n", open([mntPath stringByAppendingString:@"/mobile/Library/Preferences"].UTF8String, O_RDONLY));
-//    printf("open ret: %d\n", open("/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches", O_RDONLY));
-//
-//    dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[mntPath stringByAppendingString:@"/mobile"] error:NULL];
-//    NSLog(@"/var/mobile directory: %@", dirs);
-//
-//    [@"Hello, this is an example file!" writeToFile:[mntPath stringByAppendingString:@"/Hello.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-//    funVnodeOverwriteFile("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", AAAApath.UTF8String);
-//    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 501, 501);
-//    funVnodeOverwriteFile(AAAApath.UTF8String, BBBBpath.UTF8String);
-//    funVnodeOverwriteFile("/System/Library/AppPlaceholders/Stocks.app/AppIcon60x60@2x.png", "/System/Library/AppPlaceholders/Tips.app/AppIcon60x60@2x.png");
-//
-//    xpc_crasher("com.apple.tccd");
-//    xpc_crasher("com.apple.tccd");
-//    sleep(5);
-//    funUcred(getProc(getPidByName("tccd")));
-//    funProc(getProc(getPidByName("tccd")));
-//    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
-//
-//
-//    funVnodeOverwrite(AAAApath.UTF8String, AAAApath.UTF8String);
-//
-//    funVnodeOverwrite(selfProc, "/System/Library/AppPlaceholders/Stocks.app/AppIcon60x60@2x.png", copyToAppDocs.UTF8String);
-//
-//
-//Overwrite tccd:
-//    NSString *copyToAppDocs = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/tccd_patched.bin"];
-//    remove(copyToAppDocs.UTF8String);
-//    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/tccd_patched.bin"] toPath:copyToAppDocs error:nil];
-//    chmod(copyToAppDocs.UTF8String, 0755);
-//    funVnodeOverwrite(selfProc, "/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", [copyToAppDocs UTF8String]);
-//
-//    xpc_crasher("com.apple.tccd");
-//    xpc_crasher("com.apple.tccd");
-//
-//#endif
-    
-//    sleep(5);
     return 0;
 }

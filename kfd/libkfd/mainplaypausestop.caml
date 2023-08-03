@@ -4,7 +4,7 @@
   <CALayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 84 84" clearsContext="1" contentsFormat="RGBA8" contentsRect="0.5 0.4736842105263 1 1" hidden="0" masksToBounds="0" name="Root Layer" opaque="0" position="42 42">
     <backgroundColor opacity="0" value="0 0 0"/>
     <sublayers>
-      <CALayer id="origin" allowsEdgeAntialiasing="1" allowsGroupOpacity="0" bounds="0 0 0 0" contentsFormat="RGBA8" hidden="0" name="origin" position="42 42" transform="scale(0.33333, 0.33333, 1)">
+      <CALayer id="origin" allowsEdgeAntialiasing="1" allowsGroupOpacity="0" bounds="0 0 0 0" contentsFormat="RGBA8" hidden="0" name="origin" position="34 34" transform="scale(0.33333, 0.33333, 1)">
 	<sublayers>
 	  <CALayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 0 0" contentsFormat="RGBA8" hidden="0" name="controlParent" position="0 0">
 	    <sublayers>
@@ -12,7 +12,7 @@
 		<sublayers>
 		  <CALayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 0 0" contentsFormat="RGBA8" hidden="0" name="shapeparent" position="0 0">
 		    <sublayers>
-		      <CALayer id="#1" allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 0 0" contentsFormat="RGBA8" hidden="0" name="play shape" opacity="1" position="0 0" transform="">
+		      <CALayer id="#1" allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 0 0" contentsFormat="RGBA8" hidden="0" name="play shape" opacity="1" position="0 0" transform="scale(0.6, 0.6, 1)">
 			<sublayers>
 			  <CALayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 79.86 89.19" contentsFormat="RGBA8" name="play" position="4.768768768769 -1.216216216216">
 			    <sublayers>
@@ -27,7 +27,7 @@
 			</sublayers>
 			<animations/>
 		      </CALayer>
-		      <CALayer id="#2" allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 0 0" contentsFormat="RGBA8" hidden="0" name="pause shape" opacity="1" position="0 0" transform="scale(0, 0, 1)">
+		      <CALayer id="#2" allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 0 0" contentsFormat="RGBA8" hidden="0" name="pause shape" opacity="1" position="0 0" transform="scale(0.6, 0.6, 1)">
 			<sublayers>
 			  <CALayer allowsEdgeAntialiasing="1" allowsGroupOpacity="1" bounds="0 0 189 189" contentsFormat="RGBA8" name="pause" position="0 0">
 			    <sublayers>
@@ -60,5 +60,37 @@
       </CALayer>
     </sublayers>
     <scriptComponents/>
+    <states>
+          <LKState name="play">
+        <elements>
+          <LKStateSetValue targetId="#2" keyPath="opacity">
+            <value type="integer" value="0"/>
+          </LKStateSetValue>
+          <LKStateSetValue targetId="#1" keyPath="opacity">
+            <value type="integer" value="1"/>
+          </LKStateSetValue>
+        </elements>
+          </LKState>
+          <LKState name="pause">
+        <elements>
+          <LKStateSetValue targetId="#1" keyPath="opacity">
+            <value type="integer" value="0"/>
+          </LKStateSetValue>
+          <LKStateSetValue targetId="#2" keyPath="opacity">
+            <value type="integer" value="1"/>
+          </LKStateSetValue>
+        </elements>
+          </LKState>
+          <LKState name="stop">
+        <elements>
+          <LKStateSetValue targetId="#3" keyPath="opacity">
+            <value type="integer" value="1"/>
+          </LKStateSetValue>
+          <LKStateSetValue targetId="#1" keyPath="opacity">
+            <value type="integer" value="0"/>
+          </LKStateSetValue>
+        </elements>
+          </LKState>
+        </states>
   </CALayer>
 </caml>
