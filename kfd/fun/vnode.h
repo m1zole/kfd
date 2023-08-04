@@ -77,7 +77,7 @@ uint64_t funVnodeIterateByVnode(uint64_t vnode);
 /*
 Description:
   Redirect directory to another directory using vnode.
-  Only work when mount points of directories are same.
+  Only work when mount points of directories are same. /Var and /System are different.
   Can be escaped out of sandbox.
   If succeeds, return value to_vnode->v_data (for unredirect)
 */

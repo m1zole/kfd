@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var enableResSet = false
     @State private var enableHideHomebar = false
     @State private var enableHideNotifs = false
+    @State private var enableDynamicIsland = false
     
     var puafPagesOptions = [16, 32, 64, 128, 256, 512, 1024, 2048]
     var puafMethodOptions = ["physpuppet", "smith"]
@@ -115,7 +116,6 @@ struct ContentView: View {
                                     .font(.headline)
                             }
                         }
-
                         .onChange(of: enableLSTweaks, perform: { _ in
                             // Perform any actions when the toggle state changes
                         })
@@ -128,8 +128,19 @@ struct ContentView: View {
                                     .font(.headline)
                             }
                         }
-
                         .onChange(of: enableHideNotifs, perform: { _ in
+                            // Perform any actions when the toggle state changes
+                        })
+                        Toggle(isOn: $enableDynamicIsland) {
+                            HStack(spacing: 20) {
+                                Image(systemName: enableDynamicIsland ? "pencil.circle.fill" : "pencil.circle")
+                                    .foregroundColor(.pink)
+                                    .imageScale(.large)
+                                Text("Enable the dynamic island")
+                                    .font(.headline)
+                            }
+                        }
+                        .onChange(of: enableDynamicIsland, perform: { _ in
                             // Perform any actions when the toggle state changes
                         })
                     }
@@ -143,8 +154,7 @@ struct ContentView: View {
                         let tweaks = enabledTweaks()
 
                         // Convert the Swift array of strings to a C-style array of char*
-                        var cTweaks: [UnsafeMutablePointer<CChar>?] = tweaks.map { strdup($0) } // Use strdup to allocate memory for C-style strings
-
+                        var cTweaks: [UnsafeMutablePointer<CChar>?] = tweaks.map { strdup($0) }
                         // Add a null pointer at the end to signal the end of the array
                         cTweaks.append(nil)
 
@@ -162,18 +172,27 @@ struct ContentView: View {
             }
             .navigationBarTitle("kfdtweaks", displayMode: .inline)
             .accentColor(.green) // Highlight the navigation bar elements in green
-            .navigationBarItems(trailing: settingsButton)
+            .navigationBarItems(leading: respringButton, trailing: settingsButton)
             .popover(isPresented: $isSettingsPopoverPresented, arrowEdge: .bottom) {
                 settingsPopover
             }
         }
-        .foregroundColor(.white) // Set the default text color to white
     }
     
     // Settings Button in the Navigation Bar
     private var settingsButton: some View {
         Button(action: {
-            isSettingsPopoverPresented.toggle() // Toggle the settings popover
+            isSettingsPopoverPresented.toggle()
+        }) {
+            Image(systemName: "gearshape")
+                .imageScale(.large)
+                .foregroundColor(.green)
+        }
+    }
+    
+    private var respringButton: some View {
+        Button(action: {
+            restartFrontboard()
         }) {
             Image(systemName: "gearshape")
                 .imageScale(.large)
@@ -217,14 +236,12 @@ struct ContentView: View {
             }
             
             Button("Apply Settings") {
-                // Do something when the user applies the settings
-                isSettingsPopoverPresented = false // Close the popover after applying settings
+                isSettingsPopoverPresented = false
             }
         }
         .padding()
     }
     
-    // Get the list of enabled tweaks based on the current state of toggles
     private func enabledTweaks() -> [String] {
         var enabledTweaks: [String] = []
         if enableHideDock {

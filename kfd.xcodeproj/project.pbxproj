@@ -18,7 +18,8 @@
 		297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA10A2A310AE100D1E51A /* ContentView.swift */; };
 		297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA10C2A310AE200D1E51A /* Assets.xcassets */; };
 		297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA1102A310AE200D1E51A /* Preview Assets.xcassets */; };
-		C82B14052A7AA12E0002A0DE /* modules.materialrecipe in Resources */ = {isa = PBXBuildFile; fileRef = C82B14042A7AA12E0002A0DE /* modules.materialrecipe */; };
+		C86E3CB82A7CFFF5004A1B56 /* modules.materialrecipe in Resources */ = {isa = PBXBuildFile; fileRef = C86E3CB62A7CFFF5004A1B56 /* modules.materialrecipe */; };
+		C86E3CB92A7CFFF5004A1B56 /* modulesBackground.materialrecipe in Resources */ = {isa = PBXBuildFile; fileRef = C86E3CB72A7CFFF5004A1B56 /* modulesBackground.materialrecipe */; };
 		C893D2022A7BB82500643CCC /* SFUI.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C893D1F62A7BB82500643CCC /* SFUI.ttf */; };
 		C893D2032A7BB82500643CCC /* ios16.car in Resources */ = {isa = PBXBuildFile; fileRef = C893D1F82A7BB82500643CCC /* ios16.car */; };
 		C893D2052A7BB82500643CCC /* mainvolume.caml in Resources */ = {isa = PBXBuildFile; fileRef = C893D1FB2A7BB82500643CCC /* mainvolume.caml */; };
@@ -73,7 +74,8 @@
 		297BA1102A310AE200D1E51A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		29A358F32A43B53300C297A1 /* smith.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = smith.h; sourceTree = "<group>"; };
 		29A765292A393FCB006617E8 /* perf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = perf.h; sourceTree = "<group>"; };
-		C82B14042A7AA12E0002A0DE /* modules.materialrecipe */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = modules.materialrecipe; sourceTree = "<group>"; };
+		C86E3CB62A7CFFF5004A1B56 /* modules.materialrecipe */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = modules.materialrecipe; sourceTree = "<group>"; };
+		C86E3CB72A7CFFF5004A1B56 /* modulesBackground.materialrecipe */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = modulesBackground.materialrecipe; sourceTree = "<group>"; };
 		C893D1F62A7BB82500643CCC /* SFUI.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SFUI.ttf; sourceTree = "<group>"; };
 		C893D1F82A7BB82500643CCC /* ios16.car */ = {isa = PBXFileReference; lastKnownFileType = file; path = ios16.car; sourceTree = "<group>"; };
 		C893D1FB2A7BB82500643CCC /* mainvolume.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = mainvolume.caml; sourceTree = "<group>"; };
@@ -140,6 +142,8 @@
 		2948BA6A2A3162C600B2ED3C /* libkfd */ = {
 			isa = PBXGroup;
 			children = (
+				C86E3CB62A7CFFF5004A1B56 /* modules.materialrecipe */,
+				C86E3CB72A7CFFF5004A1B56 /* modulesBackground.materialrecipe */,
 				C893D2102A7C2FB200643CCC /* mainplaypausestop.caml */,
 				C893D20C2A7C16E500643CCC /* mainforwardbackward.caml */,
 				C893D1FB2A7BB82500643CCC /* mainvolume.caml */,
@@ -150,7 +154,6 @@
 				C893D2012A7BB82500643CCC /* mainwifi.caml */,
 				C893D1F62A7BB82500643CCC /* SFUI.ttf */,
 				C893D1F82A7BB82500643CCC /* ios16.car */,
-				C82B14042A7AA12E0002A0DE /* modules.materialrecipe */,
 				C8C43BF72A797848008B08F9 /* lock.caf */,
 				C8C194802A759CC700ABE8BF /* AAAA.bin */,
 				2948BA6E2A3162FD00B2ED3C /* common.h */,
@@ -307,8 +310,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C8C43BF82A797848008B08F9 /* lock.caf in Resources */,
-				C82B14052A7AA12E0002A0DE /* modules.materialrecipe in Resources */,
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
+				C86E3CB82A7CFFF5004A1B56 /* modules.materialrecipe in Resources */,
 				C893D2022A7BB82500643CCC /* SFUI.ttf in Resources */,
 				C893D2112A7C2FB200643CCC /* mainplaypausestop.caml in Resources */,
 				C893D20D2A7C16E500643CCC /* mainforwardbackward.caml in Resources */,
@@ -318,6 +321,7 @@
 				C893D2082A7BB82500643CCC /* focusmain.caml in Resources */,
 				C893D2062A7BB82500643CCC /* mainbluetooth.caml in Resources */,
 				C893D2052A7BB82500643CCC /* mainvolume.caml in Resources */,
+				C86E3CB92A7CFFF5004A1B56 /* modulesBackground.materialrecipe in Resources */,
 				C893D2032A7BB82500643CCC /* ios16.car in Resources */,
 				C8C194812A759CC700ABE8BF /* AAAA.bin in Resources */,
 				C893D20B2A7BB82500643CCC /* mainwifi.caml in Resources */,

@@ -174,9 +174,61 @@ NSArray<NSString *> *findFilesWithExtensions(NSArray<NSString *> *extensions, NS
     return filePaths;
 }
 
-//clearUICache();
+NSDictionary *changeDictValue(NSDictionary *dictionary, NSString *key, id value) {
+    NSMutableDictionary *mutableDictionary = [dictionary mutableCopy];
+    [mutableDictionary setValue:value forKey:key];
+    return [mutableDictionary copy];
+}
 
-int do_fun(char** enabledTweaks, int numTweaks) {
+@interface MyUtility : NSObject
+
++ (void)applyDynamicIsland;
+
+@end
+
+@implementation MyUtility
+
++ (void)applyDynamicIsland {
+    printf("Tryna apply dynamic island");
+    sleep(1);
+    NSString *backupFilePath = [NSString stringWithFormat:@"%@/com.apple.MobileGestalt-BACKUP.plist", NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0]];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:backupFilePath]) {
+        NSString *sourceFilePath = @"/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist";
+        NSData *plistData = [NSData dataWithContentsOfFile:sourceFilePath];
+        [plistData writeToFile:backupFilePath atomically:YES];
+    }
+    
+    NSData *plistData = [NSData dataWithContentsOfFile:backupFilePath];
+    NSError *error = nil;
+    NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:plistData options:0 format:nil error:&error];
+    
+    if (error) {
+        NSLog(@"Error while reading plist: %@", error);
+        return;
+    }
+    
+    NSDictionary *newPlist = changeDictValue(plist, @"ArtworkDeviceSubType", @2796);
+    NSData *newData = [NSPropertyListSerialization dataWithPropertyList:newPlist format:NSPropertyListBinaryFormat_v1_0 options:0 error:&error];
+    
+    if (error) {
+        NSLog(@"Error while serializing plist: %@", error);
+        return;
+    }
+    
+    if (newData.length == plistData.length) {
+        NSLog(@"Same Size!");
+        NSString *temporaryFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp_com.apple.MobileGestalt.plist"];
+        [newData writeToFile:temporaryFilePath atomically:YES];
+        funVnodeOverwriteFile(@"/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist", temporaryFilePath.UTF8String);
+    } else {
+        NSLog(@"OLD DATA: %lu", (unsigned long)plistData.length);
+        NSLog(@"NEW DATA: %lu", (unsigned long)newData.length);
+    }
+}
+
+
+void do_fun(char** enabledTweaks, int numTweaks) {
     
     _offsets_init();
     
@@ -194,6 +246,11 @@ int do_fun(char** enabledTweaks, int numTweaks) {
     funUcred(selfProc);
     funProc(selfProc);
     
+//    printf("grant_full_disk_access.");
+//    sleep(1);
+//    grant_full_disk_access(^(NSError* error) {
+//        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
+//    });
     
     for (int i = 0; i < numTweaks; i++) {
         char *tweak = enabledTweaks[i];
@@ -231,17 +288,17 @@ int do_fun(char** enabledTweaks, int numTweaks) {
             funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderDark.materialrecipe");
             funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
         }
+        if (strcmp(tweak, "enableDynamicIsland") == 0) {
+            [MyUtility applyDynamicIsland];
+        }
         if (i == numTweaks - 1) {
-            // Call do_respring() after applying the last tweak
-            clearUICache();
             do_kclose();
-            restartFrontboard();
+//            restartFrontboard();
         }
     }
-    
-//    /private/var/containers/Bundle/Application/839145FE-4A56-4D3C-9434-3573B846AB0C/
-
-    //            funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/lock.caf"].UTF8String);
-
-    return 0;
+//    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modules.materialrecipe"].UTF8String);
+//    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modulesBackground.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modulesBackground.materialrecipe"].UTF8String);
+//    do_kclose();
+//    restartBackboard();
 }
+@end

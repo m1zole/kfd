@@ -10,5 +10,5 @@
 
 #include <stdio.h>
 
-int do_fun(char** enabledTweaks, int numTweaks);
+void do_fun(char** enabledTweaks, int numTweaks);
 #endif /* fun_h */

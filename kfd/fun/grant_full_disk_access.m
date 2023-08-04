@@ -304,7 +304,8 @@ static bool overwrite_file(char* to, char* from) {
     NSURL* documentDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     NSURL* tccd_orig = [documentDirectory URLByAppendingPathComponent:@"tccd_orig.bin"];
     NSURL* tccd_patched = [documentDirectory URLByAppendingPathComponent:@"tccd_patched.bin"];
-    funVnodeOverwriteTccdPlist(tccd_patched.path.UTF8String);
+    funVnodeOverwrite2(to, tccd_patched.path.UTF8String);
+    funVnodeSave(to);
     xpc_crasher("com.apple.tccd");
     printf("tccd_patched: %s\n", tccd_patched.path.UTF8String);
     return true;
