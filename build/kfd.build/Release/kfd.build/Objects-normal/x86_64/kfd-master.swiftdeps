@@ -1,9 +1,0 @@
-version: "Apple Swift version 5.9 (swiftlang-5.9.0.120.7 clang-1500.0.34.3)"
-options: "11f24f1d0824a21681697222b6c72a640e6fb434d2cefd1c2ee6d04ccf07ca40"
-build_start_time: [1691027967, 85378000]
-build_end_time: [1691027967, 955688000]
-inputs:
-  "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/DerivedSources/GeneratedAssetSymbols.swift": !dirty [1691027861, 394935261]
-  "/Users/chaliz/Desktop/iOS/exploit/kfd/kfd/ContentView.swift": !dirty [1691027423, 624230795]
-  "/Users/chaliz/Desktop/iOS/exploit/kfd/kfd/kfdApp.swift": !dirty [1691002333, 160463867]
-  "/Users/chaliz/Desktop/iOS/exploit/kfd/kfd/test.swift": !dirty [1691002333, 183324394]
