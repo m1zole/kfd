@@ -186,29 +186,14 @@ int do_fun(void) {
 //    });
     
 //    findRootVnode();
-//    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/lock.caf", 0x21, 1, 1, true);
-//    funVnodeHide("/System/Library/Audio/UISounds/photoShutter.caf");
-//    funVnodeOverwrite2("/System/Library/Audio/UISounds/lock.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/vineboom.mp3"].UTF8String);
-//    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/photoShutter.caf", 1, 1, 1, true);
-//    funVnodeHide("/System/Library/PrivateFrameworks/UIKitCore.framework/UIKitCore");
-//    funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
-//    funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/DisplayModule.bundle/Brightness.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbrightness.caml"].UTF8String);
+    funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/items/SFUI.ttf"].UTF8String);
     printf("replaceing iPhoneDebug.pem\n");
-    funVnodeOverwrite2("/System/Library/Lockdown/iPhoneDebug.pem", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/cert.pem"].UTF8String);
-//    printf("hiding home bar\n");
-//    funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
+    funVnodeOverwrite2("/System/Library/Lockdown/iPhoneDebug.pem", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/items/cert.pem"].UTF8String);
+    printf("hiding home bar\n");
+    funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
     printf("hiding dock background\n");
     funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
     funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
-////    printf("hiding lockicons\n");
-////    funVnodeHide("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car");
-//    printf("hiding notifications/music player\n");
-//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeLight.visualstyleset");
-//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeDark.visualstyleset");
-//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/plattersDark.materialrecipe");
-//    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderLight.materialrecipe");
-//    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderDark.materialrecipe");
-//    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
 //    funCSFlags("launchd");
 //    funTask("kfd");
     
@@ -229,15 +214,12 @@ int do_fun(void) {
     
 //    ResSet16(); offsets broken
     
-//    funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"].UTF8String);
-    
-//    funVnodeOverwriteFile("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"].UTF8String);
-//
-//    grant_full_disk_access(^(NSError* error) {
-//        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
-//    });
-//    patch_installd();
+    funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"].UTF8String);
 
+    grant_full_disk_access(^(NSError* error) {
+        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
+    });
+    patch_installd();
         
 //    Redirect Folders: NSHomeDirectory() + @"/Documents/mounted" -> "/var/mobile/Library/Caches/com.apple.keyboards"
 //    NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];

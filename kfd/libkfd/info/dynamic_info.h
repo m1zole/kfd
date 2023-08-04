@@ -104,8 +104,8 @@ struct dynamic_info {
 };
 
 const struct dynamic_info kern_versions[] = {
+    //iPhone SE 2020 iOS 16.6 beta1
     {
-        //iPhone SE 2020 iOS 16.6 beta1
         .kern_version = "Darwin Kernel Version 22.6.0: Tue May  9 06:18:02 PDT 2023; root:xnu-8796.140.12.502.1~12/RELEASE_ARM64_T8030",
         .fileglob__fg_ops = 0x28,
         .fileglob__fg_data = 0x40 - 8,

@@ -1,0 +1,30 @@
+{
+  "" : {
+    "const-values" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/SwiftUtils-master.swiftconstvalues",
+    "dependencies" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/SwiftUtils-master.d",
+    "diagnostics" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/SwiftUtils-master.dia",
+    "emit-module-dependencies" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/SwiftUtils-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/SwiftUtils-master-emit-module.dia",
+    "swift-dependencies" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/SwiftUtils-master.swiftdeps"
+  },
+  "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/Sources/SwiftUtils/Extensions/Data.swift" : {
+    "index-unit-output-path" : "/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/Data.o",
+    "llvm-bc" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/Data.bc",
+    "object" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/Data.o"
+  },
+  "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/Sources/SwiftUtils/Extensions/String.swift" : {
+    "index-unit-output-path" : "/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/String.o",
+    "llvm-bc" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/String.bc",
+    "object" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/String.o"
+  },
+  "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/Sources/SwiftUtils/ptrauth.swift" : {
+    "index-unit-output-path" : "/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/ptrauth.o",
+    "llvm-bc" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/ptrauth.bc",
+    "object" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/ptrauth.o"
+  },
+  "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/Sources/SwiftUtils/require.swift" : {
+    "index-unit-output-path" : "/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/require.o",
+    "llvm-bc" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/require.bc",
+    "object" : "/Users/chaliz/Library/Developer/Xcode/DerivedData/kfd-bxxppgmmjrxgflcnzwewpvsylkdx/SourcePackages/checkouts/SwiftUtils/build/SwiftUtils.build/Release/SwiftUtils.build/Objects-normal/arm64/require.o"
+  }
+}

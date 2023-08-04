@@ -1,0 +1,6 @@
+Target dependency graph (3 targets)
+Target 'kfd' in project 'kfd'
+➜ Explicit dependency on target 'SwiftUtils' in project 'SwiftUtils'
+Target 'SwiftUtils' in project 'SwiftUtils'
+➜ Explicit dependency on target 'SwiftUtils' in project 'SwiftUtils'
+Target 'SwiftUtils' in project 'SwiftUtils' (no dependencies)
