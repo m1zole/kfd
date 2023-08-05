@@ -6,6 +6,9 @@
 //
 
 #include <stdio.h>
+#include <Foundation/Foundation.h>
+#include <UIKit/UIKit.h>
+
 int clearUICache(void);
 int listCache(void);
 int ResSet16(NSInteger height, NSInteger width);
@@ -17,3 +20,4 @@ int removeKeyboardCache(void);
 int regionChanger(NSString *country_value, NSString *region_value);
 int CCTest(void);
 int readpslog(void);
+void HexDump(uint64_t addr, size_t size);
