@@ -246,6 +246,9 @@ void do_fun(char** enabledTweaks, int numTweaks) {
     funUcred(selfProc);
     funProc(selfProc);
     
+//    CCTest();
+//    removeSMSCache();
+//    setSuperviseMode(true);
 //    printf("grant_full_disk_access.");
 //    sleep(1);
 //    grant_full_disk_access(^(NSError* error) {
@@ -262,7 +265,7 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
         }
         if (strcmp(tweak, "enableResSet") == 0) {
-            ResSet16();
+            ResSet16(2796, 1290);
         }
         if (strcmp(tweak, "enableCCTweaks") == 0) {
             funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/DisplayModule.bundle/Brightness.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbrightness.caml"].UTF8String);
@@ -292,6 +295,7 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             [MyUtility applyDynamicIsland];
         }
         if (i == numTweaks - 1) {
+            listCache();
             do_kclose();
 //            restartFrontboard();
         }

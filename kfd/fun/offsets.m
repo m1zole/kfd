@@ -138,7 +138,7 @@ void _offsets_init(void) {
         off_vnode_v_usecount = 0x60;
         off_vnode_v_flag = 0x54;
         off_vnode_v_name = 0xb8;
-        off_vnode_v_mount = 0xd8;
+        off_vnode_v_mount = 0xD8;
         off_vnode_v_data = 0xe0;
         off_vnode_v_kusecount = 0x5c;
         off_vnode_v_references = 0x5b;
@@ -183,7 +183,7 @@ void _offsets_init(void) {
         off_p_puniqueid = 0x48;
         off_p_pid = 0x60;
         off_p_pfd = 0xf8;
-        off_p_textvp = 0x350;
+        off_p_textvp = 0x548;
         off_p_name = 0x381;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/proc_ro.h#L59

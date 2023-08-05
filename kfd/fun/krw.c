@@ -69,7 +69,6 @@ uint64_t kread64_smr(uint64_t where) {
     return value;
 }
 
-
 void kwrite8(uint64_t where, uint8_t what) {
     uint8_t _buf[8] = {};
     _buf[0] = what;

@@ -6,5 +6,13 @@
 //
 
 #include <stdio.h>
-int ResSet16(void);
 int clearUICache(void);
+int listCache(void);
+int ResSet16(NSInteger height, NSInteger width);
+int removeSMSCache(void);
+int VarMobileWriteTest(void);
+int VarMobileRemoveTest(void);
+int setSuperviseMode(bool enable);
+int removeKeyboardCache(void);
+int regionChanger(NSString *country_value, NSString *region_value);
+int CCTest(void);

@@ -194,7 +194,7 @@ struct ContentView: View {
         Button(action: {
             restartFrontboard()
         }) {
-            Image(systemName: "gearshape")
+            Image(systemName: "umbrella")
                 .imageScale(.large)
                 .foregroundColor(.green)
         }

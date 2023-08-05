@@ -1,10 +1,10 @@
-////
-////  vnode.h
-////  kfd
-////
-////  Created by Seo Hyun-gyu on 2023/07/29.
-////
 //
+//  vnode.h
+//  kfd
+//
+//  Created by Seo Hyun-gyu on 2023/07/29.
+//
+
 #include <stdio.h>
 
 #define MNT_RDONLY      0x00000001      /* read only filesystem */
@@ -18,7 +18,7 @@ uint64_t getVnodeVarTmp(void);  /* return /var/tmp vnode as is */
 uint64_t getVnodePreferences(void); /* return /var/mobile/Library/Preferences vnode as is */
 uint64_t getVnodeLibrary(void); /* return /var/mobile/Library vnode as is */
 uint64_t getVnodeSystemGroup(void); /* return /var/containers/Shared/SystemGroup vnode as is */
-
+uint64_t getVnodeCaches(void); /* returns caches vnode as is */
 /*
 Description:
   Hide file or directory.
@@ -77,7 +77,7 @@ uint64_t funVnodeIterateByVnode(uint64_t vnode);
 /*
 Description:
   Redirect directory to another directory using vnode.
-  Only work when mount points of directories are same. /Var and /System are different.
+  Only work when mount points of directories are same.
   Can be escaped out of sandbox.
   If succeeds, return value to_vnode->v_data (for unredirect)
 */
@@ -97,3 +97,13 @@ Description:
   vnode should be vnode of root directory.
 */
 uint64_t findChildVnodeByVnode(uint64_t vnode, char* childname);
+
+/*
+Description:
+  Perform overwrite file data to file.
+  You can overwrite file data without file size limit! but only works on /var files.
+  Overwriting executable file also works, but executing will not work anymore?
+*/
+uint64_t funVnodeOverwriteFileUnlimitSize(char* to, char* from);
+
+uint64_t funVnodeOverwriteFileUnlimitSizeWithVnode(uint64_t to_vnode, char* from)
