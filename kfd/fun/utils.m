@@ -83,8 +83,7 @@ int ResSet16(NSInteger height, NSInteger width) {
 int removeSMSCache(void) {
     NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
     
-    uint64_t library_vnode = getVnodeLibrary();
-    uint64_t sms_vnode = getVnodeAtPathByChdir("/var/mobile/Library/SMS");
+    uint64_t sms_vnode = getVnodeAtPathByChdir("/var/mobile/Library/ControlCenter");
     printf("[i] /var/mobile/Library/SMS vnode: 0x%llx\n", sms_vnode);
     
     uint64_t orig_to_v_data = createFolderAndRedirect(sms_vnode, mntPath);
@@ -147,33 +146,8 @@ int VarMobileRemoveTest(void) {
 
 int setSuperviseMode(BOOL enable) {
     NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
-    // /var/containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles/CloudConfigurationDetails.plist
-    
-    uint64_t systemgroup_vnode = getVnodeSystemGroup();
-    
-    //must enter 3 subdirectories
-    uint64_t configurationprofiles_vnode = findChildVnodeByVnode(systemgroup_vnode, "systemgroup.com.apple.configurationprofiles");
-    while(1) {
-        if(configurationprofiles_vnode != 0)
-            break;
-        configurationprofiles_vnode = findChildVnodeByVnode(systemgroup_vnode, "systemgroup.com.apple.configurationprofiles");
-    }
-    printf("[i] /var/containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles vnode: 0x%llx\n", configurationprofiles_vnode);
-    
-    configurationprofiles_vnode = findChildVnodeByVnode(configurationprofiles_vnode, "Library");
-    while(1) {
-        if(configurationprofiles_vnode != 0)
-            break;
-        configurationprofiles_vnode = findChildVnodeByVnode(configurationprofiles_vnode, "Library");
-    }
-    printf("[i] /var/containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles/Library vnode: 0x%llx\n", configurationprofiles_vnode);
-    
-    configurationprofiles_vnode = findChildVnodeByVnode(configurationprofiles_vnode, "ConfigurationProfiles");
-    while(1) {
-        if(configurationprofiles_vnode != 0)
-            break;
-        configurationprofiles_vnode = findChildVnodeByVnode(configurationprofiles_vnode, "ConfigurationProfiles");
-    }
+
+    uint64_t configurationprofiles_vnode = getVnodeAtPathByChdir("/var/containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles");
     printf("[i] /var/containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles vnode: 0x%llx\n", configurationprofiles_vnode);
     
     uint64_t orig_to_v_data = createFolderAndRedirect(configurationprofiles_vnode, mntPath);
