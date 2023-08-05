@@ -7,13 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		212762BF2A7574040070E6A5 /* fun.m in Sources */ = {isa = PBXBuildFile; fileRef = 212762B42A7574040070E6A5 /* fun.m */; };
-		212762C02A7574040070E6A5 /* grant_full_disk_access.m in Sources */ = {isa = PBXBuildFile; fileRef = 212762B52A7574040070E6A5 /* grant_full_disk_access.m */; };
-		212762C12A7574040070E6A5 /* helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 212762B62A7574040070E6A5 /* helpers.m */; };
-		212762C22A7574040070E6A5 /* thanks_opa334dev_htrowii.m in Sources */ = {isa = PBXBuildFile; fileRef = 212762B72A7574040070E6A5 /* thanks_opa334dev_htrowii.m */; };
-		212762C32A7574040070E6A5 /* krw.c in Sources */ = {isa = PBXBuildFile; fileRef = 212762B82A7574040070E6A5 /* krw.c */; };
-		212762C42A7574040070E6A5 /* offsets.m in Sources */ = {isa = PBXBuildFile; fileRef = 212762B92A7574040070E6A5 /* offsets.m */; };
-		212762C62A7574040070E6A5 /* proc.c in Sources */ = {isa = PBXBuildFile; fileRef = 212762BB2A7574040070E6A5 /* proc.c */; };
 		297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA1082A310AE100D1E51A /* kfdApp.swift */; };
 		297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA10A2A310AE100D1E51A /* ContentView.swift */; };
 		297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA10C2A310AE200D1E51A /* Assets.xcassets */; };
@@ -32,29 +25,21 @@
 		C893D2112A7C2FB200643CCC /* mainplaypausestop.caml in Resources */ = {isa = PBXBuildFile; fileRef = C893D2102A7C2FB200643CCC /* mainplaypausestop.caml */; };
 		C8C194812A759CC700ABE8BF /* AAAA.bin in Resources */ = {isa = PBXBuildFile; fileRef = C8C194802A759CC700ABE8BF /* AAAA.bin */; };
 		C8C43BF82A797848008B08F9 /* lock.caf in Resources */ = {isa = PBXBuildFile; fileRef = C8C43BF72A797848008B08F9 /* lock.caf */; };
+		C8CB75142A7EA18000305C68 /* thanks_opa334dev_htrowii.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75022A7EA18000305C68 /* thanks_opa334dev_htrowii.m */; };
+		C8CB75152A7EA18000305C68 /* offsets.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75052A7EA18000305C68 /* offsets.m */; };
+		C8CB75162A7EA18000305C68 /* helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75082A7EA18000305C68 /* helpers.m */; };
+		C8CB75172A7EA18000305C68 /* fun.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75092A7EA18000305C68 /* fun.m */; };
+		C8CB75182A7EA18000305C68 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB750B2A7EA18000305C68 /* utils.m */; };
+		C8CB75192A7EA18000305C68 /* vnode.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB750E2A7EA18000305C68 /* vnode.m */; };
+		C8CB751A2A7EA18000305C68 /* krw.c in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75102A7EA18000305C68 /* krw.c */; };
+		C8CB751B2A7EA18000305C68 /* grant_full_disk_access.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75112A7EA18000305C68 /* grant_full_disk_access.m */; };
+		C8CB751C2A7EA18000305C68 /* proc.c in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75132A7EA18000305C68 /* proc.c */; };
 		C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = C8843C222A724AA900CA0DC9 /* SwiftUtils */; };
-		C8EAC7D22A7690E2005FB878 /* vnode.m in Sources */ = {isa = PBXBuildFile; fileRef = C8EAC7D12A7690E2005FB878 /* vnode.m */; };
-		C8EAC7D52A769100005FB878 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C8EAC7D42A769100005FB878 /* utils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		212762AC2A7573CB0070E6A5 /* static_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_info.h; sourceTree = "<group>"; };
 		212762AD2A7573CB0070E6A5 /* dynamic_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dynamic_info.h; sourceTree = "<group>"; };
-		212762AF2A7574040070E6A5 /* thanks_opa334dev_htrowii.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thanks_opa334dev_htrowii.h; sourceTree = "<group>"; };
-		212762B02A7574040070E6A5 /* vnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vnode.h; sourceTree = "<group>"; };
-		212762B12A7574040070E6A5 /* proc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = proc.h; sourceTree = "<group>"; };
-		212762B22A7574040070E6A5 /* offsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = offsets.h; sourceTree = "<group>"; };
-		212762B32A7574040070E6A5 /* krw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = krw.h; sourceTree = "<group>"; };
-		212762B42A7574040070E6A5 /* fun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = fun.m; sourceTree = "<group>"; };
-		212762B52A7574040070E6A5 /* grant_full_disk_access.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = grant_full_disk_access.m; sourceTree = "<group>"; };
-		212762B62A7574040070E6A5 /* helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = helpers.m; sourceTree = "<group>"; };
-		212762B72A7574040070E6A5 /* thanks_opa334dev_htrowii.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = thanks_opa334dev_htrowii.m; sourceTree = "<group>"; };
-		212762B82A7574040070E6A5 /* krw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = krw.c; sourceTree = "<group>"; };
-		212762B92A7574040070E6A5 /* offsets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = offsets.m; sourceTree = "<group>"; };
-		212762BB2A7574040070E6A5 /* proc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = proc.c; sourceTree = "<group>"; };
-		212762BC2A7574040070E6A5 /* fun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fun.h; sourceTree = "<group>"; };
-		212762BD2A7574040070E6A5 /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
-		212762BE2A7574040070E6A5 /* grant_full_disk_access.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = grant_full_disk_access.h; sourceTree = "<group>"; };
 		2948BA6E2A3162FD00B2ED3C /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		2948BA6F2A31630800B2ED3C /* info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = info.h; sourceTree = "<group>"; };
 		2948BA702A31631000B2ED3C /* krkw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = krkw.h; sourceTree = "<group>"; };
@@ -97,9 +82,24 @@
 		C893D2102A7C2FB200643CCC /* mainplaypausestop.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = mainplaypausestop.caml; sourceTree = "<group>"; };
 		C8C194802A759CC700ABE8BF /* AAAA.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = AAAA.bin; sourceTree = "<group>"; };
 		C8C43BF72A797848008B08F9 /* lock.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = lock.caf; sourceTree = "<group>"; };
-		C8EAC7D12A7690E2005FB878 /* vnode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = vnode.m; sourceTree = "<group>"; };
-		C8EAC7D32A769100005FB878 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
-		C8EAC7D42A769100005FB878 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
+		C8CB75022A7EA18000305C68 /* thanks_opa334dev_htrowii.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = thanks_opa334dev_htrowii.m; sourceTree = "<group>"; };
+		C8CB75032A7EA18000305C68 /* krw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = krw.h; sourceTree = "<group>"; };
+		C8CB75042A7EA18000305C68 /* grant_full_disk_access.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = grant_full_disk_access.h; sourceTree = "<group>"; };
+		C8CB75052A7EA18000305C68 /* offsets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = offsets.m; sourceTree = "<group>"; };
+		C8CB75062A7EA18000305C68 /* fun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fun.h; sourceTree = "<group>"; };
+		C8CB75072A7EA18000305C68 /* proc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = proc.h; sourceTree = "<group>"; };
+		C8CB75082A7EA18000305C68 /* helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = helpers.m; sourceTree = "<group>"; };
+		C8CB75092A7EA18000305C68 /* fun.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = fun.m; sourceTree = "<group>"; };
+		C8CB750A2A7EA18000305C68 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		C8CB750B2A7EA18000305C68 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
+		C8CB750C2A7EA18000305C68 /* vnode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vnode.h; sourceTree = "<group>"; };
+		C8CB750D2A7EA18000305C68 /* thanks_opa334dev_htrowii.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thanks_opa334dev_htrowii.h; sourceTree = "<group>"; };
+		C8CB750E2A7EA18000305C68 /* vnode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = vnode.m; sourceTree = "<group>"; };
+		C8CB750F2A7EA18000305C68 /* offsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = offsets.h; sourceTree = "<group>"; };
+		C8CB75102A7EA18000305C68 /* krw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = krw.c; sourceTree = "<group>"; };
+		C8CB75112A7EA18000305C68 /* grant_full_disk_access.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = grant_full_disk_access.m; sourceTree = "<group>"; };
+		C8CB75122A7EA18000305C68 /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
+		C8CB75132A7EA18000305C68 /* proc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = proc.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,24 +126,24 @@
 		212762AE2A7574040070E6A5 /* fun */ = {
 			isa = PBXGroup;
 			children = (
-				212762AF2A7574040070E6A5 /* thanks_opa334dev_htrowii.h */,
-				212762B72A7574040070E6A5 /* thanks_opa334dev_htrowii.m */,
-				C8EAC7D32A769100005FB878 /* utils.h */,
-				C8EAC7D42A769100005FB878 /* utils.m */,
-				212762B02A7574040070E6A5 /* vnode.h */,
-				C8EAC7D12A7690E2005FB878 /* vnode.m */,
-				212762BB2A7574040070E6A5 /* proc.c */,
-				212762B12A7574040070E6A5 /* proc.h */,
-				212762B92A7574040070E6A5 /* offsets.m */,
-				212762B22A7574040070E6A5 /* offsets.h */,
-				212762B82A7574040070E6A5 /* krw.c */,
-				212762B32A7574040070E6A5 /* krw.h */,
-				212762B42A7574040070E6A5 /* fun.m */,
-				212762BC2A7574040070E6A5 /* fun.h */,
-				212762B62A7574040070E6A5 /* helpers.m */,
-				212762BD2A7574040070E6A5 /* helpers.h */,
-				212762B52A7574040070E6A5 /* grant_full_disk_access.m */,
-				212762BE2A7574040070E6A5 /* grant_full_disk_access.h */,
+				C8CB75062A7EA18000305C68 /* fun.h */,
+				C8CB75092A7EA18000305C68 /* fun.m */,
+				C8CB75042A7EA18000305C68 /* grant_full_disk_access.h */,
+				C8CB75112A7EA18000305C68 /* grant_full_disk_access.m */,
+				C8CB75122A7EA18000305C68 /* helpers.h */,
+				C8CB75082A7EA18000305C68 /* helpers.m */,
+				C8CB75102A7EA18000305C68 /* krw.c */,
+				C8CB75032A7EA18000305C68 /* krw.h */,
+				C8CB750F2A7EA18000305C68 /* offsets.h */,
+				C8CB75052A7EA18000305C68 /* offsets.m */,
+				C8CB75132A7EA18000305C68 /* proc.c */,
+				C8CB75072A7EA18000305C68 /* proc.h */,
+				C8CB750D2A7EA18000305C68 /* thanks_opa334dev_htrowii.h */,
+				C8CB75022A7EA18000305C68 /* thanks_opa334dev_htrowii.m */,
+				C8CB750A2A7EA18000305C68 /* utils.h */,
+				C8CB750B2A7EA18000305C68 /* utils.m */,
+				C8CB750C2A7EA18000305C68 /* vnode.h */,
+				C8CB750E2A7EA18000305C68 /* vnode.m */,
 			);
 			path = fun;
 			sourceTree = "<group>";
@@ -353,17 +353,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				212762C02A7574040070E6A5 /* grant_full_disk_access.m in Sources */,
-				212762BF2A7574040070E6A5 /* fun.m in Sources */,
-				C8EAC7D52A769100005FB878 /* utils.m in Sources */,
+				C8CB751A2A7EA18000305C68 /* krw.c in Sources */,
 				297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */,
+				C8CB751B2A7EA18000305C68 /* grant_full_disk_access.m in Sources */,
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,
-				212762C12A7574040070E6A5 /* helpers.m in Sources */,
-				212762C62A7574040070E6A5 /* proc.c in Sources */,
-				C8EAC7D22A7690E2005FB878 /* vnode.m in Sources */,
-				212762C32A7574040070E6A5 /* krw.c in Sources */,
-				212762C42A7574040070E6A5 /* offsets.m in Sources */,
-				212762C22A7574040070E6A5 /* thanks_opa334dev_htrowii.m in Sources */,
+				C8CB75152A7EA18000305C68 /* offsets.m in Sources */,
+				C8CB75182A7EA18000305C68 /* utils.m in Sources */,
+				C8CB75172A7EA18000305C68 /* fun.m in Sources */,
+				C8CB75142A7EA18000305C68 /* thanks_opa334dev_htrowii.m in Sources */,
+				C8CB75192A7EA18000305C68 /* vnode.m in Sources */,
+				C8CB75162A7EA18000305C68 /* helpers.m in Sources */,
+				C8CB751C2A7EA18000305C68 /* proc.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

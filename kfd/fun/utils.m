@@ -278,7 +278,7 @@ int listCache(void) {
     NSLog(@"/var/mobile/Library/Caches/TelephonyUI-9 directory list:\n %@", dirs);
     
     printf("overwriting passcode face\n");
-    funVnodeOverwriteFileUnlimitSize([mntPath stringByAppendingString:@"en-0---white.png"].UTF8String, [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/1.png"].UTF8String);
+    funVnodeOverwriteFileUnlimitSize([mntPath stringByAppendingString:dirs[0]].UTF8String, [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/1.png"].UTF8String);
     printf("cleaning up\n");
     UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
     return 0;

@@ -8,7 +8,6 @@
 #ifndef fun_h
 #define fun_h
 
-#include <stdio.h>
 
 void do_fun(char** enabledTweaks, int numTweaks);
 #endif /* fun_h */
