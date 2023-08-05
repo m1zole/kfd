@@ -13,15 +13,11 @@
 #import "vnode.h"
 #import "krw.h"
 #import "helpers.h"
-<<<<<<< HEAD
 #include "offsets.h"
 #import "thanks_opa334dev_htrowii.h"
 #import <errno.h>
 #import "utils.h"
-=======
 #import "offsets.h"
-#import "thanks_opa334dev_htrowii.h"
->>>>>>> 7bb981f (Hmmm)
 
 uint64_t createFolderAndRedirect(uint64_t vnode, NSString *mntPath) {
     [[NSFileManager defaultManager] removeItemAtPath:mntPath error:nil];
@@ -258,7 +254,6 @@ int regionChanger(NSString *country_value, NSString *region_value) {
     return 0;
 }
 
-<<<<<<< HEAD
 int listCache(void) {
     NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
     

@@ -128,6 +128,8 @@ void _offsets_init(void) {
         off_fd_ofiles = 0;
         off_fd_cdir = 0x20; //  new one! https://github.com/Baw-Appie/KernBypass/blob/69e5ae6baf04d0978358feee57eca8b8bc1382ed/kernel.h#L390 try these
         
+        off_fd_cdir = 0x20;
+        
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/file_internal.h#L125
         off_fp_glob = 0x10;
         
@@ -217,6 +219,7 @@ void _offsets_init(void) {
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/filedesc.h#L138
         off_fd_ofiles = 0;
         off_fd_cdir = 0x20; //  new one! https://github.com/Baw-Appie/KernBypass/blob/69e5ae6baf04d0978358feee57eca8b8bc1382ed/kernel.h#L390 try these
+        off_fd_cdir = 0x20;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/file_internal.h#L125
         off_fp_glob = 0x10;
