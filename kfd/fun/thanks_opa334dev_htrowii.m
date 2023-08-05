@@ -190,7 +190,7 @@ uint64_t funVnodeOverwrite2(char* to, char* from) {
     printf("writing to %s", to);
     int to_file_index = open(to, O_RDONLY);
     if (to_file_index == -1)  {
-        printf("to file nonexistent\n)");
+        printf("\nto file nonexistent\n)");
         return -1;
     }
     

@@ -217,7 +217,10 @@ uint64_t funVnodeRedirectFolder(char* to, char* from) {
 uint64_t funVnodeOverwriteFile(char* to, char* from) {
 
     int to_file_index = open(to, O_RDONLY);
-    if (to_file_index == -1) return -1;
+    if (to_file_index == -1) {
+        printf("\nto file nonexistent: %s\n", to);
+        return -1;
+    }
     off_t to_file_size = lseek(to_file_index, 0, SEEK_END);
     
     int from_file_index = open(from, O_RDONLY);

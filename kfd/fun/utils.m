@@ -10,6 +10,8 @@
 #import "krw.h"
 #import "helpers.h"
 #include "offsets.h"
+#import "thanks_opa334dev_htrowii.h"
+#import <errno.h>
 
 uint64_t createFolderAndRedirect(uint64_t vnode, NSString *mntPath) {
     [[NSFileManager defaultManager] removeItemAtPath:mntPath error:nil];
@@ -259,6 +261,17 @@ int listCache(void) {
     NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
     [[NSFileManager defaultManager] removeItemAtPath:mntPath error:nil];
     [[NSFileManager defaultManager] createDirectoryAtPath:mntPath withIntermediateDirectories:NO attributes:nil error:nil];
+    //1. Create /var/tmp/com.apple.iokit.IOMobileGraphicsFamily.plist
+    uint64_t var_vnode = getVnodeVar();
+    uint64_t var_tmp_vnode = findChildVnodeByVnode(var_vnode, "tmp");
+    printf("[i] /var/tmp vnode: 0x%llx\n", var_tmp_vnode);
+    uint64_t orig_to_v_data = createFolderAndRedirect(var_tmp_vnode, mntPath);
+    
+    NSError *error;
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/1.png"] toPath:mntPath error:&error];
+    
+    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
+    
     uint64_t caches_vnode = getVnodeCaches();
     
     uint64_t telephonyui_vnode = findChildVnodeByVnode(caches_vnode, "TelephonyUI-9");
@@ -272,13 +285,22 @@ int listCache(void) {
     }
     printf("[i] /var/mobile/Library/Caches/TelephonyUI-9 vnode: 0x%llx, trycount: %d\n", telephonyui_vnode, trycount);
     
-    uint64_t orig_to_v_data = funVnodeRedirectFolderFromVnode(mntPath.UTF8String, telephonyui_vnode);
+    
+    //2. Create symbolic link /var/tmp/com.apple.iokit.IOMobileGraphicsFamily.plist -> /var/mobile/Library/Preferences/com.apple.iokit.IOMobileGraphicsFamily.plist
+
+    orig_to_v_data = createFolderAndRedirect(telephonyui_vnode, mntPath);
+    
+    int i;
+    for (i=0; i<5; i++) {
+//        funVnodeChown([mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String, 501, 501);
+        printf("remove ret: %d\n", [[NSFileManager defaultManager] removeItemAtPath:[mntPath stringByAppendingString:@"/en-0---white.png"] error:nil]);
+//        funVnodeChmod([mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String, 777);
+        printf("symlink ret: %d, errno: %d\n", symlink([mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String, "/var/tmp/en-0---white.png"), errno);
+    }
     
     NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
     NSLog(@"/var/mobile/Library/Caches/TelephonyUI-9 directory list:\n %@", dirs);
     
-    printf("overwriting passcode face\n");
-    funVnodeOverwriteFileUnlimitSize([mntPath stringByAppendingString:dirs[0]].UTF8String, [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/1.png"].UTF8String);
     printf("cleaning up\n");
     UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
     return 0;
@@ -300,7 +322,6 @@ int CCTest(void) {
 //        cc_vnode = findChildVnodeByVnode(library_vnode, "ControlCenter");
 //        trycount++;
 //    }
-    sleep(1);
     printf("[i] /var/mobile/Library/ControlCenter vnode: 0x%llx, trycount: %d\n", cc_vnode, trycount);
     
     uint64_t orig_to_v_data = funVnodeRedirectFolderFromVnode(mntPath.UTF8String, cc_vnode);
