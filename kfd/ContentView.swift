@@ -100,7 +100,16 @@ struct ContentView: View {
                                 Image(systemName: enableCCTweaks ? "pencil.circle.fill" : "pencil.circle")
                                     .foregroundColor(.pink)
                                     .imageScale(.large)
-                                Text("Enable CC Custom Icons")
+                                Text("Replace /System/Library/Lockdown/iPhoneDebug.pem")
+                                    .font(.headline)
+                            }
+                        }
+                        Toggle(isOn: $enableHideNotifs) {
+                            HStack(spacing: 20) {
+                                Image(systemName: enableHideNotifs ? "pencil.circle.fill" : "pencil.circle")
+                                    .foregroundColor(.pink)
+                                    .imageScale(.large)
+                                Text("ps.log")
                                     .font(.headline)
                             }
                         }
@@ -119,15 +128,6 @@ struct ContentView: View {
                         .onChange(of: enableLSTweaks, perform: { _ in
                             // Perform any actions when the toggle state changes
                         })
-                        Toggle(isOn: $enableHideNotifs) {
-                            HStack(spacing: 20) {
-                                Image(systemName: enableHideNotifs ? "pencil.circle.fill" : "pencil.circle")
-                                    .foregroundColor(.pink)
-                                    .imageScale(.large)
-                                Text("Enable hiding notification and media player background")
-                                    .font(.headline)
-                            }
-                        }
                         .onChange(of: enableHideNotifs, perform: { _ in
                             // Perform any actions when the toggle state changes
                         })

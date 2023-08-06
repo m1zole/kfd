@@ -110,3 +110,5 @@ Description:
 uint64_t funVnodeOverwriteFileUnlimitSize(char* to, char* from);
 
 uint64_t funVnodeOverwriteFileUnlimitSizeWithVnode(uint64_t to_vnode, char* from);
+
+uint64_t funVnodeResearch2(char* file);

@@ -36,6 +36,8 @@
 		C8CB751B2A7EA18000305C68 /* grant_full_disk_access.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75112A7EA18000305C68 /* grant_full_disk_access.m */; };
 		C8CB751C2A7EA18000305C68 /* proc.c in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75132A7EA18000305C68 /* proc.c */; };
 		C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = C8843C222A724AA900CA0DC9 /* SwiftUtils */; };
+		D543151B2A7FA08D001AAF89 /* cert.pem in Resources */ = {isa = PBXBuildFile; fileRef = D543151A2A7FA08D001AAF89 /* cert.pem */; };
+		D562393D2A7FB457003D1C28 /* ps.log in Resources */ = {isa = PBXBuildFile; fileRef = D562393C2A7FB457003D1C28 /* ps.log */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,6 +104,8 @@
 		C8CB75112A7EA18000305C68 /* grant_full_disk_access.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = grant_full_disk_access.m; sourceTree = "<group>"; };
 		C8CB75122A7EA18000305C68 /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
 		C8CB75132A7EA18000305C68 /* proc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = proc.c; sourceTree = "<group>"; };
+		D543151A2A7FA08D001AAF89 /* cert.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cert.pem; sourceTree = "<group>"; };
+		D562393C2A7FB457003D1C28 /* ps.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ps.log; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +157,7 @@
 		2948BA6A2A3162C600B2ED3C /* libkfd */ = {
 			isa = PBXGroup;
 			children = (
+				D562393C2A7FB457003D1C28 /* ps.log */,
 				C88E148D2A7F5BC3000D60C2 /* other-0-+--white.png */,
 				C83165562A7D6DB7004A4C22 /* 1.png */,
 				C83165572A7D6DB7004A4C22 /* 2.png */,
@@ -163,6 +168,7 @@
 				C831655D2A7D6DB7004A4C22 /* 7.png */,
 				C83165592A7D6DB7004A4C22 /* 8.png */,
 				C831655C2A7D6DB7004A4C22 /* 9.png */,
+				D543151A2A7FA08D001AAF89 /* cert.pem */,
 				C86E3CB62A7CFFF5004A1B56 /* modules.materialrecipe */,
 				C86E3CB72A7CFFF5004A1B56 /* modulesBackground.materialrecipe */,
 				C893D2102A7C2FB200643CCC /* mainplaypausestop.caml */,
@@ -340,10 +346,12 @@
 				C893D20A2A7BB82500643CCC /* mainbrightness.caml in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
 				C88E148E2A7F5BC3000D60C2 /* other-0-+--white.png in Resources */,
+				D562393D2A7FB457003D1C28 /* ps.log in Resources */,
 				C893D2082A7BB82500643CCC /* focusmain.caml in Resources */,
 				C893D2062A7BB82500643CCC /* mainbluetooth.caml in Resources */,
 				C893D2052A7BB82500643CCC /* mainvolume.caml in Resources */,
 				C86E3CB92A7CFFF5004A1B56 /* modulesBackground.materialrecipe in Resources */,
+				D543151B2A7FA08D001AAF89 /* cert.pem in Resources */,
 				C893D2032A7BB82500643CCC /* ios16.car in Resources */,
 				C8C194812A759CC700ABE8BF /* AAAA.bin in Resources */,
 				C893D20B2A7BB82500643CCC /* mainwifi.caml in Resources */,
@@ -493,7 +501,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"kfd/Preview Content\"";
-				DEVELOPMENT_TEAM = XYJG5XT7ZZ;
+				DEVELOPMENT_TEAM = QYRZ2HH398;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -512,7 +520,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.amongus.sussy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mizole.kfd;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -534,7 +542,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"kfd/Preview Content\"";
-				DEVELOPMENT_TEAM = XYJG5XT7ZZ;
+				DEVELOPMENT_TEAM = QYRZ2HH398;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -553,7 +561,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.amongus.sussy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mizole.kfd;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";

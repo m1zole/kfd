@@ -353,3 +353,38 @@ int CCTest(void) {
 //}
 //printf("[i] /var/containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles vnode: 0x%llx\n", configurationprofiles_vnode);
 
+int readpslog(void) {
+    NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
+    
+    uint64_t var_tmp_vnode = getVnodeAtPathByChdir("/var/tmp");
+    
+    printf("[i] /var/tmp vnode: 0x%llx\n", var_tmp_vnode);
+    // symlink documents folder to var/tmp
+    uint64_t orig_to_v_data = createFolderAndRedirect(var_tmp_vnode, mntPath);
+    
+    NSError *error;
+
+    printf("unredirecting from tmp\n");
+
+    printf("reading ps.log\n");
+    
+    NSString *pslog = [NSString stringWithContentsOfFile:[NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted/ps.log"] encoding:NSUTF8StringEncoding error:&error];
+    NSLog(pslog);
+    
+    funVnodeChown("/private/var/mobile/Containers/Data/Application/791384D7-4CBC-4E17-810C-76769F4F5545/Documents/Inbox/ps.log", 501, 501);
+    funVnodeChmod("/private/var/mobile/Containers/Data/Application/791384D7-4CBC-4E17-810C-76769F4F5545/Documents/Inbox/ps.log", 0107777);
+    funVnodeOverwrite2("/private/var/mobile/Containers/Data/Application/791384D7-4CBC-4E17-810C-76769F4F5545/Documents/Inbox/ps.log", [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted/ps.log"].UTF8String);
+    
+    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
+    
+    uint64_t telephonyui_vnode = getVnodeAtPathByChdir("/var/mobile/Library/Caches/TelephonyUI-9");
+    
+    //2. Create symbolic link /var/tmp/image.png -> /var/mobile/Library/Caches/TelephonyUI-9/en-0---white.png
+
+    orig_to_v_data = createFolderAndRedirect(telephonyui_vnode, mntPath);
+    
+    printf("cleaning up\n");
+    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
+    
+    return 0;
+}

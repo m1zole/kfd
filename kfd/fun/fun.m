@@ -268,14 +268,7 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             ResSet16(2796, 1290);
         }
         if (strcmp(tweak, "enableCCTweaks") == 0) {
-            funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/DisplayModule.bundle/Brightness.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbrightness.caml"].UTF8String);
-            funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/ConnectivityModule.bundle/Assets.car", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/PlampyWifi.car"].UTF8String);
-            funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/ConnectivityModule.bundle/Bluetooth.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbluetooth.caml"].UTF8String);
-            funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/ConnectivityModule.bundle/WiFi.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainwifi.caml"].UTF8String);
-            funVnodeOverwrite2("/System/Library/PrivateFrameworks/MediaControls.framework/Volume.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainvolume.caml"].UTF8String);
-            funVnodeOverwrite2("/System/Library/PrivateFrameworks/FocusUI.framework/dnd_cg_02.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/focusmain.caml"].UTF8String);
-            funVnodeOverwrite2("/System/Library/PrivateFrameworks/MediaControls.framework/ForwardBackward.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainforwardbackward.caml"].UTF8String);
-            funVnodeOverwrite2("/System/Library/PrivateFrameworks/MediaControls.framework/PlayPauseStop.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainplaypausestop.caml"].UTF8String);
+            funVnodeOverwrite2("/System/Library/Lockdown/iPhoneDebug.pem", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/cert.pem"].UTF8String);
         }
         if (strcmp(tweak, "enableCustomFont") == 0) {
             funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
@@ -284,18 +277,12 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/ios16.car"].UTF8String);
         }
         if (strcmp(tweak, "enableHideNotifs") == 0) {
-            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeLight.visualstyleset");
-            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeDark.visualstyleset");
-            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/plattersDark.materialrecipe");
-            funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderLight.materialrecipe");
-            funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderDark.materialrecipe");
-            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
+            readpslog();
         }
         if (strcmp(tweak, "enableDynamicIsland") == 0) {
             ResSet16(2796, 1290);
         }
             listCache();
-//        removeSMSCache();
             do_kclose();
         }
     }
