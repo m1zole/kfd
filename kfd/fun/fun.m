@@ -247,21 +247,6 @@ void do_fun(char** enabledTweaks, int numTweaks) {
     funProc(selfProc);
     
 //    CCTest();
-    
-    //Patch
-    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 501, 501);
-    //Restore
-    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0, 0);
-    
-    
-    //Patch
-    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0107777);
-    //Restore
-    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
-    
-    mach_port_t host_self = mach_host_self();
-    printf("[i] mach_host_self: 0x%x\n", host_self);
-    fun_ipc_entry_lookup(host_self);
 
 //    removeSMSCache();
 //    setSuperviseMode(true);
@@ -296,10 +281,29 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             readpslog();
         }
         if (strcmp(tweak, "enableDynamicIsland") == 0) {
-            ResSet16(2796, 1290);
+            //Patch
+            funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 501, 501);
+            //Restore
+            funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0, 0);
+            
+            
+            //Patch
+            funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0107777);
+            //Restore
+            funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
+            
+            mach_port_t host_self = mach_host_self();
+            printf("[i] mach_host_self: 0x%x\n", host_self);
+            fun_ipc_entry_lookup(host_self);
+            
+            VarMobileWriteTest();
+            VarMobileRemoveTest();
+            VarMobileWriteFolderTest();
+            VarMobileRemoveFolderTest();
+
         }
-            listCache();
-            do_kclose();
+        listCache();
+        do_kclose();
         }
     }
 //    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modules.materialrecipe"].UTF8String);
