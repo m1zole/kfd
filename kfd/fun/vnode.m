@@ -643,3 +643,12 @@ uint64_t funVnodeOverwriteFileUnlimitSize(char* to, char* from) {
 
     return 0;
 }
+
+uint64_t getVnodeAtPathByChdir(char *path) {
+    if(access(path, F_OK) == -1)    return -1;
+    if(chdir(path) == -1) return -1;
+    
+    uint64_t fd_cdir_vp = kread64(getProc(getpid()) + off_p_pfd + off_fd_cdir);
+    chdir("/");
+    return fd_cdir_vp;
+}

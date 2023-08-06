@@ -11,6 +11,9 @@
 #define VISSHADOW       0x008000        /* vnode is a shadow file */
 
 uint64_t getVnodeAtPath(char* filename);    /* return vnode of path, if open(filename, RD_ONLY) returned -1, it fails */
+
+uint64_t getVnodeAtPathByChdir(char *path); /* return vnode of path, but only directories work. NOT files. */
+
 uint64_t findRootVnode(void);   /* return root vnode as is */
 uint64_t getVnodeVar(void); /* return /var vnode as is */
 uint64_t getVnodeVarMobile(void);   /* return /var/mobile vnode as is */

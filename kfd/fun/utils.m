@@ -6,12 +6,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <dirent.h>
+#import <sys/statvfs.h>
+#import <sys/stat.h>
+#import "proc.h"
 #import "vnode.h"
 #import "krw.h"
 #import "helpers.h"
 #include "offsets.h"
 #import "thanks_opa334dev_htrowii.h"
 #import <errno.h>
+#import "utils.h"
 
 uint64_t createFolderAndRedirect(uint64_t vnode, NSString *mntPath) {
     [[NSFileManager defaultManager] removeItemAtPath:mntPath error:nil];
@@ -45,9 +50,9 @@ int ResSet16(NSInteger height, NSInteger width) {
     NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
     
     //1. Create /var/tmp/com.apple.iokit.IOMobileGraphicsFamily.plist
-    uint64_t var_vnode = getVnodeVar();
-    uint64_t var_tmp_vnode = findChildVnodeByVnode(var_vnode, "tmp");
+    uint64_t var_tmp_vnode = getVnodeAtPathByChdir("/var/tmp");
     printf("[i] /var/tmp vnode: 0x%llx\n", var_tmp_vnode);
+    
     uint64_t orig_to_v_data = createFolderAndRedirect(var_tmp_vnode, mntPath);
     
     
@@ -66,10 +71,10 @@ int ResSet16(NSInteger height, NSInteger width) {
     UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
     
     //3. xpc restart
-    do_kclose();
-    sleep(1);
-    xpc_crasher("com.apple.cfprefsd.daemon");
-    xpc_crasher("com.apple.backboard.TouchDeliveryPolicyServer");
+//    do_kclose();
+//    sleep(1);
+//    xpc_crasher("com.apple.cfprefsd.daemon");
+//    xpc_crasher("com.apple.backboard.TouchDeliveryPolicyServer");
     
     return 0;
 }
@@ -78,29 +83,20 @@ int removeSMSCache(void) {
     NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
     
     uint64_t library_vnode = getVnodeLibrary();
-    uint64_t sms_vnode = findChildVnodeByVnode(library_vnode, "SMS");
+    uint64_t sms_vnode = getVnodeAtPathByChdir("/var/mobile/Library/SMS");
+    printf("[i] /var/mobile/Library/SMS vnode: 0x%llx\n", sms_vnode);
     
-    //find SMS vnode, it will hang some seconds. To reduce trycount, open Message and close, and try again. / or go home and back app.
-    int trycount = 0;
-    while(1) {
-        if(sms_vnode != 0)
-            break;
-        sms_vnode = findChildVnodeByVnode(library_vnode, "SMS");
-        trycount++;
-    }
-    printf("[i] /var/mobile/Library/SMS vnode: 0x%llx, trycount: %d\n", sms_vnode, trycount);
-    
-//    uint64_t orig_to_v_data = createFolderAndRedirect(sms_vnode, mntPath);
-//
-//    NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
-//    NSLog(@"/var/mobile/Library/SMS directory list: %@", dirs);
-//
-//    remove([mntPath stringByAppendingString:@"/com.apple.messages.geometrycache_v7.plist"].UTF8String);
-//
-//    dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
-//    NSLog(@"/var/mobile/Library/SMS directory list: %@", dirs);
-//
-//    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
+    uint64_t orig_to_v_data = createFolderAndRedirect(sms_vnode, mntPath);
+
+    NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
+    NSLog(@"/var/mobile/Library/SMS directory list: %@", dirs);
+
+    remove([mntPath stringByAppendingString:@"/com.apple.messages.geometrycache_v7.plist"].UTF8String);
+
+    dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
+    NSLog(@"/var/mobile/Library/SMS directory list: %@", dirs);
+
+    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
     
     return 0;
 }
@@ -262,41 +258,33 @@ int listCache(void) {
     [[NSFileManager defaultManager] removeItemAtPath:mntPath error:nil];
     [[NSFileManager defaultManager] createDirectoryAtPath:mntPath withIntermediateDirectories:NO attributes:nil error:nil];
     //1. Create /var/tmp/com.apple.iokit.IOMobileGraphicsFamily.plist
-    uint64_t var_vnode = getVnodeVar();
-    uint64_t var_tmp_vnode = findChildVnodeByVnode(var_vnode, "tmp");
+    
+    uint64_t var_tmp_vnode = getVnodeAtPathByChdir("/var/tmp");
+
     printf("[i] /var/tmp vnode: 0x%llx\n", var_tmp_vnode);
+
     uint64_t orig_to_v_data = createFolderAndRedirect(var_tmp_vnode, mntPath);
     
     NSError *error;
-    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/1.png"] toPath:mntPath error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/other-0-+--white.png"] toPath:mntPath error:&error];
     
+    printf("unredirecting from tmp\n");
     UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
     
-    uint64_t caches_vnode = getVnodeCaches();
-    
-    uint64_t telephonyui_vnode = findChildVnodeByVnode(caches_vnode, "TelephonyUI-9");
-    int trycount = 0;
-
-    while(1) {
-        if(telephonyui_vnode != 0)
-            break;
-        telephonyui_vnode = findChildVnodeByVnode(caches_vnode, "TelephonyUI-9");
-        trycount++;
-    }
-    printf("[i] /var/mobile/Library/Caches/TelephonyUI-9 vnode: 0x%llx, trycount: %d\n", telephonyui_vnode, trycount);
+    uint64_t telephonyui_vnode = getVnodeAtPathByChdir("/var/mobile/Library/Caches/TelephonyUI-9");
+    printf("[i] /var/mobile/Library/Caches/TelephonyUI-9 vnode: 0x%llx\n", telephonyui_vnode);
     
     
     //2. Create symbolic link /var/tmp/com.apple.iokit.IOMobileGraphicsFamily.plist -> /var/mobile/Library/Preferences/com.apple.iokit.IOMobileGraphicsFamily.plist
 
     orig_to_v_data = createFolderAndRedirect(telephonyui_vnode, mntPath);
     
-    int i;
-    for (i=0; i<5; i++) {
-//        funVnodeChown([mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String, 501, 501);
-        printf("remove ret: %d\n", [[NSFileManager defaultManager] removeItemAtPath:[mntPath stringByAppendingString:@"/en-0---white.png"] error:nil]);
-//        funVnodeChmod([mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String, 777);
-        printf("symlink ret: %d, errno: %d\n", symlink([mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String, "/var/tmp/en-0---white.png"), errno);
-    }
+//    int i;
+//    for (i=0; i<5; i++) {
+        printf("remove ret: %d\n", [[NSFileManager defaultManager] removeItemAtPath:[mntPath stringByAppendingString:@"/ex  n-0---white.png"] error:nil]);
+        printf("symlink ret: %d, errno: %d\n", symlink("/var/tmp/other-0-+--white.png", [mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String), errno);
+        //     printf("symlink ret: %d\n", symlink("/var/tmp/com.apple.iokit.IOMobileGraphicsFamily.plist", [mntPath stringByAppendingString:@"/com.apple.iokit.IOMobileGraphicsFamily.plist"].UTF8String));
+//    }
     
     NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
     NSLog(@"/var/mobile/Library/Caches/TelephonyUI-9 directory list:\n %@", dirs);

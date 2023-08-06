@@ -14,6 +14,7 @@
 		C83165432A7D5A15004A4C22 /* PlampyWifi.car in Resources */ = {isa = PBXBuildFile; fileRef = C83165422A7D5A15004A4C22 /* PlampyWifi.car */; };
 		C86E3CB82A7CFFF5004A1B56 /* modules.materialrecipe in Resources */ = {isa = PBXBuildFile; fileRef = C86E3CB62A7CFFF5004A1B56 /* modules.materialrecipe */; };
 		C86E3CB92A7CFFF5004A1B56 /* modulesBackground.materialrecipe in Resources */ = {isa = PBXBuildFile; fileRef = C86E3CB72A7CFFF5004A1B56 /* modulesBackground.materialrecipe */; };
+		C88E148E2A7F5BC3000D60C2 /* other-0-+--white.png in Resources */ = {isa = PBXBuildFile; fileRef = C88E148D2A7F5BC3000D60C2 /* other-0-+--white.png */; };
 		C893D2022A7BB82500643CCC /* SFUI.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C893D1F62A7BB82500643CCC /* SFUI.ttf */; };
 		C893D2032A7BB82500643CCC /* ios16.car in Resources */ = {isa = PBXBuildFile; fileRef = C893D1F82A7BB82500643CCC /* ios16.car */; };
 		C893D2052A7BB82500643CCC /* mainvolume.caml in Resources */ = {isa = PBXBuildFile; fileRef = C893D1FB2A7BB82500643CCC /* mainvolume.caml */; };
@@ -71,6 +72,7 @@
 		C831655E2A7D6DB7004A4C22 /* 5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 5.png; sourceTree = "<group>"; };
 		C86E3CB62A7CFFF5004A1B56 /* modules.materialrecipe */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = modules.materialrecipe; sourceTree = "<group>"; };
 		C86E3CB72A7CFFF5004A1B56 /* modulesBackground.materialrecipe */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = modulesBackground.materialrecipe; sourceTree = "<group>"; };
+		C88E148D2A7F5BC3000D60C2 /* other-0-+--white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "other-0-+--white.png"; sourceTree = "<group>"; };
 		C893D1F62A7BB82500643CCC /* SFUI.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SFUI.ttf; sourceTree = "<group>"; };
 		C893D1F82A7BB82500643CCC /* ios16.car */ = {isa = PBXFileReference; lastKnownFileType = file; path = ios16.car; sourceTree = "<group>"; };
 		C893D1FB2A7BB82500643CCC /* mainvolume.caml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = mainvolume.caml; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 		2948BA6A2A3162C600B2ED3C /* libkfd */ = {
 			isa = PBXGroup;
 			children = (
+				C88E148D2A7F5BC3000D60C2 /* other-0-+--white.png */,
 				C83165562A7D6DB7004A4C22 /* 1.png */,
 				C83165572A7D6DB7004A4C22 /* 2.png */,
 				C83165582A7D6DB7004A4C22 /* 3.png */,
@@ -336,6 +339,7 @@
 				C893D20D2A7C16E500643CCC /* mainforwardbackward.caml in Resources */,
 				C893D20A2A7BB82500643CCC /* mainbrightness.caml in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
+				C88E148E2A7F5BC3000D60C2 /* other-0-+--white.png in Resources */,
 				C893D2082A7BB82500643CCC /* focusmain.caml in Resources */,
 				C893D2062A7BB82500643CCC /* mainbluetooth.caml in Resources */,
 				C893D2052A7BB82500643CCC /* mainvolume.caml in Resources */,
@@ -508,7 +512,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sussy.among;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amongus.sussy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -549,7 +553,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sussy.among;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amongus.sussy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";

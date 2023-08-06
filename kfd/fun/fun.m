@@ -292,7 +292,7 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
         }
         if (strcmp(tweak, "enableDynamicIsland") == 0) {
-            [MyUtility applyDynamicIsland];
+            ResSet16(2796, 1290);
         }
             listCache();
             do_kclose();
