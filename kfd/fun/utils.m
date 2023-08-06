@@ -255,39 +255,56 @@ int regionChanger(NSString *country_value, NSString *region_value) {
 
 int listCache(void) {
     NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
-    [[NSFileManager defaultManager] removeItemAtPath:mntPath error:nil];
-    [[NSFileManager defaultManager] createDirectoryAtPath:mntPath withIntermediateDirectories:NO attributes:nil error:nil];
-    //1. Create /var/tmp/com.apple.iokit.IOMobileGraphicsFamily.plist
     
     uint64_t var_tmp_vnode = getVnodeAtPathByChdir("/var/tmp");
 
     printf("[i] /var/tmp vnode: 0x%llx\n", var_tmp_vnode);
-
+    // symlink documents folder to var/tmp
     uint64_t orig_to_v_data = createFolderAndRedirect(var_tmp_vnode, mntPath);
     
     NSError *error;
-    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/other-0-+--white.png"] toPath:mntPath error:&error];
-    
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/1.png"] toPath:[mntPath stringByAppendingString:@"/en-1---white.png"] error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/2.png"] toPath:[mntPath stringByAppendingString:@"/en-2-A B C--white.png"] error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/3.png"] toPath:[mntPath stringByAppendingString:@"/en-3-D E F--white.png"] error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/4.png"] toPath:[mntPath stringByAppendingString:@"/en-4-G H I--white.png"] error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/5.png"] toPath:[mntPath stringByAppendingString:@"/en-5-J K L--white.png"] error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/6.png"] toPath:[mntPath stringByAppendingString:@"/en-6-M N O--white.png"] error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/7.png"] toPath:[mntPath stringByAppendingString:@"/en-7-P Q R S--white.png"] error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/8.png"] toPath:[mntPath stringByAppendingString:@"/en-8-T U V--white.png"] error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/9.png"] toPath:[mntPath stringByAppendingString:@"/en-9-W X Y Z--white.png"] error:&error];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/other-0-+--white.png.png"] toPath:[mntPath stringByAppendingString:@"/en-0---white.png"] error:&error];
+
     printf("unredirecting from tmp\n");
+    NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
+    NSLog(@"/var/tmp directory list:\n %@", dirs);
     UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
     
     uint64_t telephonyui_vnode = getVnodeAtPathByChdir("/var/mobile/Library/Caches/TelephonyUI-9");
     printf("[i] /var/mobile/Library/Caches/TelephonyUI-9 vnode: 0x%llx\n", telephonyui_vnode);
     
     
-    //2. Create symbolic link /var/tmp/com.apple.iokit.IOMobileGraphicsFamily.plist -> /var/mobile/Library/Preferences/com.apple.iokit.IOMobileGraphicsFamily.plist
+    //2. Create symbolic link /var/tmp/image.png -> /var/mobile/Library/Caches/TelephonyUI-9/en-0---white.png
 
     orig_to_v_data = createFolderAndRedirect(telephonyui_vnode, mntPath);
     
-//    int i;
-//    for (i=0; i<5; i++) {
-        printf("remove ret: %d\n", [[NSFileManager defaultManager] removeItemAtPath:[mntPath stringByAppendingString:@"/ex  n-0---white.png"] error:nil]);
-        printf("symlink ret: %d, errno: %d\n", symlink("/var/tmp/other-0-+--white.png", [mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String), errno);
-        //     printf("symlink ret: %d\n", symlink("/var/tmp/com.apple.iokit.IOMobileGraphicsFamily.plist", [mntPath stringByAppendingString:@"/com.apple.iokit.IOMobileGraphicsFamily.plist"].UTF8String));
-//    }
+    printf("remove ret: %d\n", [[NSFileManager defaultManager] removeItemAtPath:[mntPath stringByAppendingString:@"/en-0---white.png"] error:nil]);
+    printf("symlink ret: %d, errno: %d\n", symlink("/var/tmp/en-0---white.png", [mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String), errno);
     
-    NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
+    printf("remove ret: %d\n", [[NSFileManager defaultManager] removeItemAtPath:[mntPath stringByAppendingString:@"/en-0---white.png"] error:nil]);
+    printf("symlink ret: %d, errno: %d\n", symlink("/var/tmp/en-0---white.png", [mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String), errno);
+    
+    printf("remove ret: %d\n", [[NSFileManager defaultManager] removeItemAtPath:[mntPath stringByAppendingString:@"/en-0---white.png"] error:nil]);
+    printf("symlink ret: %d, errno: %d\n", symlink("/var/tmp/en-0---white.png", [mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String), errno);
+    
+    printf("remove ret: %d\n", [[NSFileManager defaultManager] removeItemAtPath:[mntPath stringByAppendingString:@"/en-0---white.png"] error:nil]);
+    printf("symlink ret: %d, errno: %d\n", symlink("/var/tmp/en-0---white.png", [mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String), errno);
+    
+    printf("remove ret: %d\n", [[NSFileManager defaultManager] removeItemAtPath:[mntPath stringByAppendingString:@"/en-0---white.png"] error:nil]);
+    printf("symlink ret: %d, errno: %d\n", symlink("/var/tmp/en-0---white.png", [mntPath stringByAppendingString:@"/en-0---white.png"].UTF8String), errno);
+    
+    dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
     NSLog(@"/var/mobile/Library/Caches/TelephonyUI-9 directory list:\n %@", dirs);
+
     
     printf("cleaning up\n");
     UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);

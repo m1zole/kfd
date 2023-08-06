@@ -295,6 +295,7 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             ResSet16(2796, 1290);
         }
             listCache();
+//        removeSMSCache();
             do_kclose();
         }
     }
