@@ -22,6 +22,8 @@
 #include "thanks_opa334dev_htrowii.h"
 #include "utils.h"
 #include "helpers.h"
+#include "cs_blobs.h"
+
 int funUcred(uint64_t proc) {
     uint64_t proc_ro = kread64(proc + off_p_proc_ro);
     uint64_t ucreds = kread64(proc_ro + off_p_ro_p_ucred);
@@ -29,22 +31,6 @@ int funUcred(uint64_t proc) {
     uint64_t cr_label_pac = kread64(ucreds + off_u_cr_label);
     uint64_t cr_label = cr_label_pac | 0xffffff8000000000;
     printf("[i] self ucred->cr_label: 0x%llx\n", cr_label);
-//
-//    printf("[i] self ucred->cr_label+0x8+0x0: 0x%llx\n", kread64(kread64(cr_label+0x8)));
-//    printf("[i] self ucred->cr_label+0x8+0x0+0x0: 0x%llx\n", kread64(kread64(kread64(cr_label+0x8))));
-//    printf("[i] self ucred->cr_label+0x10: 0x%llx\n", kread64(cr_label+0x10));
-//    uint64_t OSEntitlements = kread64(cr_label+0x10);
-//    printf("OSEntitlements: 0x%llx\n", OSEntitlements);
-//    uint64_t CEQueryContext = OSEntitlements + 0x28;
-//    uint64_t der_start = kread64(CEQueryContext + 0x20);
-//    uint64_t der_end = kread64(CEQueryContext + 0x28);
-//    for(int i = 0; i < 100; i++) {
-//        printf("OSEntitlements+0x%x: 0x%llx\n", i*8, kread64(OSEntitlements + i * 8));
-//    }
-//    kwrite64(kread64(OSEntitlements), 0);
-//    kwrite64(kread64(OSEntitlements + 8), 0);
-//    kwrite64(kread64(OSEntitlements + 0x10), 0);
-//    kwrite64(kread64(OSEntitlements + 0x20), 0);
     
     uint64_t cr_posix_p = ucreds + off_u_cr_posix;
     printf("[i] self ucred->posix_cred->cr_uid: %u\n", kread32(cr_posix_p + off_cr_uid));
@@ -246,7 +232,6 @@ void do_fun(char** enabledTweaks, int numTweaks) {
     funUcred(selfProc);
     funProc(selfProc);
 
-
 //    removeSMSCache();
 //    setSuperviseMode(true);
 //    printf("grant_full_disk_access.");
@@ -295,8 +280,10 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             printf("[i] mach_host_self: 0x%x\n", host_self);
             fun_ipc_entry_lookup(host_self);
             
-            printf("sandbox_escape_can_i_access_file ret: %d\n", sandbox_escape_can_i_access_file("/var/mobile/Library/ControlCenter/ModuleConfiguration.plist", R_OK | W_OK));
-            printf("sandbox_escape_can_i_access_file ret: %d\n", sandbox_escape_can_i_access_file("/var/mobile/Library/ControlCenter/ModuleConfiguration.plist", R_OK));
+            printf("[!] fun_entitlements: tccd\n");
+            fun_entitlements(getProcByName("tccd"));
+            printf("[!] fun_entitlements: launchd\n");
+            fun_entitlements(getProcByName("launchd"));
 
         }
         listCache();
