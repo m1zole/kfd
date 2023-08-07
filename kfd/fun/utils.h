@@ -23,3 +23,4 @@ int regionChanger(NSString *country_value, NSString *region_value);
 int CCTest(void);
 int readpslog(void);
 void HexDump(uint64_t addr, size_t size);
+bool sandbox_escape_can_i_access_file(char* path, int mode);
