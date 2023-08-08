@@ -280,10 +280,13 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             printf("[i] mach_host_self: 0x%x\n", host_self);
             fun_ipc_entry_lookup(host_self);
             
-            printf("[!] fun_entitlements: tccd\n");
-            fun_dump_entitlements(getProcByName("tccd"));
-            printf("[!] fun_entitlements: launchd\n");
-            fun_dump_entitlements(getProcByName("launchd"));
+            printf("[!] fun_proc_dump_entitlements: tccd\n");
+            fun_proc_dump_entitlements(getProcByName("tccd"));
+            printf("[!] fun_proc_dump_entitlements: SpringBoard\n");
+            fun_proc_dump_entitlements(getProcByName("SpringBoard"));
+            
+            printf("[!] fun_vnode_dump_entitlements: ReportCrash\n");
+            fun_vnode_dump_entitlements("/System/Library/CoreServices/ReportCrash");
 
         }
         listCache();
