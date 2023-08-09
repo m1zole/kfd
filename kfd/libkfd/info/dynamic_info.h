@@ -105,7 +105,6 @@ struct dynamic_info {
 
 const struct dynamic_info kern_versions[] = {
     {
-        //iPhone SE 2020 iOS 16.6 beta1
         .kern_version = "Darwin Kernel Version 22.6.0: Tue May  9 06:18:02 PDT 2023; root:xnu-8796.140.12.502.1~12/RELEASE_ARM64_T8030",
         .fileglob__fg_ops = 0x28,
         .fileglob__fg_data = 0x40 - 8,
@@ -184,7 +183,6 @@ const struct dynamic_info kern_versions[] = {
         .kernelcache__vm_page_array_ending_addr = 0xfffffff00a4bc908,
         .kernelcache__vn_kqfilter = 0xfffffff007f56588,
     },
-    //iPhone 12 mini 16.1.2
     {
         .kern_version = "Darwin Kernel Version 22.1.0: Thu Oct  6 19:34:22 PDT 2022; root:xnu-8792.42.7~1/RELEASE_ARM64_T8101",
         .fileglob__fg_ops = 0x0028,
@@ -208,7 +206,7 @@ const struct dynamic_info kern_versions[] = {
         .proc__p_list__le_next = 0x0000,
         .proc__p_list__le_prev = 0x0008,
         .proc__p_pid = 0x0060,
-        .proc__p_fd__fd_ofiles = 0x00f8,         //16.1.2ではたぶん固定?
+        .proc__p_fd__fd_ofiles = 0x00f8,
         .proc__object_size = 0x0530,
         .pseminfo__psem_usecount = 0x0004,
         .pseminfo__psem_uid = 0x000c,
@@ -230,7 +228,7 @@ const struct dynamic_info kern_versions[] = {
         .thread__map = 0x0378,
         .thread__thread_id = 0x0418,
         .thread__object_size = 0x04c0,
-        .uthread__object_size = 0x0208,          //0xfffffffffffffb48 が 0x200、0xfffffffffffffb40 が 0x208
+        .uthread__object_size = 0x0208,
         .vm_map_entry__links__prev = 0x0000,
         .vm_map_entry__links__next = 0x0008,
         .vm_map_entry__links__start = 0x0010,
@@ -238,18 +236,18 @@ const struct dynamic_info kern_versions[] = {
         .vm_map_entry__store__entry__rbe_left = 0x0020,
         .vm_map_entry__store__entry__rbe_right = 0x0028,
         .vm_map_entry__store__entry__rbe_parent = 0x0030,
-        .vnode__v_un__vu_specinfo = 0x0078,      //+ 0x08 -> + 0x10
-        ._vm_map__hdr__links__prev = 0x0010,     //+ 0x08 -> + 0x10
-        ._vm_map__hdr__links__next = 0x0018,     //+ 0x08 -> + 0x10
-        ._vm_map__hdr__links__start = 0x0020,    //+ 0x08 -> + 0x10
-        ._vm_map__hdr__links__end = 0x0028,      //+ 0x08 -> + 0x10
+        .vnode__v_un__vu_specinfo = 0x0078,
+        ._vm_map__hdr__links__prev = 0x0010,
+        ._vm_map__hdr__links__next = 0x0018,
+        ._vm_map__hdr__links__start = 0x0020,
+        ._vm_map__hdr__links__end = 0x0028,
         ._vm_map__hdr__nentries = 0x0030,
         ._vm_map__hdr__rb_head_store__rbh_root = 0x0038,
         ._vm_map__pmap = 0x0040,
         ._vm_map__hint = 0x0098,
         ._vm_map__hole_hint = 0x00a0,
         ._vm_map__holes_list = 0x00a8,
-        ._vm_map__object_size = 0x00c0,          //16.1.2ではたぶん固定?
+        ._vm_map__object_size = 0x00c0,
         .kernelcache__kernel_base = 0xfffffff007004000,
         .kernelcache__cdevsw = 0xfffffff00a3a1168,
         .kernelcache__gPhysBase = 0xfffffff007847e40,
