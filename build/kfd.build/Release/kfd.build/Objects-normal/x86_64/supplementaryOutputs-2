@@ -1,0 +1,9 @@
+"/Users/chaliz/Desktop/iOS/exploit/kfd/kfd/ContentView.swift":
+  objc-header: "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/x86_64/kfd-Swift.h"
+  abi-baseline-json: "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/x86_64/kfd.abi.json"
+  const-values: "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/x86_64/kfd-master.swiftconstvalues"
+  swiftdoc: "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/x86_64/kfd.swiftdoc"
+  swiftsourceinfo: "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/x86_64/kfd.swiftsourceinfo"
+  diagnostics: "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/x86_64/kfd-master.dia"
+  dependencies: "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/x86_64/kfd-master.d"
+  swiftmodule: "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/x86_64/kfd.swiftmodule"

@@ -1,0 +1,30 @@
+{
+  "" : {
+    "const-values" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/kfd-master.swiftconstvalues",
+    "dependencies" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/kfd-master.d",
+    "diagnostics" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/kfd-master.dia",
+    "emit-module-dependencies" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/kfd-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/kfd-master-emit-module.dia",
+    "swift-dependencies" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/kfd-master.swiftdeps"
+  },
+  "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/kfd.build/Release/kfd.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  },
+  "/Users/chaliz/Desktop/iOS/exploit/kfd/kfd/ContentView.swift" : {
+    "index-unit-output-path" : "/kfd.build/Release/kfd.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/chaliz/Desktop/iOS/exploit/kfd/kfd/kfdApp.swift" : {
+    "index-unit-output-path" : "/kfd.build/Release/kfd.build/Objects-normal/arm64/kfdApp.o",
+    "llvm-bc" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/kfdApp.bc",
+    "object" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/kfdApp.o"
+  },
+  "/Users/chaliz/Desktop/iOS/exploit/kfd/kfd/test.swift" : {
+    "index-unit-output-path" : "/kfd.build/Release/kfd.build/Objects-normal/arm64/test.o",
+    "llvm-bc" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/test.bc",
+    "object" : "/Users/chaliz/Desktop/iOS/exploit/kfd/build/kfd.build/Release/kfd.build/Objects-normal/arm64/test.o"
+  }
+}
