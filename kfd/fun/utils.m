@@ -371,10 +371,6 @@ int readpslog(void) {
     NSString *pslog = [NSString stringWithContentsOfFile:[NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted/ps.log"] encoding:NSUTF8StringEncoding error:&error];
     NSLog(pslog);
     
-    funVnodeChown("/private/var/mobile/Containers/Data/Application/791384D7-4CBC-4E17-810C-76769F4F5545/Documents/Inbox/ps.log", 501, 501);
-    funVnodeChmod("/private/var/mobile/Containers/Data/Application/791384D7-4CBC-4E17-810C-76769F4F5545/Documents/Inbox/ps.log", 0107777);
-    funVnodeOverwrite2("/private/var/mobile/Containers/Data/Application/791384D7-4CBC-4E17-810C-76769F4F5545/Documents/Inbox/ps.log", [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted/ps.log"].UTF8String);
-    
     UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
     
     uint64_t telephonyui_vnode = getVnodeAtPathByChdir("/var/mobile/Library/Caches/TelephonyUI-9");
