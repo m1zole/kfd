@@ -372,6 +372,9 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             readpslog();
         }
         if (strcmp(tweak, "enableDynamicIsland") == 0) {
+            
+            printf("[i] starting tests...\n");
+            
             //Patch
             funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 501, 501);
             //Restore
@@ -387,10 +390,10 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             printf("[i] mach_host_self: 0x%x\n", host_self);
             fun_ipc_entry_lookup(host_self);
             
-            printf("[!] fun_proc_dump_entitlements: tccd\n");
-            fun_proc_dump_entitlements(getProcByName("tccd"));
-            printf("[!] fun_proc_dump_entitlements: SpringBoard\n");
-            fun_proc_dump_entitlements(getProcByName("SpringBoard"));
+            //printf("[!] fun_proc_dump_entitlements: tccd\n");
+            //fun_proc_dump_entitlements(getProcByName("tccd"));
+            //printf("[!] fun_proc_dump_entitlements: SpringBoard\n");
+            //fun_proc_dump_entitlements(getProcByName("SpringBoard"));
 
             printf("[!] fun_vnode_dump_entitlements: ReportCrash\n");
             fun_vnode_dump_entitlements("/System/Library/CoreServices/ReportCrash");

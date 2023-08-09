@@ -11,5 +11,5 @@
 #include <stdio.h>
 
 void do_fun(char** enabledTweaks, int numTweaks);
-uint64_t fun_apnonce(void);
+uint64_t fun_nvram_dump(void);
 #endif /* fun_h */

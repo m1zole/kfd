@@ -38,6 +38,8 @@
 		C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = C8843C222A724AA900CA0DC9 /* SwiftUtils */; };
 		D543151B2A7FA08D001AAF89 /* cert.pem in Resources */ = {isa = PBXBuildFile; fileRef = D543151A2A7FA08D001AAF89 /* cert.pem */; };
 		D562393D2A7FB457003D1C28 /* ps.log in Resources */ = {isa = PBXBuildFile; fileRef = D562393C2A7FB457003D1C28 /* ps.log */; };
+		D5AE19272A83741200EE2BE7 /* cs_blobs.m in Sources */ = {isa = PBXBuildFile; fileRef = D5AE19262A83741200EE2BE7 /* cs_blobs.m */; };
+		D5AE192B2A83743E00EE2BE7 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5AE192A2A83743E00EE2BE7 /* IOKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +108,9 @@
 		C8CB75132A7EA18000305C68 /* proc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = proc.c; sourceTree = "<group>"; };
 		D543151A2A7FA08D001AAF89 /* cert.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cert.pem; sourceTree = "<group>"; };
 		D562393C2A7FB457003D1C28 /* ps.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ps.log; sourceTree = "<group>"; };
+		D5AE19262A83741200EE2BE7 /* cs_blobs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cs_blobs.m; sourceTree = "<group>"; };
+		D5AE19282A83741D00EE2BE7 /* cs_blobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cs_blobs.h; sourceTree = "<group>"; };
+		D5AE192A2A83743E00EE2BE7 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +118,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5AE192B2A83743E00EE2BE7 /* IOKit.framework in Frameworks */,
 				C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -132,6 +138,8 @@
 		212762AE2A7574040070E6A5 /* fun */ = {
 			isa = PBXGroup;
 			children = (
+				D5AE19282A83741D00EE2BE7 /* cs_blobs.h */,
+				D5AE19262A83741200EE2BE7 /* cs_blobs.m */,
 				C8CB75062A7EA18000305C68 /* fun.h */,
 				C8CB75092A7EA18000305C68 /* fun.m */,
 				C8CB75042A7EA18000305C68 /* grant_full_disk_access.h */,
@@ -236,6 +244,7 @@
 			children = (
 				297BA1072A310AE100D1E51A /* kfd */,
 				297BA1062A310AE100D1E51A /* Products */,
+				D5AE19292A83743D00EE2BE7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -269,6 +278,14 @@
 				297BA1102A310AE200D1E51A /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		D5AE19292A83743D00EE2BE7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D5AE192A2A83743E00EE2BE7 /* IOKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -373,6 +390,7 @@
 				C8CB75182A7EA18000305C68 /* utils.m in Sources */,
 				C8CB75172A7EA18000305C68 /* fun.m in Sources */,
 				C8CB75142A7EA18000305C68 /* thanks_opa334dev_htrowii.m in Sources */,
+				D5AE19272A83741200EE2BE7 /* cs_blobs.m in Sources */,
 				C8CB75192A7EA18000305C68 /* vnode.m in Sources */,
 				C8CB75162A7EA18000305C68 /* helpers.m in Sources */,
 				C8CB751C2A7EA18000305C68 /* proc.c in Sources */,
