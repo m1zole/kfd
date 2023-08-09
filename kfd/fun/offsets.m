@@ -44,6 +44,7 @@ uint32_t off_cr_gmuid = 0;
 uint32_t off_cr_flags = 0;
 uint32_t off_task_t_flags = 0;
 uint32_t off_fd_ofiles = 0;
+uint32_t off_fd_cdir = 0;
 uint32_t off_fp_glob = 0;
 uint32_t off_fg_data = 0;
 uint32_t off_fg_flag = 0;
@@ -56,11 +57,14 @@ uint32_t off_vnode_v_mount = 0;
 uint32_t off_vnode_v_data = 0;
 uint32_t off_vnode_v_kusecount = 0;
 uint32_t off_vnode_v_references = 0;
+uint32_t off_vnode_v_lflag = 0;
+uint32_t off_vnode_v_owner = 0;
 uint32_t off_vnode_v_parent = 0;
 uint32_t off_vnode_v_label = 0;
 uint32_t off_vnode_v_cred = 0;
 uint32_t off_vnode_v_writecount = 0;
 uint32_t off_vnode_v_type = 0;
+uint32_t off_vnode_vu_ubcinfo = 0;
 uint32_t off_mount_mnt_data = 0;
 uint32_t off_mount_mnt_fsowner = 0;
 uint32_t off_mount_mnt_fsgroup = 0;
@@ -124,6 +128,9 @@ void _offsets_init(void) {
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/filedesc.h#L138
         off_fd_ofiles = 0;
+        off_fd_cdir = 0x20; //  new one! https://github.com/Baw-Appie/KernBypass/blob/69e5ae6baf04d0978358feee57eca8b8bc1382ed/kernel.h#L390 try these
+        
+        off_fd_cdir = 0x20;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/file_internal.h#L125
         off_fp_glob = 0x10;
@@ -138,7 +145,7 @@ void _offsets_init(void) {
         off_vnode_v_usecount = 0x60;
         off_vnode_v_flag = 0x54;
         off_vnode_v_name = 0xb8;
-        off_vnode_v_mount = 0xd8;
+        off_vnode_v_mount = 0xD8;
         off_vnode_v_data = 0xe0;
         off_vnode_v_kusecount = 0x5c;
         off_vnode_v_references = 0x5b;
@@ -183,7 +190,7 @@ void _offsets_init(void) {
         off_p_puniqueid = 0x48;
         off_p_pid = 0x60;
         off_p_pfd = 0xf8;
-        off_p_textvp = 0x350;
+        off_p_textvp = 0x548;
         off_p_name = 0x381;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/proc_ro.h#L59
@@ -213,6 +220,8 @@ void _offsets_init(void) {
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/filedesc.h#L138
         off_fd_ofiles = 0;
+        off_fd_cdir = 0x20; //  new one! https://github.com/Baw-Appie/KernBypass/blob/69e5ae6baf04d0978358feee57eca8b8bc1382ed/kernel.h#L390 try these
+        off_fd_cdir = 0x20;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/file_internal.h#L125
         off_fp_glob = 0x10;
@@ -231,11 +240,14 @@ void _offsets_init(void) {
         off_vnode_v_data = 0xe0;
         off_vnode_v_kusecount = 0x5c;
         off_vnode_v_references = 0x5b;
+        off_vnode_v_lflag = 0x58;
+        off_vnode_v_owner = 0x68;
         off_vnode_v_parent = 0xc0;
         off_vnode_v_label = 0xe8;
         off_vnode_v_cred = 0x98;
         off_vnode_v_writecount = 0xb0;
         off_vnode_v_type = 0x70;
+        off_vnode_vu_ubcinfo = 0x78;
         
         //https://github.com/apple-oss-distributions/xnu/blob/main/bsd/sys/mount_internal.h#L108
         off_mount_mnt_data = 0x11F;

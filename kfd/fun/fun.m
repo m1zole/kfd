@@ -21,7 +21,8 @@
 #include "grant_full_disk_access.h"
 #include "thanks_opa334dev_htrowii.h"
 #include "utils.h"
-
+#include "helpers.h"
+#include "cs_blobs.h"
 
 int funUcred(uint64_t proc) {
     uint64_t proc_ro = kread64(proc + off_p_proc_ro);
@@ -30,22 +31,6 @@ int funUcred(uint64_t proc) {
     uint64_t cr_label_pac = kread64(ucreds + off_u_cr_label);
     uint64_t cr_label = cr_label_pac | 0xffffff8000000000;
     printf("[i] self ucred->cr_label: 0x%llx\n", cr_label);
-//
-//    printf("[i] self ucred->cr_label+0x8+0x0: 0x%llx\n", kread64(kread64(cr_label+0x8)));
-//    printf("[i] self ucred->cr_label+0x8+0x0+0x0: 0x%llx\n", kread64(kread64(kread64(cr_label+0x8))));
-//    printf("[i] self ucred->cr_label+0x10: 0x%llx\n", kread64(cr_label+0x10));
-//    uint64_t OSEntitlements = kread64(cr_label+0x10);
-//    printf("OSEntitlements: 0x%llx\n", OSEntitlements);
-//    uint64_t CEQueryContext = OSEntitlements + 0x28;
-//    uint64_t der_start = kread64(CEQueryContext + 0x20);
-//    uint64_t der_end = kread64(CEQueryContext + 0x28);
-//    for(int i = 0; i < 100; i++) {
-//        printf("OSEntitlements+0x%x: 0x%llx\n", i*8, kread64(OSEntitlements + i * 8));
-//    }
-//    kwrite64(kread64(OSEntitlements), 0);
-//    kwrite64(kread64(OSEntitlements + 8), 0);
-//    kwrite64(kread64(OSEntitlements + 0x10), 0);
-//    kwrite64(kread64(OSEntitlements + 0x20), 0);
     
     uint64_t cr_posix_p = ucreds + off_u_cr_posix;
     printf("[i] self ucred->posix_cred->cr_uid: %u\n", kread32(cr_posix_p + off_cr_uid));
@@ -63,7 +48,7 @@ int funUcred(uint64_t proc) {
 
 
 int funCSFlags(char* process) {
-    uint64_t pid = getPidByName(process);
+    pid_t pid = getPidByName(process);
     uint64_t proc = getProc(pid);
     
     uint64_t proc_ro = kread64(proc + off_p_proc_ro);
@@ -91,7 +76,7 @@ int funCSFlags(char* process) {
 }
 
 int funTask(char* process) {
-    uint64_t pid = getPidByName(process);
+    pid_t pid = getPidByName(process);
     uint64_t proc = getProc(pid);
     printf("[i] %s proc: 0x%llx\n", process, proc);
     uint64_t proc_ro = kread64(proc + off_p_proc_ro);
@@ -115,7 +100,7 @@ int funTask(char* process) {
     #define TFRO_PAC_EXC_FATAL              0x00010000                      /* task is marked a corpse if a PAC exception occurs */
     #define TFRO_PAC_ENFORCE_USER_STATE     0x01000000                      /* Enforce user and kernel signed thread state */
     
-    uint32_t t_flags_ro = kread64(proc_ro + off_p_ro_t_flags_ro);
+    uint32_t t_flags_ro = kread32(proc_ro + off_p_ro_t_flags_ro);
     printf("[i] %s proc->proc_ro->t_flags_ro: 0x%x\n", process, t_flags_ro);
     
     return 0;
@@ -134,36 +119,209 @@ uint64_t fun_ipc_entry_lookup(mach_port_name_t port_name) {
     uint64_t itk_space_pac = kread64(pr_task + 0x300);
     uint64_t itk_space = itk_space_pac | 0xffffff8000000000;
     printf("[i] self task->itk_space: 0x%llx\n", itk_space);
-    //NEED TO FIGURE OUT SMR POINTER!!!
+    uint32_t port_index = MACH_PORT_INDEX(port_name);
+    uint32_t table_size = kread32(itk_space + 0x14);
+    printf("[i] table_size: 0x%x, port_index: 0x%x\n", table_size, port_index);
+    if (port_index >= table_size) {
+        printf("[-] invalid port name 0x%x\n", port_name);
+    }
+
+    //0x20 = IPC_SPACE_IS_TABLE_OFF
+    uint64_t is_table = kread64_smr(itk_space + 0x20);
+    printf("[i] self task->itk_space->is_table: 0x%llx\n", is_table);
+
+    uint64_t entry = is_table + port_index * 0x18/*SIZE(ipc_entry)*/;
+    printf("[i] entry: 0x%llx\n", entry);
+
+    uint64_t object_pac = kread64(entry + 0x0/*OFFSET(ipc_entry, ie_object)*/);
+    uint64_t object = object_pac | 0xffffff8000000000;
+    uint32_t ip_bits = kread32(object + 0x0/*OFFSET(ipc_port, ip_bits)*/);
+    uint32_t ip_refs = kread32(object + 0x4/*OFFSET(ipc_port, ip_references)*/);
+    uint64_t kobject_pac = kread64(object + 0x48/*OFFSET(ipc_port, ip_kobject)*/);
+    uint64_t kobject = kobject_pac | 0xffffff8000000000;
+    printf("[i] ipc_port: ip_bits 0x%x, ip_refs 0x%x\n", ip_bits, ip_refs);
+    printf("[i] ip_kobject: 0x%llx\n", kobject);
     
-//    uint32_t table_size = kread32(itk_space + 0x14);
-//    printf("[i] self task->itk_space table_size: 0x%x\n", table_size);
-//    uint32_t port_index = MACH_PORT_INDEX(port_name);
-//    if (port_index >= table_size) {
-//        printf("[!] invalid port name: 0x%x", port_name);
-//        return -1;
-//    }
-//
-//    uint64_t is_table_pac = kread64(itk_space + 0x20);
-//    uint64_t is_table = is_table_pac | 0xffffff8000000000;
-//    printf("[i] self task->itk_space->is_table: 0x%llx\n", is_table);
-//    printf("[i] self task->itk_space->is_table read: 0x%llx\n", kread64(is_table));
-//
-//    const int sizeof_ipc_entry_t = 0x18;
-//    uint64_t ipc_entry = is_table + sizeof_ipc_entry_t * port_index;
-//    printf("[i] self task->itk_space->is_table->ipc_entry: 0x%llx\n", ipc_entry);
-//
-//    uint64_t ie_object = kread64(ipc_entry + 0x0);
-//    printf("[i] self task->itk_space->is_table->ipc_entry->ie_object: 0x%llx\n", ie_object);
-//
-//    sleep(1);
+    return kobject;
+}
+
+static uint32_t
+extract32(uint32_t val, unsigned start, unsigned len) {
+    return (val >> start) & (~0U >> (32U - len));
+}
+
+typedef mach_port_t io_object_t;
+typedef io_object_t io_service_t, io_connect_t, io_registry_entry_t;
+extern const mach_port_t kIOMasterPortDefault;
+#define kIODeviceTreePlane "IODeviceTree"
+CFTypeRef IORegistryEntryCreateCFProperty(io_registry_entry_t entry, CFStringRef key, CFAllocatorRef allocator, uint32_t options);
+#define IO_OBJECT_NULL ((io_object_t)0)
+#define OS_STRING_LEN(a) extract32(a, 14, 18)
+
+typedef char io_string_t[512];
+io_registry_entry_t IORegistryEntryFromPath(mach_port_t master, const io_string_t path);
+
+
+static uint64_t
+lookup_io_object(io_object_t object) {
+    return fun_ipc_entry_lookup(object);
+}
+
+static uint64_t
+get_of_dict(io_registry_entry_t nvram_entry) {
+    uint64_t nvram_object = fun_ipc_entry_lookup(nvram_entry);
     
-    
-    
+    return kread64(nvram_object + 0xc0);    //io_dt_nvram_of_dict_off = 0xC0;
+}
+
+static uint64_t print_key_value_in_os_dict(uint64_t os_dict) {
+    uint64_t os_dict_entry_ptr, string_ptr, val_ptr = 0;
+    uint32_t os_dict_cnt, cur_key_len, cur_val_len;
+    size_t max_key_len = 1024;
+    struct {
+        uint64_t key, val;
+    } os_dict_entry;
+    char *cur_key;
+
+    if(((cur_key = malloc(max_key_len)) != NULL) /*&& ((cur_val = malloc(max_value_len)) != NULL)*/) {
+        os_dict_entry_ptr = kread64(os_dict + 0x20/*OS_DICTIONARY_DICT_ENTRY_OFF*/);
+        if(os_dict_entry_ptr != 0) {
+            os_dict_entry_ptr = os_dict_entry_ptr | 0xffffff8000000000;
+            printf("[i] os_dict_entry_ptr: 0x%llx\n", os_dict_entry_ptr);
+            os_dict_cnt = kread32(os_dict + 0x14/*OS_DICTIONARY_COUNT_OFF*/);
+            if(os_dict_cnt != 0) {
+                printf("[i] os_dict_cnt: 0x%x\n", os_dict_cnt);
+                while(os_dict_cnt-- != 0) {
+                    kreadbuf(os_dict_entry_ptr + os_dict_cnt * sizeof(os_dict_entry), &os_dict_entry, sizeof(os_dict_entry));
+                    //printf("key: 0x%llx, val: 0x%llx\n", os_dict_entry.key, os_dict_entry.val);
+                    
+                    //KEY
+                    cur_key_len = kread32(os_dict_entry.key + 0xc/*OS_STRING_LEN_OFF*/);
+                    if(cur_key_len == 0) {
+                        break;
+                    }
+                    cur_key_len = OS_STRING_LEN(cur_key_len);
+                    string_ptr = kread64(os_dict_entry.key + 0x10/*OS_STRING_STRING_OFF*/);
+                    if(string_ptr == 0) {
+                        break;
+                    }
+                    string_ptr = string_ptr | 0xffffff8000000000;
+                    kreadbuf(string_ptr, cur_key, cur_key_len);
+                    printf("[+] key_str: %s, key_str_len: 0x%x\n", cur_key, cur_key_len);
+                    
+                    
+                    //VALUE
+//                    HexDump(os_dict_entry.val, 100);
+                    cur_val_len = kread32(os_dict_entry.val + 0xc/*OS_STRING_LEN_OFF*/);
+                    if(cur_val_len == 0) {
+                        printf("[-] cur_val_len = 0\n");
+                        continue;
+                    }
+                    val_ptr = kread64(os_dict_entry.val + 0x18/*?*/);
+                    val_ptr = val_ptr | 0xffffff8000000000;
+                    if(val_ptr == 0) {
+                        printf("[-] val_ptr = 0\n");
+                        continue;
+                    }
+                    
+                    char* cur_val = malloc(cur_val_len);
+                    kreadbuf(val_ptr, cur_val, cur_val_len);
+                    printf("[+] val_str: %s, val_str_len: 0x%x\n", cur_val, cur_val_len);
+                    free(cur_val);
+                }
+            }
+        }
+        free(cur_key);
+    }
     return 0;
 }
 
-int do_fun(void) {
+
+uint64_t fun_nvram_dump(void) {
+
+    io_registry_entry_t nvram_entry = IORegistryEntryFromPath(kIOMasterPortDefault, kIODeviceTreePlane ":/options");
+    
+    if(nvram_entry != IO_OBJECT_NULL) {
+        printf("[i] nvram_entry: 0x%x\n", nvram_entry);
+
+        uint64_t of_dict = get_of_dict(nvram_entry);
+        printf("[i] of_dict: 0x%llx\n", of_dict);
+        
+        print_key_value_in_os_dict(of_dict);
+    }
+    return 0;
+}
+
+// Function to find files with specific extensions in a directory, doesn't work??? wtf?
+NSArray<NSString *> *findFilesWithExtensions(NSArray<NSString *> *extensions, NSString *directory) {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSArray<NSString *> *fileNames = [fileManager contentsOfDirectoryAtPath:directory error:nil];
+    
+    NSMutableArray<NSString *> *filePaths = [NSMutableArray array];
+    for (NSString *fileName in fileNames) {
+        if ([extensions containsObject:fileName.pathExtension]) {
+            [filePaths addObject:[directory stringByAppendingPathComponent:fileName]];
+        }
+    }
+    
+    return filePaths;
+}
+
+NSDictionary *changeDictValue(NSDictionary *dictionary, NSString *key, id value) {
+    NSMutableDictionary *mutableDictionary = [dictionary mutableCopy];
+    [mutableDictionary setValue:value forKey:key];
+    return [mutableDictionary copy];
+}
+
+@interface MyUtility : NSObject
+
++ (void)applyDynamicIsland;
+
+@end
+
+@implementation MyUtility
+
++ (void)applyDynamicIsland {
+    printf("Tryna apply dynamic island");
+    sleep(1);
+    NSString *backupFilePath = [NSString stringWithFormat:@"%@/com.apple.MobileGestalt-BACKUP.plist", NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0]];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:backupFilePath]) {
+        NSString *sourceFilePath = @"/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist";
+        NSData *plistData = [NSData dataWithContentsOfFile:sourceFilePath];
+        [plistData writeToFile:backupFilePath atomically:YES];
+    }
+    
+    NSData *plistData = [NSData dataWithContentsOfFile:backupFilePath];
+    NSError *error = nil;
+    NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:plistData options:0 format:nil error:&error];
+    
+    if (error) {
+        NSLog(@"Error while reading plist: %@", error);
+        return;
+    }
+    
+    NSDictionary *newPlist = changeDictValue(plist, @"ArtworkDeviceSubType", @2796);
+    NSData *newData = [NSPropertyListSerialization dataWithPropertyList:newPlist format:NSPropertyListBinaryFormat_v1_0 options:0 error:&error];
+    
+    if (error) {
+        NSLog(@"Error while serializing plist: %@", error);
+        return;
+    }
+    
+    if (newData.length == plistData.length) {
+        NSLog(@"Same Size!");
+        NSString *temporaryFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp_com.apple.MobileGestalt.plist"];
+        [newData writeToFile:temporaryFilePath atomically:YES];
+        funVnodeOverwriteFile(@"/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist", temporaryFilePath.UTF8String);
+    } else {
+        NSLog(@"OLD DATA: %lu", (unsigned long)plistData.length);
+        NSLog(@"NEW DATA: %lu", (unsigned long)newData.length);
+    }
+}
+
+
+void do_fun(char** enabledTweaks, int numTweaks) {
     
     _offsets_init();
     
@@ -180,143 +338,75 @@ int do_fun(void) {
     
     funUcred(selfProc);
     funProc(selfProc);
-//    printf("grant full disk access\n");
-//    grant_full_disk_access(^(NSError* error) {
-//        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
-//    });
-    
-//    findRootVnode();
-//    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/lock.caf", 0x21, 1, 1, true);
-    funVnodeHide("/System/Library/Audio/UISounds/photoShutter.caf");
-//    funVnodeOverwrite2("/System/Library/Audio/UISounds/lock.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/vineboom.mp3"].UTF8String);
-//    funVnodeOverwriteWithBytes("/System/Library/Audio/UISounds/photoShutter.caf", 1, 1, 1, true);
-//    funVnodeHide("/System/Library/PrivateFrameworks/UIKitCore.framework/UIKitCore");
-//    funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
-    funVnodeOverwrite2("/System/Library/ControlCenter/Bundles/DisplayModule.bundle/Brightness.ca/main.caml", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/mainbrightness.caml"].UTF8String);
-    printf("hiding home bar\n");
-    funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
-    printf("hiding dock background\n");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
-////    printf("hiding lockicons\n");
-////    funVnodeHide("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car");
-    printf("hiding notifications/music player\n");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeLight.visualstyleset");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platterStrokeDark.visualstyleset");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/plattersDark.materialrecipe");
-    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderLight.materialrecipe");
-    funVnodeHide("/System/Library/PrivateFrameworks/SpringBoardHome.framework/folderDark.materialrecipe");
-    funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/platters.materialrecipe");
-//    funCSFlags("launchd");
-//    funTask("kfd");
-    
-    //Patch
-//    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 501, 501);
-//    //Restore
-//    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0, 0);
-//
-//
-//    //Patch
-//    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0107777);
-//    //Restore
-//    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
-    
-//    mach_port_t host_self = mach_host_self();
-//    printf("[i] mach_host_self: 0x%x\n", host_self);
-//    fun_ipc_entry_lookup(host_self);
-    
-//    ResSet16(); offsets broken
-    
-//    funVnodeOverwrite2("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"].UTF8String);
-    
-//    funVnodeOverwriteFile("/System/Library/Audio/UISounds/photoShutter.caf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"].UTF8String);
-//
-//    grant_full_disk_access(^(NSError* error) {
-//        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
-//    });
-//    patch_installd();
 
-        
-//    Redirect Folders: NSHomeDirectory() + @"/Documents/mounted" -> "/var/mobile/Library/Caches/com.apple.keyboards"
-//    NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
-//    [[NSFileManager defaultManager] removeItemAtPath:mntPath error:nil];
-//    [[NSFileManager defaultManager] createDirectoryAtPath:mntPath withIntermediateDirectories:NO attributes:nil error:nil];
-//    funVnodeRedirectFolder(mntPath.UTF8String, "/System/Library"); //<- should NOT be work.
-//    funVnodeRedirectFolder(mntPath.UTF8String, "/var/mobile/Library/Caches/com.apple.keyboards"); //<- should be work.
-//    NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
-//    NSLog(@"mntPath directory list: %@", dirs);
+//    removeSMSCache();
+//    setSuperviseMode(true);
+//    printf("grant_full_disk_access.");
+//    sleep(1);
+//    grant_full_disk_access(^(NSError* error) {
+//        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
+//    });
     
-//#if 0
-//    Redirect Folders: NSHomeDirectory() + @"/Documents/mounted" -> /var/mobile
-//    funVnodeResearch(mntPath.UTF8String, mntPath.UTF8String);
-//    dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
-//    NSLog(@"[i] /var/mobile dirs: %@", dirs);
-//
-//
-//
-//
-//    funVnodeOverwriteFile(mntPath.UTF8String, "/var/mobile/Library/Caches/com.apple.keyboards");
-//    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/AAAA.bin"] toPath:[NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted/images/BBBB.bin"] error:nil];
-//
-//    symlink("/System/Library/PrivateFrameworks/TCC.framework/Support/", [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/Support"].UTF8String);
-//    mount("/System/Library/PrivateFrameworks/TCC.framework/Support/", mntPath, NULL, MS_BIND | MS_REC, NULL);
-//    printf("mount ret: %d\n", mount("apfs", mntpath, 0, &mntargs))
-//    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/", 501, 501);
-//    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/", 0107777);
-//
-//    funVnodeOverwriteFile(mntPath.UTF8String, "/");
-//
-//
-//    for(NSString *dir in dirs) {
-//        NSString *mydir = [mntPath stringByAppendingString:@"/"];
-//        mydir = [mydir stringByAppendingString:dir];
-//        int fd_open = open(mydir.UTF8String, O_RDONLY);
-//        printf("open %s, ret: %d\n", mydir.UTF8String, fd_open);
-//        if(fd_open != -1) {
-//            NSArray* dirs2 = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mydir error:NULL];
-//            NSLog(@"/var/%@ directory: %@", dir, dirs2);
-//        }
-//        close(fd_open);
-//    }
-//    printf("open ret: %d\n", open([mntPath stringByAppendingString:@"/mobile/Library"].UTF8String, O_RDONLY));
-//    printf("open ret: %d\n", open([mntPath stringByAppendingString:@"/containers"].UTF8String, O_RDONLY));
-//    printf("open ret: %d\n", open([mntPath stringByAppendingString:@"/mobile/Library/Preferences"].UTF8String, O_RDONLY));
-//    printf("open ret: %d\n", open("/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches", O_RDONLY));
-//
-//    dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[mntPath stringByAppendingString:@"/mobile"] error:NULL];
-//    NSLog(@"/var/mobile directory: %@", dirs);
-//
-//    [@"Hello, this is an example file!" writeToFile:[mntPath stringByAppendingString:@"/Hello.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-//    funVnodeOverwriteFile("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", AAAApath.UTF8String);
-//    funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 501, 501);
-//    funVnodeOverwriteFile(AAAApath.UTF8String, BBBBpath.UTF8String);
-//    funVnodeOverwriteFile("/System/Library/AppPlaceholders/Stocks.app/AppIcon60x60@2x.png", "/System/Library/AppPlaceholders/Tips.app/AppIcon60x60@2x.png");
-//
-//    xpc_crasher("com.apple.tccd");
-//    xpc_crasher("com.apple.tccd");
-//    sleep(5);
-//    funUcred(getProc(getPidByName("tccd")));
-//    funProc(getProc(getPidByName("tccd")));
-//    funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
-//
-//
-//    funVnodeOverwrite(AAAApath.UTF8String, AAAApath.UTF8String);
-//
-//    funVnodeOverwrite(selfProc, "/System/Library/AppPlaceholders/Stocks.app/AppIcon60x60@2x.png", copyToAppDocs.UTF8String);
-//
-//
-//Overwrite tccd:
-//    NSString *copyToAppDocs = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/tccd_patched.bin"];
-//    remove(copyToAppDocs.UTF8String);
-//    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/tccd_patched.bin"] toPath:copyToAppDocs error:nil];
-//    chmod(copyToAppDocs.UTF8String, 0755);
-//    funVnodeOverwrite(selfProc, "/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", [copyToAppDocs UTF8String]);
-//
-//    xpc_crasher("com.apple.tccd");
-//    xpc_crasher("com.apple.tccd");
-//
-//#endif
-    
-//    sleep(5);
-    return 0;
+    for (int i = 0; i < numTweaks; i++) {
+        char *tweak = enabledTweaks[i];
+        printf("[i] tweaks\n");
+        if (strcmp(tweak, "HideDock") == 0) {
+            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
+            funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
+        }
+        if (strcmp(tweak, "enableHideHomebar") == 0) {
+            funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
+        }
+        if (strcmp(tweak, "enableResSet") == 0) {
+            ResSet16(2796, 1290);
+        }
+        if (strcmp(tweak, "enableCCTweaks") == 0) {
+            funVnodeOverwrite2("/System/Library/Lockdown/iPhoneDebug.pem", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/cert.pem"].UTF8String);
+        }
+        if (strcmp(tweak, "enableCustomFont") == 0) {
+            funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
+        }
+        if (strcmp(tweak, "enableLSTweaks") == 0) {
+            funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/ios16.car"].UTF8String);
+        }
+        if (strcmp(tweak, "enableHideNotifs") == 0) {
+            readpslog();
+        }
+        if (strcmp(tweak, "enableDynamicIsland") == 0) {
+            
+            printf("[i] starting tests...\n");
+            
+            //Patch
+            funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 501, 501);
+            //Restore
+            funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0, 0);
+            
+            
+            //Patch
+            funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0107777);
+            //Restore
+            funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
+            
+            mach_port_t host_self = mach_host_self();
+            printf("[i] mach_host_self: 0x%x\n", host_self);
+            fun_ipc_entry_lookup(host_self);
+            
+            //printf("[!] fun_proc_dump_entitlements: tccd\n");
+            //fun_proc_dump_entitlements(getProcByName("tccd"));
+            //printf("[!] fun_proc_dump_entitlements: SpringBoard\n");
+            //fun_proc_dump_entitlements(getProcByName("SpringBoard"));
+
+            //printf("[!] fun_vnode_dump_entitlements: ReportCrash\n");
+            //fun_vnode_dump_entitlements("/System/Library/CoreServices/ReportCrash");
+            
+            fun_nvram_dump();
+            
+        }
+    }
+    do_kclose();
 }
+//    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modules.materialrecipe"].UTF8String);
+//    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modulesBackground.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modulesBackground.materialrecipe"].UTF8String);
+//    do_kclose();
+//    restartBackboard();
+@end

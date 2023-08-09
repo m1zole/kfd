@@ -10,6 +10,6 @@
 
 #include <stdio.h>
 
-int do_fun(void);
-
+void do_fun(char** enabledTweaks, int numTweaks);
+uint64_t fun_nvram_dump(void);
 #endif /* fun_h */
