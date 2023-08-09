@@ -396,16 +396,15 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             //printf("[!] fun_proc_dump_entitlements: SpringBoard\n");
             //fun_proc_dump_entitlements(getProcByName("SpringBoard"));
 
-            printf("[!] fun_vnode_dump_entitlements: ReportCrash\n");
-            fun_vnode_dump_entitlements("/System/Library/CoreServices/ReportCrash");
+            //printf("[!] fun_vnode_dump_entitlements: ReportCrash\n");
+            //fun_vnode_dump_entitlements("/System/Library/CoreServices/ReportCrash");
             
             fun_nvram_dump();
-
+            
         }
-        listCache();
-        }
-    do_kclose();
     }
+    do_kclose();
+}
 //    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modules.materialrecipe"].UTF8String);
 //    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modulesBackground.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modulesBackground.materialrecipe"].UTF8String);
 //    do_kclose();
