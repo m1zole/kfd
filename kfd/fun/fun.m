@@ -349,6 +349,7 @@ void do_fun(char** enabledTweaks, int numTweaks) {
     
     for (int i = 0; i < numTweaks; i++) {
         char *tweak = enabledTweaks[i];
+        printf("[i] tweaks\n");
         if (strcmp(tweak, "HideDock") == 0) {
             funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
             funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
@@ -402,8 +403,8 @@ void do_fun(char** enabledTweaks, int numTweaks) {
 
         }
         listCache();
-        do_kclose();
         }
+    do_kclose();
     }
 //    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modules.materialrecipe"].UTF8String);
 //    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modulesBackground.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modulesBackground.materialrecipe"].UTF8String);

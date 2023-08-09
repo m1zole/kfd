@@ -18,7 +18,6 @@
 #import "thanks_opa334dev_htrowii.h"
 #import <errno.h>
 #import "utils.h"
-#import "offsets.h"
 
 uint64_t createFolderAndRedirect(uint64_t vnode, NSString *mntPath) {
     [[NSFileManager defaultManager] removeItemAtPath:mntPath error:nil];

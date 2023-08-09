@@ -265,7 +265,9 @@ struct ContentView: View {
         if enableHideNotifs {
             enabledTweaks.append("enableHideNotifs")
         }
-
+        if enableDynamicIsland {
+            enabledTweaks.append("enableDynamicIsland")
+        }
         return enabledTweaks
     }
 }
