@@ -28,7 +28,6 @@
 		C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = C8843C222A724AA900CA0DC9 /* SwiftUtils */; };
 		C8EAC7D22A7690E2005FB878 /* vnode.m in Sources */ = {isa = PBXBuildFile; fileRef = C8EAC7D12A7690E2005FB878 /* vnode.m */; };
 		C8EAC7D52A769100005FB878 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C8EAC7D42A769100005FB878 /* utils.m */; };
-		D54A79F02A7A83F8001B661B /* cert.pem in Resources */ = {isa = PBXBuildFile; fileRef = D54A79EF2A7A83F8001B661B /* cert.pem */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,7 +77,6 @@
 		C8EAC7D12A7690E2005FB878 /* vnode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = vnode.m; sourceTree = "<group>"; };
 		C8EAC7D32A769100005FB878 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		C8EAC7D42A769100005FB878 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
-		D54A79EF2A7A83F8001B661B /* cert.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cert.pem; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,7 +128,6 @@
 		2948BA6A2A3162C600B2ED3C /* libkfd */ = {
 			isa = PBXGroup;
 			children = (
-				D54A79EF2A7A83F8001B661B /* cert.pem */,
 				C82854162A788B8F0050E059 /* SFUI.ttf */,
 				C8C194822A759CE500ABE8BF /* focusmain.caml */,
 				C8C194842A759CE500ABE8BF /* mainbrightness.caml */,
@@ -293,7 +290,6 @@
 			files = (
 				C8C43BF82A797848008B08F9 /* lock.caf in Resources */,
 				C8C194862A759CE500ABE8BF /* mainvolume.caml in Resources */,
-				D54A79F02A7A83F8001B661B /* cert.pem in Resources */,
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
 				C8C43BF62A797802008B08F9 /* main.caml in Resources */,
 				C8C194872A759CE500ABE8BF /* mainbrightness.caml in Resources */,
