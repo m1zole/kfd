@@ -48,6 +48,7 @@
 #include "info/dynamic_types/thread.h"
 #include "info/dynamic_types/uthread.h"
 #include "info/dynamic_types/vm_map.h"
+#include "info/dynamic_types/IOSurface.h"
 
 /*
  * Helper macros for static types.
@@ -123,7 +124,8 @@ const u64 macos_13_3   = 0x0000323532453232; // 22E252
 const u64 macos_13_3_1 = 0x0000313632453232; // 22E261
 const u64 macos_13_4   = 0x0000003636463232; // 22F66
 
-#define t1sz_boot (17ull)
+//#define t1sz_boot (17ull)
+#define t1sz_boot (25ull)
 #define ptr_mask ((1ull << (64ull - t1sz_boot)) - 1ull)
 #define pac_mask (~ptr_mask)
 #define unsign_kaddr(kaddr) ((kaddr) | (pac_mask))
@@ -178,40 +180,66 @@ void info_init(struct kfd* kfd)
 
     usize size2 = sizeof(kfd->info.env.osversion);
     assert_bsd(sysctlbyname("kern.osversion", &kfd->info.env.osversion, &size2, NULL, 0));
-
-    switch (*(u64*)(&kfd->info.env.osversion)) {
-        case ios_16_3:
-        case ios_16_3_1: {
-            kfd->info.env.vid = 0;
-            kfd->info.env.ios = true;
-            break;
-        }
-        case ios_16_4:
-        case ios_16_5:
-        case ios_16_5_1: {
-            kfd->info.env.vid = 1;
-            kfd->info.env.ios = true;
-            break;
-        }
-        case macos_13_1: {
-            kfd->info.env.vid = 2;
-            kfd->info.env.ios = false;
-            break;
-        }
-        case macos_13_4: {
-            kfd->info.env.vid = 3;
-            kfd->info.env.ios = false;
-            break;
-        }
-        case ios_16_1_2: {
-            kfd->info.env.vid = 4;
-            kfd->info.env.ios = true;
-            break;
-        }
-        default: {
-            assert_false("unsupported osversion");
+    
+    if (@available(iOS 16, *)) {
+        switch (*(u64*)(&kfd->info.env.osversion)) {
+            case ios_16_3:
+            case ios_16_3_1: {
+                kfd->info.env.vid = 0;
+                kfd->info.env.ios = true;
+                break;
+            }
+            case ios_16_4:
+            case ios_16_4_1:
+            case ios_16_5:
+            case ios_16_5_1: {
+                kfd->info.env.vid = 1;
+                kfd->info.env.ios = true;
+                break;
+            }
+            case macos_13_1: {
+                kfd->info.env.vid = 2;
+                kfd->info.env.ios = false;
+                break;
+            }
+            case macos_13_4: {
+                kfd->info.env.vid = 3;
+                kfd->info.env.ios = false;
+                break;
+            }
+            default: {
+                assert_false("unsupported osversion");
+            }
         }
     }
+    else {
+        int ptrAuthVal = 0;
+        size_t len = sizeof(ptrAuthVal);
+//        assert(sysctlbyname("hw.optional.arm.FEAT_PAuth", &ptrAuthVal, &len, NULL, 0) != -1);
+        
+        kfd->info.env.ios = true;
+        if (@available(iOS 15.4, *)) {
+            kfd->info.env.vid = 8;
+        }
+        else if (@available(iOS 15.2, *)) {
+            kfd->info.env.vid = 6;
+        }
+        else if (@available(iOS 15.0, *)) {
+            kfd->info.env.vid = 4;
+        }
+        else if (@available(iOS 14.8, *)) {
+            kfd->info.env.vid = 11;
+        }
+        else if (@available(iOS 14.3, *)) {
+            kfd->info.env.vid = 10;
+        }
+        
+        if (ptrAuthVal != 0) {
+            kfd->info.env.vid++;
+        }
+    }
+
+    
 
     print_i32(kfd->info.env.pid);
     print_u64(kfd->info.env.tid);
@@ -228,24 +256,25 @@ void info_run(struct kfd* kfd)
     /*
      * current_proc() and current_task()
      */
-    assert(kfd->info.kaddr.current_proc);
-    kfd->info.kaddr.current_task = kfd->info.kaddr.current_proc + dynamic_sizeof(proc);
-    print_x64(kfd->info.kaddr.current_proc);
-    print_x64(kfd->info.kaddr.current_task);
+    assert(kfd->info.kernel.current_proc);
+    u64 signed_task_kaddr = dynamic_kget(proc, task, kfd->info.kernel.current_proc);
+    kfd->info.kernel.current_task = unsign_kaddr(signed_task_kaddr);
+    print_x64(kfd->info.kernel.current_proc);
+    print_x64(kfd->info.kernel.current_task);
 
     /*
      * current_map()
      */
-    u64 signed_map_kaddr = dynamic_kget(task, map, kfd->info.kaddr.current_task);
-    kfd->info.kaddr.current_map = unsign_kaddr(signed_map_kaddr);
-    print_x64(kfd->info.kaddr.current_map);
+    u64 signed_map_kaddr = dynamic_kget(task, map, kfd->info.kernel.current_task);
+    kfd->info.kernel.current_map = unsign_kaddr(signed_map_kaddr);
+    print_x64(kfd->info.kernel.current_map);
 
     /*
      * current_pmap()
      */
-    u64 signed_pmap_kaddr = dynamic_kget(vm_map, pmap, kfd->info.kaddr.current_map);
-    kfd->info.kaddr.current_pmap = unsign_kaddr(signed_pmap_kaddr);
-    print_x64(kfd->info.kaddr.current_pmap);
+    u64 signed_pmap_kaddr = dynamic_kget(vm_map, pmap, kfd->info.kernel.current_map);
+    kfd->info.kernel.current_pmap = unsign_kaddr(signed_pmap_kaddr);
+    print_x64(kfd->info.kernel.current_pmap);
 
     /*
      * current_thread() and current_uthread()
@@ -253,44 +282,45 @@ void info_run(struct kfd* kfd)
     const bool find_current_thread = false;
 
     if (find_current_thread) {
-        u64 thread_kaddr = dynamic_kget(task, threads_next, kfd->info.kaddr.current_task);
+        u64 thread_kaddr = dynamic_kget(task, threads_next, kfd->info.kernel.current_task);
 
         while (true) {
             u64 tid = dynamic_kget(thread, thread_id, thread_kaddr);
             if (tid == kfd->info.env.tid) {
-                kfd->info.kaddr.current_thread = thread_kaddr;
-                kfd->info.kaddr.current_uthread = thread_kaddr + dynamic_sizeof(thread);
+                kfd->info.kernel.current_thread = thread_kaddr;
+                kfd->info.kernel.current_uthread = thread_kaddr + dynamic_sizeof(thread);
                 break;
             }
 
             thread_kaddr = dynamic_kget(thread, task_threads_next, thread_kaddr);
         }
 
-        print_x64(kfd->info.kaddr.current_thread);
-        print_x64(kfd->info.kaddr.current_uthread);
+        print_x64(kfd->info.kernel.current_thread);
+        print_x64(kfd->info.kernel.current_uthread);
     }
 
-    if (kfd->info.kaddr.kernel_proc) {
+    if (kfd->info.kernel.kernel_proc) {
         /*
          * kernel_proc() and kernel_task()
          */
-        kfd->info.kaddr.kernel_task = kfd->info.kaddr.kernel_proc + dynamic_sizeof(proc);
-        print_x64(kfd->info.kaddr.kernel_proc);
-        print_x64(kfd->info.kaddr.kernel_task);
+        u64 signed_kernel_task = dynamic_kget(proc, task, kfd->info.kernel.kernel_proc);
+        kfd->info.kernel.kernel_task = unsign_kaddr(signed_kernel_task);
+        print_x64(kfd->info.kernel.kernel_proc);
+        print_x64(kfd->info.kernel.kernel_task);
 
         /*
          * kernel_map()
          */
-        u64 signed_map_kaddr = dynamic_kget(task, map, kfd->info.kaddr.kernel_task);
-        kfd->info.kaddr.kernel_map = unsign_kaddr(signed_map_kaddr);
-        print_x64(kfd->info.kaddr.kernel_map);
+        u64 signed_map_kaddr = dynamic_kget(task, map, kfd->info.kernel.kernel_task);
+        kfd->info.kernel.kernel_map = unsign_kaddr(signed_map_kaddr);
+        print_x64(kfd->info.kernel.kernel_map);
 
         /*
          * kernel_pmap()
          */
-        u64 signed_pmap_kaddr = dynamic_kget(vm_map, pmap, kfd->info.kaddr.kernel_map);
-        kfd->info.kaddr.kernel_pmap = unsign_kaddr(signed_pmap_kaddr);
-        print_x64(kfd->info.kaddr.kernel_pmap);
+        u64 signed_pmap_kaddr = dynamic_kget(vm_map, pmap, kfd->info.kernel.kernel_map);
+        kfd->info.kernel.kernel_pmap = unsign_kaddr(signed_pmap_kaddr);
+        print_x64(kfd->info.kernel.kernel_pmap);
     }
 
     timer_end();

