@@ -187,14 +187,8 @@ u64 kopen(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method)
     puaf_run(kfd);
     krkw_run(kfd);
     info_run(kfd);
-    printf("0000\n");
-    usleep(100000);
     perf_run(kfd);
-    printf("1111\n");
-    usleep(100000);
     puaf_cleanup(kfd);
-    printf("2222\n");
-    usleep(100000);
 
     timer_end();
     return (u64)(kfd);

@@ -179,12 +179,10 @@ void perf_init(struct kfd* kfd)
 void perf_run(struct kfd* kfd)
 {
     if (!kfd->perf.kernelcache_index) {
-        printf("AAAA\n");
         return;
     }
 
     const struct kernelcache_addresses* kc = &kcs[kfd->perf.kernelcache_index];
-    printf("BBBB\n");
     /*
      * Open a "/dev/aes_0" descriptor, then use it to find the kernel slide.
      */
@@ -211,7 +209,6 @@ void perf_run(struct kfd* kfd)
     u64 fo_kqfilter_kaddr = unsign_kaddr(fg_ops) + static_offsetof(fileops, fo_kqfilter);
     u64 fo_kqfilter = 0;
     kread((u64)(kfd), fo_kqfilter_kaddr, &fo_kqfilter, sizeof(fo_kqfilter));
-    printf("CCCC\n");
 
     u64 vn_kqfilter = unsign_kaddr(fo_kqfilter);
     u64 kernel_slide = vn_kqfilter - kc->vn_kqfilter;
