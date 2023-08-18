@@ -30,17 +30,16 @@ void kwrite32(uint64_t where, uint32_t what);
 void kwrite64(uint64_t where, uint64_t what);
 void kreadbuf(uint64_t kaddr, void* output, size_t size);
 
-void init_kcall(void);
-uint64_t kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6);
-uint64_t dirty_kalloc(size_t size);
+uint64_t zm_fix_addr_kalloc(uint64_t addr);
+uint64_t init_kcall(uint64_t *_fake_vtable, uint64_t *_fake_client, mach_port_t *_user_client);
+uint64_t init_kcall_allocated(uint64_t _fake_vtable, uint64_t _fake_client, mach_port_t *_user_client);
+uint64_t kcall(mach_port_t user_client, uint64_t fake_client, uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6);
 
-// used to fix what kexecute returns
-typedef struct {
-    uint64_t prev;
-    uint64_t next;
-    uint64_t start;
-    uint64_t end;
-} kmap_hdr_t;
-uint64_t ZmFixAddr(uint64_t addr);
+uint64_t kalloc(mach_port_t user_client, uint64_t fake_client, size_t ksize);
+
+void kfree(mach_port_t user_client, uint64_t fake_client, uint64_t kaddr, size_t ksize);
+
+uint64_t clean_dirty_kalloc(uint64_t addr, size_t size);
+int kalloc_using_empty_kdata_page(uint64_t* _fake_vtable, uint64_t* _fake_client);
 
 #endif /* krw_h */

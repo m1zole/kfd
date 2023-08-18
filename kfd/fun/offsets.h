@@ -40,7 +40,7 @@ extern uint32_t off_sandbox_slot;
 extern uint64_t off_kalloc_data_external;
 extern uint64_t off_kfree_data_external;
 extern uint64_t off_add_x0_x0_0x40_ret;
-extern uint64_t off_zone_map;
+extern uint64_t off_empty_kdata_page;
 
 void _offsets_init(void);
 

