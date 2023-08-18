@@ -454,7 +454,6 @@ int do_fun(void) {
         sandbox(getpid(), sb);
     } else {
         kalloc_using_empty_kdata_page(&fake_vtable, &fake_client);
-        
         //Once if you successfully get kalloc to use fake_vtable and fake_client,
         //DO NOT use dirty_kalloc again since unstable method.
         uint64_t sb = unsandbox(getpid());
