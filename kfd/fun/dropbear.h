@@ -11,5 +11,6 @@
 int untarBootstrap(void);
 int cleanBootstrap(void);
 int setupSSH(void);
+int runSSH(void);
 
 #endif /* dropbear_h */

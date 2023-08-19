@@ -29,12 +29,6 @@ void test_kalloc_kfree(void) {
     kfree(allocated_kmem, allocated_size);
 }
 
-void test_platformize(pid_t pid) {
-    set_task_platform(pid, true);
-    set_proc_csflags(pid);
-    set_csb_platform_binary(pid);
-}
-
 void test_unsandbox(void) {
     char* _token = token_by_sandbox_extension_issue_file("com.apple.app-sandbox.read-write", "/", 0);
     printf("consume ret: %lld\n", sandbox_extension_consume(_token));
@@ -71,6 +65,8 @@ void test_load_trustcache2(void) {
 }
 
 int do_fun(void) {
+    printf("do_fun start!\n");
+    usleep(10000);
     _offsets_init();
     
     uint64_t kslide = get_kslide();
@@ -86,31 +82,13 @@ int do_fun(void) {
 
     prepare_kcall();
     
-    test_platformize(getpid());
+    platformize(getpid());
     
     uint64_t sb = unsandbox(getpid());
     
-    //do some stuff..
-//    test_load_trustcache2();
-    
-    //1. load trustcache
-    printf("binaries.tc ret: 0x%llx\n", staticTrustCacheUploadFileAtPath([NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/binaries.tc"], NULL));
-    printf("iosbinpack64.tc ret: 0x%llx\n", staticTrustCacheUploadFileAtPath([NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/iosbinpack/iosbinpack64.tc"], NULL));
-
-    //2. bootstrap if not exist
-    cleanBootstrap();
-    untarBootstrap();
-    
-//    NSLog(@"dirs: %@\n", [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/containers/Bundle" error:nil]);
-//    NSLog(@"dirs: %@\n", [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/containers/Bundle/iosbinpack64" error:nil]);
-//    NSLog(@"access ret: %d\n", access("/var/containers/Bundle/iosbinpack64/test", F_OK));
-    
-    //3. check if runnable
-    util_runCommand("/var/containers/Bundle/iosbinpack64/test", NULL, NULL);
-    util_runCommand("/var/containers/Bundle/iosbinpack64/bin/date", NULL, NULL);
-    
-    //4.setup and run SSH
-    setupSSH();
+    //do some stuff here...
+    runSSH();
+    NSLog(@"dirs: %@", [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/containers/Bundle/iosbinpack64" error:nil]);
     
     sandbox(getpid(), sb);
     

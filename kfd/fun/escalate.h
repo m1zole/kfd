@@ -5,8 +5,6 @@
 //  Created by Seo Hyun-gyu on 2023/08/19.
 //
 
-#include <Foundation/Foundation.h>
-#include <UIKit/UIKit.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <spawn.h>
@@ -34,3 +32,4 @@ bool set_task_platform(pid_t pid, bool set);
 void set_proc_csflags(pid_t pid);
 uint64_t get_cs_blob(pid_t pid);
 void set_csb_platform_binary(pid_t pid);
+void platformize(pid_t pid);

@@ -4,7 +4,8 @@
 //
 //  Created by Seo Hyun-gyu on 2023/08/19.
 //
-
+#include <Foundation/Foundation.h>
+#include <UIKit/UIKit.h>
 #include "krw.h"
 #include "offsets.h"
 #include "proc.h"
@@ -158,4 +159,10 @@ uint64_t get_cs_blob(pid_t pid) {
 void set_csb_platform_binary(pid_t pid) {
     uint64_t cs_blob = get_cs_blob(pid);
     kwrite32(cs_blob + off_cs_blob_csb_platform_binary, 1);
+}
+
+void platformize(pid_t pid) {
+    set_task_platform(pid, true);
+    set_proc_csflags(pid);
+    set_csb_platform_binary(pid);
 }
