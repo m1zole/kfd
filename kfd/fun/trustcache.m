@@ -31,6 +31,37 @@ BOOL trustCacheListAdd(uint64_t trustCacheKaddr)
     return YES;
 }
 
+BOOL trustCacheListRemove(uint64_t trustCacheKaddr)
+{
+    if (!trustCacheKaddr) return NO;
+
+    uint64_t nextPtr = kread64(trustCacheKaddr + offsetof(trustcache_page, nextPtr));
+
+    uint64_t pmap_image4_trust_caches = off_trustcache + get_kslide();
+    uint64_t curTc = kread64(pmap_image4_trust_caches);
+    if (curTc == 0) {
+        printf("WARNING: Tried to unlink trust cache page 0x%llX but pmap_image4_trust_caches points to 0x0\n", trustCacheKaddr);
+        return NO;
+    }
+    else if (curTc == trustCacheKaddr) {
+        kwrite64(pmap_image4_trust_caches, nextPtr);
+    }
+    else {
+        uint64_t prevTc = 0;
+        while (curTc != trustCacheKaddr)
+        {
+            if (curTc == 0) {
+                printf("WARNING: Hit end of trust cache chain while trying to unlink trust cache page 0x%llX\n", trustCacheKaddr);
+                return NO;
+            }
+            prevTc = curTc;
+            curTc = kread64(curTc);
+        }
+        kwrite64(prevTc, nextPtr);
+    }
+    return YES;
+}
+
 
 uint64_t staticTrustCacheUploadFile(trustcache_file *fileToUpload, size_t fileSize, size_t *outMapSize)
 {

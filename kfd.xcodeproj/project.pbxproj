@@ -14,16 +14,16 @@
 		6E75BFA82A8475C70056ABDA /* fun.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFA72A8475C70056ABDA /* fun.m */; };
 		6E75BFAB2A8476340056ABDA /* krw.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFAA2A8476340056ABDA /* krw.m */; };
 		6E75BFAE2A847A980056ABDA /* offsets.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFAD2A847A980056ABDA /* offsets.m */; };
-		6E75BFB42A855D2E0056ABDA /* superEnts in Resources */ = {isa = PBXBuildFile; fileRef = 6E75BFB32A855D2E0056ABDA /* superEnts */; };
 		6ECE5B3D2A9030F000792D41 /* sandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B3C2A9030F000792D41 /* sandbox.m */; };
 		6ECE5B402A903B8000792D41 /* trustcache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B3F2A903B8000792D41 /* trustcache.m */; };
-		6ECE5B4B2A90432E00792D41 /* binaries in Resources */ = {isa = PBXBuildFile; fileRef = 6ECE5B492A90432D00792D41 /* binaries */; };
-		6ECE5B4C2A90432E00792D41 /* binaries.tc in Resources */ = {isa = PBXBuildFile; fileRef = 6ECE5B4A2A90432E00792D41 /* binaries.tc */; };
 		6ECE5B4F2A905F5000792D41 /* escalate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B4E2A905F5000792D41 /* escalate.m */; };
 		6ECE5B522A905FDE00792D41 /* proc.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B512A905FDE00792D41 /* proc.c */; };
 		6ECE5B552A90609100792D41 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B542A90609100792D41 /* utils.c */; };
 		6ECE5B582A9065B300792D41 /* vnode.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B572A9065B300792D41 /* vnode.c */; };
 		6ECE5B5B2A90662200792D41 /* ipc.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B5A2A90662200792D41 /* ipc.c */; };
+		6ECE5B5D2A907DE900792D41 /* iosbinpack in Resources */ = {isa = PBXBuildFile; fileRef = 6ECE5B5C2A907DE900792D41 /* iosbinpack */; };
+		6ECE5B5F2A907DFE00792D41 /* dropbear.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B5E2A907DFE00792D41 /* dropbear.m */; };
+		6ECE5B612A907FC800792D41 /* binaries in Resources */ = {isa = PBXBuildFile; fileRef = 6ECE5B602A907FC800792D41 /* binaries */; };
 		8C0AF3582A75B6BF0065C9DD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C0AF3572A75B6BF0065C9DD /* IOKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -76,13 +76,10 @@
 		6E75BFAC2A8476400056ABDA /* krw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = krw.h; sourceTree = "<group>"; };
 		6E75BFAD2A847A980056ABDA /* offsets.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = offsets.m; sourceTree = "<group>"; };
 		6E75BFAF2A847AC50056ABDA /* offsets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = offsets.h; sourceTree = "<group>"; };
-		6E75BFB32A855D2E0056ABDA /* superEnts */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = superEnts; sourceTree = "<group>"; };
 		6ECE5B3C2A9030F000792D41 /* sandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = sandbox.m; sourceTree = "<group>"; };
 		6ECE5B3E2A9030FF00792D41 /* sandbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sandbox.h; sourceTree = "<group>"; };
 		6ECE5B3F2A903B8000792D41 /* trustcache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = trustcache.m; sourceTree = "<group>"; };
 		6ECE5B412A903B9300792D41 /* trustcache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trustcache.h; sourceTree = "<group>"; };
-		6ECE5B492A90432D00792D41 /* binaries */ = {isa = PBXFileReference; lastKnownFileType = folder; path = binaries; sourceTree = "<group>"; };
-		6ECE5B4A2A90432E00792D41 /* binaries.tc */ = {isa = PBXFileReference; lastKnownFileType = file; path = binaries.tc; sourceTree = "<group>"; };
 		6ECE5B4D2A905F5000792D41 /* escalate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = escalate.h; sourceTree = "<group>"; };
 		6ECE5B4E2A905F5000792D41 /* escalate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = escalate.m; sourceTree = "<group>"; };
 		6ECE5B502A905FDE00792D41 /* proc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = proc.h; sourceTree = "<group>"; };
@@ -93,6 +90,10 @@
 		6ECE5B572A9065B300792D41 /* vnode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vnode.c; sourceTree = "<group>"; };
 		6ECE5B592A90662200792D41 /* ipc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ipc.h; sourceTree = "<group>"; };
 		6ECE5B5A2A90662200792D41 /* ipc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ipc.c; sourceTree = "<group>"; };
+		6ECE5B5C2A907DE900792D41 /* iosbinpack */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = iosbinpack; sourceTree = SOURCE_ROOT; };
+		6ECE5B5E2A907DFE00792D41 /* dropbear.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = dropbear.m; sourceTree = "<group>"; };
+		6ECE5B602A907FC800792D41 /* binaries */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = binaries; sourceTree = SOURCE_ROOT; };
+		6ECE5B642A90802100792D41 /* dropbear.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dropbear.h; sourceTree = "<group>"; };
 		8C0AF3512A75B21A0065C9DD /* kread_IOSurface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kread_IOSurface.h; sourceTree = "<group>"; };
 		8C0AF3522A75B2DA0065C9DD /* IOSurface_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSurface_shared.h; sourceTree = "<group>"; };
 		8C0AF3572A75B6BF0065C9DD /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.4.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -233,9 +234,8 @@
 		297BA1072A310AE100D1E51A /* kfd */ = {
 			isa = PBXGroup;
 			children = (
-				6ECE5B492A90432D00792D41 /* binaries */,
-				6ECE5B4A2A90432E00792D41 /* binaries.tc */,
-				6E75BFB32A855D2E0056ABDA /* superEnts */,
+				6ECE5B602A907FC800792D41 /* binaries */,
+				6ECE5B5C2A907DE900792D41 /* iosbinpack */,
 				297BA10C2A310AE200D1E51A /* Assets.xcassets */,
 				297BA10A2A310AE100D1E51A /* ContentView.swift */,
 				2965065D2A31565B0025D1A7 /* kfd-Bridging-Header.h */,
@@ -266,7 +266,9 @@
 				6ECE5B4E2A905F5000792D41 /* escalate.m */,
 				6ECE5B562A9065B300792D41 /* vnode.h */,
 				6ECE5B572A9065B300792D41 /* vnode.c */,
+				6ECE5B5E2A907DFE00792D41 /* dropbear.m */,
 				6ECE5B592A90662200792D41 /* ipc.h */,
+				6ECE5B642A90802100792D41 /* dropbear.h */,
 				6ECE5B5A2A90662200792D41 /* ipc.c */,
 				6ECE5B502A905FDE00792D41 /* proc.h */,
 				6ECE5B512A905FDE00792D41 /* proc.c */,
@@ -352,10 +354,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
-				6ECE5B4B2A90432E00792D41 /* binaries in Resources */,
-				6E75BFB42A855D2E0056ABDA /* superEnts in Resources */,
-				6ECE5B4C2A90432E00792D41 /* binaries.tc in Resources */,
+				6ECE5B612A907FC800792D41 /* binaries in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
+				6ECE5B5D2A907DE900792D41 /* iosbinpack in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,6 +375,7 @@
 				6ECE5B522A905FDE00792D41 /* proc.c in Sources */,
 				6ECE5B5B2A90662200792D41 /* ipc.c in Sources */,
 				6ECE5B4F2A905F5000792D41 /* escalate.m in Sources */,
+				6ECE5B5F2A907DFE00792D41 /* dropbear.m in Sources */,
 				6ECE5B402A903B8000792D41 /* trustcache.m in Sources */,
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,
 				6E75BFAB2A8476340056ABDA /* krw.m in Sources */,

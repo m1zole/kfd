@@ -17,6 +17,7 @@
 #import "fun.h"
 #import "proc.h"
 #import "vnode.h"
+#import "dropbear.h"
 
 void test_kalloc_kfree(void) {
     size_t allocated_size = 0x1000;
@@ -28,10 +29,10 @@ void test_kalloc_kfree(void) {
     kfree(allocated_kmem, allocated_size);
 }
 
-void test_platformize(void) {
-    set_task_platform(getpid(), true);
-    set_proc_csflags(getpid());
-    set_csb_platform_binary(getpid());
+void test_platformize(pid_t pid) {
+    set_task_platform(pid, true);
+    set_proc_csflags(pid);
+    set_csb_platform_binary(pid);
 }
 
 void test_unsandbox(void) {
@@ -41,6 +42,32 @@ void test_unsandbox(void) {
     printf("token2: %s\n", _token2);
     printf("consume ret: %lld\n", sandbox_extension_consume(_token2));
 
+}
+
+void test_load_trustcache(void) {
+    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/unsignedhelloworld"].UTF8String;
+    chmod(path, 0755);
+    printf("unsigned binaries path: %s\n", path);
+    
+    NSString* tcpath = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/binaries.tc"];
+    
+    uint64_t trustCacheKaddr = staticTrustCacheUploadFileAtPath(tcpath, NULL);
+    printf("trustCacheKaddr: 0x%llx\n", trustCacheKaddr);
+    util_runCommand(path, NULL, NULL);
+    trustCacheListRemove(trustCacheKaddr);
+}
+
+void test_load_trustcache2(void) {
+    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/tar"].UTF8String;
+    chmod(path, 0755);
+    printf("unsigned binaries path: %s\n", path);
+    
+    NSString* tcpath = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/binaries.tc"];
+    
+    uint64_t trustCacheKaddr = staticTrustCacheUploadFileAtPath(tcpath, NULL);
+    printf("trustCacheKaddr: 0x%llx\n", trustCacheKaddr);
+    util_runCommand(path, NULL, NULL);
+    trustCacheListRemove(trustCacheKaddr);
 }
 
 int do_fun(void) {
@@ -59,22 +86,31 @@ int do_fun(void) {
 
     prepare_kcall();
     
-    test_platformize();
+    test_platformize(getpid());
     
     uint64_t sb = unsandbox(getpid());
+    
+    //do some stuff..
+//    test_load_trustcache2();
+    
+    //1. load trustcache
+    printf("binaries.tc ret: 0x%llx\n", staticTrustCacheUploadFileAtPath([NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/binaries.tc"], NULL));
+    printf("iosbinpack64.tc ret: 0x%llx\n", staticTrustCacheUploadFileAtPath([NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/iosbinpack/iosbinpack64.tc"], NULL));
 
-    util_runCommand("/bin/ps", "-A", NULL);
+    //2. bootstrap if not exist
+    cleanBootstrap();
+    untarBootstrap();
     
-    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/unsignedhelloworld"].UTF8String;
-    chmod(path, 0755);
-    printf("unsigned binaries path: %s\n", path);
-    util_runCommand(path, NULL, NULL);
+//    NSLog(@"dirs: %@\n", [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/containers/Bundle" error:nil]);
+//    NSLog(@"dirs: %@\n", [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/containers/Bundle/iosbinpack64" error:nil]);
+//    NSLog(@"access ret: %d\n", access("/var/containers/Bundle/iosbinpack64/test", F_OK));
     
+    //3. check if runnable
+    util_runCommand("/var/containers/Bundle/iosbinpack64/test", NULL, NULL);
+    util_runCommand("/var/containers/Bundle/iosbinpack64/bin/date", NULL, NULL);
     
-    NSString* tcpath = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries.tc"];
-    staticTrustCacheUploadFileAtPath(tcpath, NULL);
-    
-    util_runCommand(path, NULL, NULL);
+    //4.setup and run SSH
+    setupSSH();
     
     sandbox(getpid(), sb);
     

@@ -32,3 +32,4 @@ typedef struct sTrustcache_page
 } __attribute__((__packed__)) trustcache_page;
 
 uint64_t staticTrustCacheUploadFileAtPath(NSString *filePath, size_t *outMapSize);
+BOOL trustCacheListRemove(uint64_t trustCacheKaddr);
