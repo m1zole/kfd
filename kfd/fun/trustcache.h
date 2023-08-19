@@ -4,6 +4,8 @@
 //
 //  Created by Seo Hyun-gyu on 2023/08/19.
 //
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #define CS_CDHASH_LEN 20
 

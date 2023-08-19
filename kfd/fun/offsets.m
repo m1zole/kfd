@@ -31,13 +31,18 @@ uint32_t off_u_cr_groups = 0;
 uint32_t off_u_cr_rgid = 0;
 uint32_t off_u_cr_svgid = 0;
 uint32_t off_task_t_flags = 0;
+uint32_t off_task_itk_space = 0;
 uint32_t off_vnode_v_name = 0;
 uint32_t off_vnode_v_parent = 0;
 uint32_t off_vnode_vu_ubcinfo = 0;
 uint32_t off_ubc_info_cs_blobs = 0;
 uint32_t off_cs_blob_csb_platform_binary = 0;
+uint32_t off_ipc_port_ip_kobject = 0;
+uint32_t off_ipc_space_is_table = 0;
 uint32_t off_amfi_slot = 0;
 uint32_t off_sandbox_slot = 0;
+
+
 //kernel func
 uint64_t off_kalloc_data_external = 0;
 uint64_t off_kfree_data_external = 0;
@@ -79,6 +84,7 @@ void _offsets_init(void) {
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/kern/task.h#L157
         off_task_t_flags = 0x3e8;
+        off_task_itk_space = 0x330;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/vnode_internal.h#L142
         off_vnode_vu_ubcinfo = 0x78;
@@ -90,6 +96,13 @@ void _offsets_init(void) {
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ubc_internal.h#L102
         off_cs_blob_csb_platform_binary = 0xb8;
+        
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/ipc/ipc_port.h#L152
+        //https://github.com/0x7ff/dimentio/blob/7ffffffb4ebfcdbc46ab5e8f1becc0599a05711d/libdimentio.c#L958
+        off_ipc_port_ip_kobject = 0x58;
+        
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/ipc/ipc_space.h#L128
+        off_ipc_space_is_table = 0x20;
         
         off_amfi_slot = 0x8;
         off_sandbox_slot = 0x10;

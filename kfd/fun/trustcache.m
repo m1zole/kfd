@@ -5,7 +5,6 @@
 //  Created by Seo Hyun-gyu on 2023/08/19.
 //
 
-#import <Foundation/Foundation.h>
 #import "trustcache.h"
 #import "krw.h"
 #import "offsets.h"
@@ -60,11 +59,8 @@ uint64_t staticTrustCacheUploadFile(trustcache_file *fileToUpload, size_t fileSi
     uint64_t mapSelfPtr = mapKaddr + offsetof(trustcache_page, file);
 
     kwrite64(mapSelfPtrPtr, mapSelfPtr);
-    printf("fileSize: %d\n", fileSize);
     
-//    do_kwrite(mapSelfPtr, fileToUpload, fileSize);
     kwritebuf(mapSelfPtr, fileToUpload, fileSize);
-    
     
     trustCacheListAdd(mapKaddr);
     return mapKaddr;

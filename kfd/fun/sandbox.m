@@ -10,6 +10,9 @@
 #import "offsets.h"
 #import "krw.h"
 #import "sandbox.h"
+#import "proc.h"
+#import "escalate.h"
+
 
 uint64_t unsandbox(pid_t pid) {
     printf("[*] Unsandboxing pid %d\n", pid);
