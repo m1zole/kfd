@@ -114,9 +114,9 @@ int launch(char *binary, char *arg1, char *arg2, char *arg3, char *arg4, char *a
     return 0;
 }
 
-int launchAsPlatform(char *binary, char *arg1, char *arg2, char *arg3, char *arg4, char *arg5, char *arg6, char**env) {
+int launchAsPlatform(char *binary, char *arg1, char *arg2, char *arg3, char *arg4, char *arg5, char *arg6, char* arg7, char**env) {
     pid_t pd;
-    const char* args[] = {binary, arg1, arg2, arg3, arg4, arg5, arg6,  NULL};
+    const char* args[] = {binary, arg1, arg2, arg3, arg4, arg5, arg6, arg7, NULL};
     
     posix_spawnattr_t attr;
     posix_spawnattr_init(&attr);

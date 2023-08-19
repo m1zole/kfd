@@ -88,7 +88,6 @@ int do_fun(void) {
     
     //do some stuff here...
     runSSH();
-    NSLog(@"dirs: %@", [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/containers/Bundle/iosbinpack64" error:nil]);
     
     sandbox(getpid(), sb);
     
