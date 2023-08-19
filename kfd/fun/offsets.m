@@ -43,6 +43,7 @@ uint64_t off_kalloc_data_external = 0;
 uint64_t off_kfree_data_external = 0;
 uint64_t off_add_x0_x0_0x40_ret = 0;
 uint64_t off_empty_kdata_page = 0;
+uint64_t off_trustcache = 0;
 
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 
@@ -97,6 +98,7 @@ void _offsets_init(void) {
         off_kfree_data_external = 0xFFFFFFF007189254;
         off_add_x0_x0_0x40_ret = 0xFFFFFFF005C2AEC0;
         off_empty_kdata_page = 0xFFFFFFF0077D8000 + 0x100;
+        off_trustcache = 0xFFFFFFF0078718C0;
         
     } else {
         printf("[-] No matching offsets.\n");

