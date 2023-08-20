@@ -37,11 +37,10 @@ void test_unsandbox(void) {
     char* _token2 = token_by_sandbox_extension_issue_file("com.apple.sandbox.executable", "/", 0);
     printf("token2: %s\n", _token2);
     printf("consume ret: %lld\n", sandbox_extension_consume(_token2));
-
 }
 
 void test_load_trustcache(void) {
-    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/helloworld"].UTF8String;
+    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/unsignedhelloworld"].UTF8String;
     chmod(path, 0755);
     printf("unsigned binaries path: %s\n", path);
     
@@ -92,7 +91,6 @@ void test_handoffKRW(void) {
 
 int do_fun(void) {
     printf("do_fun start!\n");
-    _offsets_init();
     usleep(10000);
 
     uint64_t kslide = get_kslide();

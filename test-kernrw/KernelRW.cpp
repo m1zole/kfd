@@ -298,15 +298,13 @@ void KernelRW::doRemotePrimitivePatching(mach_port_t transmissionPort, uint64_t 
     debug("doRemotePrimitivePatching send2=0x%08x",kr);
 }
 
-#ifdef MAINAPP
+
 void KernelRW::setOffsets(uint64_t kernelBase, uint64_t kernProc, uint64_t allProc){
     _kernel_base_addr = kernelBase;
     _kernel_proc_addr = kernProc;
     _all_proc_addr = allProc;
 }
-#endif
 
-#ifdef PSPAWN
 void KernelRW::getOffsets(uint64_t *kernelBase, uint64_t *kernProc, uint64_t *allProc){
     if (kernelBase){
         *kernelBase = _kernel_base_addr;
@@ -318,7 +316,6 @@ void KernelRW::getOffsets(uint64_t *kernelBase, uint64_t *kernProc, uint64_t *al
         *allProc = _all_proc_addr;
     }
 }
-#endif
 
 #pragma mark final primitives
 uint32_t KernelRW::kread32(uint64_t where){

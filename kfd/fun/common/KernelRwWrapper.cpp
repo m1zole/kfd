@@ -11,6 +11,7 @@
 #include <sys/param.h>
 #include "../ipc.h"
 #include "../krw.h"
+#include "../offsets.h"
 
 #define PROC_PIDPATHINFO_SIZE  (MAXPATHLEN)
 extern "C" int proc_pidpath(int pid, void * buffer, uint32_t  buffersize);
@@ -18,55 +19,11 @@ extern "C" int proc_pidpath(int pid, void * buffer, uint32_t  buffersize);
 uint64_t our_proc_kAddr;
 KernelRW *krw = NULL;
 
-#ifdef MAINAPP
+
 extern "C" void ksetOffsets(uint64_t kernBaseAddr, uint64_t kernProcAddr, uint64_t allProcAddr){
     if (krw){
         krw->setOffsets(kernBaseAddr, kernProcAddr, allProcAddr);
     }
-}
-#endif
-
-extern "C" uint64_t rk64(uint64_t addr) {
-    if (!krw){
-        return 0;
-    }
-    return krw->kread64(addr);
-}
-extern "C" uint32_t rk32(uint64_t addr) {
-    if (!krw){
-        return 0;
-    }
-    return krw->kread32(addr);
-}
-extern "C" void wk32(uint64_t addr, uint32_t val){
-    if (!krw){
-        return;
-    }
-    krw->kwrite32(addr, val);
-}
-extern "C" void wk64(uint64_t addr, uint64_t val){
-    if (!krw){
-        return;
-    }
-    krw->kwrite64(addr, val);
-}
-extern "C" size_t kread_(uint64_t addr, void *p, size_t sz){
-    if (!krw){
-        return 0;
-    }
-    return krw->kreadbuf(addr, p, sz);
-}
-extern "C" size_t kwrite_(uint64_t addr, const void *p, size_t sz){
-    if (!krw){
-        return 0;
-    }
-    return krw->kwritebuf(addr, p, sz);
-}
-extern "C" unsigned long kstrlen(uint64_t addr){
-    if (!krw){
-        return 0;
-    }
-    return krw->kstrlen(addr);
 }
 
 extern "C" void handoffKernRw(pid_t spawnedPID, const char *processPath){
@@ -158,6 +115,7 @@ extern "C" void handoffKernRw(pid_t spawnedPID, const char *processPath){
     {
         uint64_t spawnedTaskAddr = port_name_to_kobject(spawnedTaskPort);//krw->getKobjAddrForPort(spawnedTaskPort);
         printf("spawnedTaskAddr=0x%016llx\n",spawnedTaskAddr);
+        krw->setOffsets(0xfffffff007004000 + get_kslide(), get_kernproc(), kread64(off_allproc + get_kslide()));
         krw->doRemotePrimitivePatching(trasmissionPort, spawnedTaskAddr);
     }
     printf("done kernel rw handoff\n");

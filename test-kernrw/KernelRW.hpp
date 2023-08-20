@@ -45,13 +45,9 @@ public:
 
     void doRemotePrimitivePatching(mach_port_t transmissionPort, uint64_t dstTaskAddr); //requires kernel RW
     
-#ifdef MAINAPP
     void setOffsets(uint64_t kernelBase, uint64_t kernProc, uint64_t allProc);
-#endif
 
-#ifdef PSPAWN
     void getOffsets(uint64_t *kernelBase, uint64_t *kernProc, uint64_t *allProc);
-#endif
 
     uint32_t kread32(uint64_t where);
     uint64_t kread64(uint64_t where);

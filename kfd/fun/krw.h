@@ -16,7 +16,6 @@ extern "C" {
 #endif
 
 typedef mach_port_t io_connect_t;
-uint64_t IOConnectTrap6(io_connect_t, uint32_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t);
 
 uint64_t get_selftask(void);
 uint64_t get_selfproc(void);

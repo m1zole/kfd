@@ -51,6 +51,7 @@ extern uint64_t off_trustcache;
 extern uint64_t off_gphysbase;
 extern uint64_t off_gphyssize;
 extern uint64_t off_pmap_enter_options_addr;
+extern uint64_t off_allproc;
 
 void _offsets_init(void);
 

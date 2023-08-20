@@ -13,6 +13,8 @@
 #import "ipc.h"
 #import "KernelRwWrapper.h"
 
+uint64_t IOConnectTrap6(io_connect_t, uint32_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t);
+
 uint64_t _kfd = 0;
 
 uint64_t _self_task = 0;
@@ -65,6 +67,7 @@ uint64_t do_kopen(uint64_t puaf_pages, uint64_t puaf_method, uint64_t kread_meth
     set_kslide();
     set_kernproc();
     
+    _offsets_init();
     initKernRw(get_selftask(), kread64, kwrite64);
     printf("isKernRwReady: %d\n", isKernRwReady());
     

@@ -26,17 +26,8 @@ void terminateKernRw(void);
 
 void handoffKernRw(pid_t spawnedPID, const char *processPath);
 
-#ifdef MAINAPP
 void ksetOffsets(uint64_t kernBaseAddr, uint64_t kernProcAddr, uint64_t allProcAddr);
-#endif
 
-uint64_t rk64(uint64_t addr);
-uint32_t rk32(uint64_t addr);
-void wk32(uint64_t addr, uint32_t val);
-void wk64(uint64_t addr, uint64_t val);
-size_t kread_(uint64_t addr, void *p, size_t sz);
-size_t kwrite_(uint64_t addr, const void *p, size_t sz);
-unsigned long kstrlen(uint64_t addr);
 
 #ifdef __cplusplus
 }

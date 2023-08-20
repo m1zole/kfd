@@ -56,6 +56,12 @@ int main(int argc, char **argv, char **envp){
 
 //	uint64_t kbase = krw.getKernelBase();
 //	printf("kernelbase=0x%016llx\n",kbase);
+    uint64_t kernelBase = 0;
+    uint64_t kernProc = 0;
+    uint64_t allProc = 0;
+    
+    krw.getOffsets(&kernelBase, &kernProc, &allProc);
+    printf("kernelBase: 0x%llx, kernProc: 0x%llx, allProc: 0x%llx\n", kernelBase, kernProc, allProc);
     
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:@"/tmp/kfd-arm64.plist"];
     uint64_t kslide = [dict[@"kslide"] unsignedLongLongValue];
