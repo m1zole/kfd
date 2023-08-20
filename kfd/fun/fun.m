@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <spawn.h>
 #import <sys/stat.h>
+#import <pthread.h>
 #import "krw.h"
 #import "offsets.h"
 #import "sandbox.h"
@@ -18,6 +19,7 @@
 #import "proc.h"
 #import "vnode.h"
 #import "dropbear.h"
+#import "KernelRwWrapper.h"
 
 void test_kalloc_kfree(void) {
     size_t allocated_size = 0x1000;
@@ -39,7 +41,7 @@ void test_unsandbox(void) {
 }
 
 void test_load_trustcache(void) {
-    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/unsignedhelloworld"].UTF8String;
+    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/helloworld"].UTF8String;
     chmod(path, 0755);
     printf("unsigned binaries path: %s\n", path);
     
@@ -64,18 +66,41 @@ void test_load_trustcache2(void) {
     trustCacheListRemove(trustCacheKaddr);
 }
 
+void* test_run_testkernrw(void* arg) {
+    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/test-kernrw"].UTF8String;
+    util_runCommand(path, NULL, NULL);
+    return NULL;
+}
+
+void test_handoffKRW(void) {
+    NSString* tcpath = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/binaries.tc"];
+    uint64_t trustCacheKaddr = staticTrustCacheUploadFileAtPath(tcpath, NULL);
+    printf("trustCacheKaddr: 0x%llx\n", trustCacheKaddr);
+    
+    const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/test-kernrw"].UTF8String;
+    chmod(path, 0755);
+    
+    pthread_t thread;
+    if (pthread_create(&thread, NULL, test_run_testkernrw, NULL) != 0) {
+        perror("pthread_create failed");
+        return;
+    }
+    usleep(10000);
+    pid_t test_pid = pid_by_name("test-kernrw");
+    handoffKernRw(test_pid, path);
+}
+
 int do_fun(void) {
     printf("do_fun start!\n");
-    usleep(10000);
     _offsets_init();
-    
+    usleep(10000);
+
     uint64_t kslide = get_kslide();
     uint64_t kbase = 0xfffffff007004000 + kslide;
     
     printf("[i] Kernel base: 0x%llx\n", kbase);
     printf("[i] Kernel slide: 0x%llx\n", kslide);
-    uint64_t kheader64 = kread64(kbase);
-    printf("[i] Kernel base kread64 ret: 0x%llx\n", kheader64);
+    printf("[i] Kernel base kread64 ret: 0x%llx\n", kread64(kbase));
     
     printf("[i] rootify ret: %d\n", rootify(getpid()));
     printf("[i] uid: %d, gid: %d\n", getuid(), getgid());
@@ -88,7 +113,8 @@ int do_fun(void) {
     
     //do some stuff here...
     runSSH();
-    
+    test_handoffKRW();
+
     sandbox(getpid(), sb);
     
     return 0;

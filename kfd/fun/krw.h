@@ -11,15 +11,27 @@
 #include "fun.h"
 #include <mach/mach.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef mach_port_t io_connect_t;
 uint64_t IOConnectTrap6(io_connect_t, uint32_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t);
+
+uint64_t get_selftask(void);
+uint64_t get_selfproc(void);
+uint64_t get_kslide(void);
+uint64_t get_kernproc(void);
+
+void set_selftask(void);
+void set_selfproc(void);
+void set_kslide(void);
+void set_kernproc(void);
 
 uint64_t do_kopen(uint64_t puaf_pages, uint64_t puaf_method, uint64_t kread_method, uint64_t kwrite_method);
 void do_kclose(void);
 void do_kread(uint64_t kaddr, void* uaddr, uint64_t size);
 void do_kwrite(void* uaddr, uint64_t kaddr, uint64_t size);
-uint64_t get_kslide(void);
-uint64_t get_kernproc(void);
 uint8_t kread8(uint64_t where);
 uint32_t kread16(uint64_t where);
 uint32_t kread32(uint64_t where);
@@ -44,4 +56,9 @@ void kfree(uint64_t kaddr, size_t ksize);
 
 uint64_t clean_dirty_kalloc(uint64_t addr, size_t size);
 int kalloc_using_empty_kdata_page(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* krw_h */

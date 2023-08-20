@@ -32,6 +32,9 @@ uint32_t off_u_cr_rgid = 0;
 uint32_t off_u_cr_svgid = 0;
 uint32_t off_task_t_flags = 0;
 uint32_t off_task_itk_space = 0;
+uint32_t off_task_map = 0;
+uint32_t off_vm_map_pmap = 0;
+uint32_t off_pmap_ttep = 0;
 uint32_t off_vnode_v_name = 0;
 uint32_t off_vnode_v_parent = 0;
 uint32_t off_vnode_vu_ubcinfo = 0;
@@ -49,6 +52,9 @@ uint64_t off_kfree_data_external = 0;
 uint64_t off_add_x0_x0_0x40_ret = 0;
 uint64_t off_empty_kdata_page = 0;
 uint64_t off_trustcache = 0;
+uint64_t off_gphysbase = 0;
+uint64_t off_gphyssize = 0;
+uint64_t off_pmap_enter_options_addr = 0;
 
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 
@@ -85,6 +91,13 @@ void _offsets_init(void) {
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/kern/task.h#L157
         off_task_t_flags = 0x3e8;
         off_task_itk_space = 0x330;
+        off_task_map = 0x28;    //_get_task_pmap
+
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/vm/vm_map.h#L471
+        off_vm_map_pmap = 0x48;
+        
+        //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/arm/pmap.h#L377
+        off_pmap_ttep = 0x8;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/vnode_internal.h#L142
         off_vnode_vu_ubcinfo = 0x78;
@@ -112,6 +125,9 @@ void _offsets_init(void) {
         off_add_x0_x0_0x40_ret = 0xFFFFFFF005C2AEC0;
         off_empty_kdata_page = 0xFFFFFFF0077D8000 + 0x100;
         off_trustcache = 0xFFFFFFF0078718C0;
+        off_gphysbase = 0xFFFFFFF0070CBA30; //xref pmap_attribute_cache_sync size: 0x%llx @%s:%d
+        off_gphyssize = 0xFFFFFFF0070CBA48; //xref pmap_attribute_cache_sync size: 0x%llx @%s:%d
+        off_pmap_enter_options_addr = 0xFFFFFFF00727DDE8;
         
     } else {
         printf("[-] No matching offsets.\n");

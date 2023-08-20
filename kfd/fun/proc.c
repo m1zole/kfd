@@ -50,3 +50,19 @@ pid_t pid_by_name(char* nm) {
     if(proc == -1) return -1;
     return kread32(proc + off_p_pid);
 }
+
+uint64_t proc_get_task(uint64_t proc) {
+    return kread64(proc + off_p_task);
+}
+
+uint64_t task_get_vm_map(uint64_t task) {
+    return kread64(task + off_task_map);
+}
+
+uint64_t vm_map_get_pmap(uint64_t vm_map) {
+    return kread64(vm_map + off_vm_map_pmap);
+}
+
+uint64_t pmap_get_ttep(uint64_t pmap) {
+    return kread64(pmap + off_pmap_ttep);
+}
