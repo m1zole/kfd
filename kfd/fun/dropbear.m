@@ -96,6 +96,8 @@ int runSSH(void) {
 
 int cleanBootstrap(void) {
     remove("/var/containers/Bundle/._iosbinpack64");
+    remove("/var/mobile/.bash_history");
+    remove("/var/root/.bash_history");
     [[NSFileManager defaultManager] removeItemAtPath:@"/var/containers/Bundle/iosbinpack64" error:nil];
     [[NSFileManager defaultManager] removeItemAtPath:@"/var/profile" error:nil];
     [[NSFileManager defaultManager] removeItemAtPath:@"/var/motd" error:nil];
