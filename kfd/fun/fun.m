@@ -34,6 +34,7 @@ void xpc_dictionary_set_bool(xpc_object_t xdict, const char *key, bool value);
 void xpc_dictionary_set_value(xpc_object_t xdict, const char *key, xpc_object_t _Nullable value);
 char * xpc_copy_description(xpc_object_t object);
 int64_t xpc_dictionary_get_int64(xpc_object_t xdict, const char *key);
+uint64_t xpc_dictionary_get_uint64(xpc_object_t xdict, const char *key);
 char *xpc_strerror (int);
 int xpc_pipe_routine_with_flags(xpc_pipe_t xpipe, xpc_object_t xdict, xpc_object_t* reply, uint64_t flags);
 kern_return_t bootstrap_look_up(mach_port_t port, const char *service, mach_port_t *server_port);
@@ -111,96 +112,6 @@ void test_handoffKRW(void) {
     handoffKernRw(test_pid, path);
 }
 
-struct _os_alloc_once_s {
-    long once;
-    void *ptr;
-};
-
-struct xpc_global_data {
-    uint64_t    a;
-    uint64_t    xpc_flags;
-    mach_port_t    task_bootstrap_port;  /* 0x10 */
-#ifndef _64
-    uint32_t    padding;
-#endif
-    xpc_object_t    xpc_bootstrap_pipe;   /* 0x18 */
-    // and there's more, but you'll have to wait for MOXiI 2 for those...
-    // ...
-};
-
-extern struct _os_alloc_once_s _os_alloc_once_table[];
-extern void* _os_alloc_once(struct _os_alloc_once_s *slot, size_t sz, os_function_t init);
-
-xpc_object_t launchd_xpc_send_message(xpc_object_t xdict)
-{
-    void* pipePtr = NULL;
-    
-    if(_os_alloc_once_table[1].once == -1)
-    {
-        pipePtr = _os_alloc_once_table[1].ptr;
-    }
-    else
-    {
-        pipePtr = _os_alloc_once(&_os_alloc_once_table[1], 472, NULL);
-        if (!pipePtr) _os_alloc_once_table[1].once = -1;
-    }
-
-    xpc_object_t xreply = nil;
-    if (pipePtr) {
-        struct xpc_global_data* globalData = pipePtr;
-        xpc_object_t pipe = globalData->xpc_bootstrap_pipe;
-        if (pipe) {
-            int err = xpc_pipe_routine_with_flags(pipe, xdict, &xreply, 0);
-            if (err != 0) {
-                return nil;
-            }
-        }
-    }
-    return xreply;
-}
-
-int64_t launchctl_load(const char* plistPath, bool unload)
-{
-    xpc_object_t pathArray = xpc_array_create_empty();
-    xpc_array_set_string(pathArray, XPC_ARRAY_APPEND, plistPath);
-    
-    xpc_object_t msgDictionary = xpc_dictionary_create_empty();
-    xpc_dictionary_set_uint64(msgDictionary, "subsystem", 3);
-    xpc_dictionary_set_uint64(msgDictionary, "handle", 0);
-    xpc_dictionary_set_uint64(msgDictionary, "type", 1);
-    xpc_dictionary_set_bool(msgDictionary, "legacy-load", true);
-    xpc_dictionary_set_bool(msgDictionary, "enable", false);
-    xpc_dictionary_set_uint64(msgDictionary, "routine", unload ? ROUTINE_UNLOAD : ROUTINE_LOAD);
-    xpc_dictionary_set_value(msgDictionary, "paths", pathArray);
-    
-    xpc_object_t msgReply = launchd_xpc_send_message(msgDictionary);
-
-    char *msgReplyDescription = xpc_copy_description(msgReply);
-    printf("msgReply = %s\n", msgReplyDescription);
-    free(msgReplyDescription);
-    
-    int64_t bootstrapError = xpc_dictionary_get_int64(msgReply, "bootstrap-error");
-    if(bootstrapError != 0)
-    {
-        printf("bootstrap-error = %s\n", xpc_strerror((int32_t)bootstrapError));
-        return bootstrapError;
-    }
-    
-    int64_t error = xpc_dictionary_get_int64(msgReply, "error");
-    if(error != 0)
-    {
-        printf("error = %s\n", xpc_strerror((int32_t)error));
-        return error;
-    }
-    
-    // launchctl seems to do extra things here
-    // like getting the audit token via xpc_dictionary_get_audit_token
-    // or sometimes also getting msgReply["req_pid"] and msgReply["rec_execcnt"]
-    // but we don't really care about that here
-
-    return 0;
-}
-
 mach_port_t jbdMachPort(void)
 {
     mach_port_t outPort = -1;
@@ -238,7 +149,6 @@ xpc_object_t sendJBDMessage(xpc_object_t xdict)
 
 void test_run_jailbreakd(void) {
     util_runCommand("/var/jb/basebin/jbinit", NULL, NULL);
-    //launchctl_load(prebootPath(@"basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist").fileSystemRepresentation, false);
 }
 
 void test_communicate_jailbreakd(void) {
@@ -246,7 +156,13 @@ void test_communicate_jailbreakd(void) {
     xpc_dictionary_set_uint64(message, "id", 0x4141);
     
     xpc_object_t reply = sendJBDMessage(message);
-    printf("reply: %p\n", reply);   //if value have (not 0), then communicate successful!
+    if(!reply) {
+        printf("Failed to get reply from jailbreakd\n");
+        return;
+    }
+    
+    uint64_t result = xpc_dictionary_get_uint64(reply, "ret");
+    printf("Got reply from jailbreakd, ret = 0x%llx\n", result);
 }
 
 int do_fun(void) {
@@ -284,7 +200,5 @@ int do_fun(void) {
     
     term_kcall();
 
-    
-    
     return 0;
 }

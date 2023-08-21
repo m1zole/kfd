@@ -394,8 +394,8 @@
             filePath = "kfd/fun/fun.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
             landmarkName = "do_fun()"
             landmarkType = "9">
          </BreakpointContent>
@@ -762,8 +762,8 @@
             filePath = "kfd/fun/fun.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "110"
-            endingLineNumber = "110"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "test_handoffKRW()"
             landmarkType = "9">
             <Locations>
@@ -890,8 +890,8 @@
             filePath = "kfd/fun/fun.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "286"
-            endingLineNumber = "286"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
             landmarkName = "do_fun()"
             landmarkType = "9">
          </BreakpointContent>

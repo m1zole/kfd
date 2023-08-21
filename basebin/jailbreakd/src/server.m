@@ -100,6 +100,14 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide)
 			free(description);
 
 		}
+        
+        //handle
+        if (msgId) {
+            if(msgId == 0x4141) {
+                xpc_dictionary_set_uint64(reply, "ret", 0x1337);
+            }
+        }
+        
 		if (reply) {
 			char *description = xpc_copy_description(reply);
 			NSLog(@"[jailbreakd] responding to %s message %d with %s", systemwide ? "systemwide" : "", msgId, description);
