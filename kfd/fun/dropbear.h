@@ -8,8 +8,8 @@
 #ifndef dropbear_h
 #define dropbear_h
 
-int untarBootstrap(void);
-int cleanBootstrap(void);
+int untarDropbearBootstrap(void);
+int cleanDropbearBootstrap(void);
 int setupSSH(void);
 int runSSH(void);
 

@@ -295,8 +295,8 @@ int prepare_kcall(void) {
     if(access(save_path.UTF8String, F_OK) == 0) {
         uint64_t sb = unsandbox(getpid());
         NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:save_path];
-        _fake_vtable = [dict[@"kcall_fake_vtable"] unsignedLongLongValue];
-        _fake_client = [dict[@"kcall_fake_client"] unsignedLongLongValue];
+        _fake_vtable = [dict[@"kcall_fake_vtable_allocations"] unsignedLongLongValue];
+        _fake_client = [dict[@"kcall_fake_client_allocations"] unsignedLongLongValue];
         sandbox(getpid(), sb);
     } else {
         kalloc_using_empty_kdata_page();
@@ -305,14 +305,13 @@ int prepare_kcall(void) {
         uint64_t sb = unsandbox(getpid());
         
         NSDictionary *dictionary = @{
-            @"kcall_fake_vtable": @(_fake_vtable),
-            @"kcall_fake_client": @(_fake_client),
-            @"kslide": @(get_kslide()),
+            @"kcall_fake_vtable_allocations": @(_fake_vtable),
+            @"kcall_fake_client_allocations": @(_fake_client),
         };
         
         BOOL success = [dictionary writeToFile:save_path atomically:YES];
         if (!success) {
-            printf("[-] Failed createPlistAtPath.\n");
+            printf("[-] Failed createPlistAtPath: /tmp/kfd-arm64.plist\n");
             return -1;
         }
         
@@ -322,6 +321,13 @@ int prepare_kcall(void) {
     }
     
     init_kcall();
+    
+    return 0;
+}
+
+int term_kcall(void) {
+    mach_port_deallocate(mach_task_self(), _user_client);
+    _user_client = 0;
     
     return 0;
 }

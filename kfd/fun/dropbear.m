@@ -32,7 +32,7 @@
 extern char **environ;
 
 
-int untarBootstrap(void) {
+int untarDropbearBootstrap(void) {
     posix_spawnattr_t attr;
     posix_spawnattr_init(&attr);
     posix_spawnattr_setflags(&attr, POSIX_SPAWN_START_SUSPENDED);
@@ -75,13 +75,10 @@ int setupSSH(void) {
 }
 
 int runSSH(void) {
-    //1. load trustcache
-    printf("binaries.tc ret: 0x%llx\n", staticTrustCacheUploadFileAtPath([NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/binaries.tc"], NULL));
-    printf("iosbinpack.tc ret: 0x%llx\n", staticTrustCacheUploadFileAtPath([NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/iosbinpack/iosbinpack.tc"], NULL));
     
     //2.bootstrap
-    cleanBootstrap();
-    untarBootstrap();
+    cleanDropbearBootstrap();
+    untarDropbearBootstrap();
     
     //3.setup dropbear
     setupSSH();
@@ -94,7 +91,7 @@ int runSSH(void) {
     return 0;
 }
 
-int cleanBootstrap(void) {
+int cleanDropbearBootstrap(void) {
     remove("/var/containers/Bundle/._iosbinpack64");
     remove("/var/mobile/.bash_history");
     remove("/var/root/.bash_history");

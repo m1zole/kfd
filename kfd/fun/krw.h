@@ -56,6 +56,8 @@ void kfree(uint64_t kaddr, size_t ksize);
 uint64_t clean_dirty_kalloc(uint64_t addr, size_t size);
 int kalloc_using_empty_kdata_page(void);
 
+int term_kcall(void);
+
 #ifdef __cplusplus
 }
 #endif

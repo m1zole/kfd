@@ -22,6 +22,7 @@ uint32_t off_p_rgid = 0;
 uint32_t off_p_svuid = 0;
 uint32_t off_p_svgid = 0;
 uint32_t off_p_textvp = 0;
+uint32_t off_p_pfd = 0;
 uint32_t off_u_cr_label = 0;
 uint32_t off_u_cr_uid = 0;
 uint32_t off_u_cr_ruid = 0;
@@ -37,6 +38,9 @@ uint32_t off_vm_map_pmap = 0;
 uint32_t off_pmap_ttep = 0;
 uint32_t off_vnode_v_name = 0;
 uint32_t off_vnode_v_parent = 0;
+uint32_t off_vnode_v_data = 0;
+uint32_t off_fp_glob = 0;
+uint32_t off_fg_data = 0;
 uint32_t off_vnode_vu_ubcinfo = 0;
 uint32_t off_ubc_info_cs_blobs = 0;
 uint32_t off_cs_blob_csb_platform_binary = 0;
@@ -78,6 +82,7 @@ void _offsets_init(void) {
         off_p_svuid = 0x3c;
         off_p_svgid = 0x40;
         off_p_textvp = 0x2a8;
+        off_p_pfd = 0x100;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ucred.h#L91
         off_u_cr_label = 0x78;
@@ -104,6 +109,11 @@ void _offsets_init(void) {
         off_vnode_vu_ubcinfo = 0x78;
         off_vnode_v_name = 0xb8;
         off_vnode_v_parent = 0xc0;
+        off_vnode_v_data = 0xe0;
+        
+        off_fp_glob = 0x10;
+        
+        off_fg_data = 0x38;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ubc_internal.h#L149
         off_ubc_info_cs_blobs = 0x50;

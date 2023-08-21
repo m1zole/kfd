@@ -27,6 +27,8 @@
 		6ECE5B7E2A9217D000792D41 /* libgeneral_exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B7C2A9217D000792D41 /* libgeneral_exception.cpp */; };
 		6ECE5B7F2A9217D000792D41 /* KernelRwWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B792A9217CF00792D41 /* KernelRwWrapper.cpp */; };
 		6ECE5B802A9217D000792D41 /* KernelRW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B782A9217CF00792D41 /* KernelRW.cpp */; };
+		6ECE5B862A9269F000792D41 /* bootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B852A9269F000792D41 /* bootstrap.m */; };
+		6ECE5B892A92F95A00792D41 /* boot_info.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B882A92F95A00792D41 /* boot_info.m */; };
 		8C0AF3582A75B6BF0065C9DD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C0AF3572A75B6BF0065C9DD /* IOKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -105,6 +107,10 @@
 		6ECE5B7C2A9217D000792D41 /* libgeneral_exception.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = libgeneral_exception.cpp; sourceTree = "<group>"; };
 		6ECE5B7D2A9217D000792D41 /* libgeneral_exception.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = libgeneral_exception.hpp; sourceTree = "<group>"; };
 		6ECE5B822A92183F00792D41 /* iokit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iokit.h; sourceTree = "<group>"; };
+		6ECE5B842A9269F000792D41 /* bootstrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bootstrap.h; sourceTree = "<group>"; };
+		6ECE5B852A9269F000792D41 /* bootstrap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = bootstrap.m; sourceTree = "<group>"; };
+		6ECE5B872A92F95A00792D41 /* boot_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = boot_info.h; sourceTree = "<group>"; };
+		6ECE5B882A92F95A00792D41 /* boot_info.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = boot_info.m; sourceTree = "<group>"; };
 		8C0AF3512A75B21A0065C9DD /* kread_IOSurface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kread_IOSurface.h; sourceTree = "<group>"; };
 		8C0AF3522A75B2DA0065C9DD /* IOSurface_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSurface_shared.h; sourceTree = "<group>"; };
 		8C0AF3572A75B6BF0065C9DD /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.4.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -277,6 +283,8 @@
 				6ECE5B4E2A905F5000792D41 /* escalate.m */,
 				6ECE5B562A9065B300792D41 /* vnode.h */,
 				6ECE5B572A9065B300792D41 /* vnode.c */,
+				6ECE5B842A9269F000792D41 /* bootstrap.h */,
+				6ECE5B852A9269F000792D41 /* bootstrap.m */,
 				6ECE5B5E2A907DFE00792D41 /* dropbear.m */,
 				6ECE5B592A90662200792D41 /* ipc.h */,
 				6ECE5B642A90802100792D41 /* dropbear.h */,
@@ -284,6 +292,8 @@
 				6ECE5B502A905FDE00792D41 /* proc.h */,
 				6ECE5B512A905FDE00792D41 /* proc.c */,
 				6ECE5B3E2A9030FF00792D41 /* sandbox.h */,
+				6ECE5B872A92F95A00792D41 /* boot_info.h */,
+				6ECE5B882A92F95A00792D41 /* boot_info.m */,
 				6ECE5B3F2A903B8000792D41 /* trustcache.m */,
 				6ECE5B532A90609100792D41 /* utils.h */,
 				6ECE5B542A90609100792D41 /* utils.c */,
@@ -403,6 +413,8 @@
 				6ECE5B522A905FDE00792D41 /* proc.c in Sources */,
 				6ECE5B5B2A90662200792D41 /* ipc.c in Sources */,
 				6ECE5B4F2A905F5000792D41 /* escalate.m in Sources */,
+				6ECE5B892A92F95A00792D41 /* boot_info.m in Sources */,
+				6ECE5B862A9269F000792D41 /* bootstrap.m in Sources */,
 				6ECE5B5F2A907DFE00792D41 /* dropbear.m in Sources */,
 				6ECE5B402A903B8000792D41 /* trustcache.m in Sources */,
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,

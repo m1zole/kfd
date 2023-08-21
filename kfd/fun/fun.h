@@ -10,4 +10,3 @@
 #include <mach/mach.h>
 
 int do_fun(void);
-void test_platformize(pid_t pid);

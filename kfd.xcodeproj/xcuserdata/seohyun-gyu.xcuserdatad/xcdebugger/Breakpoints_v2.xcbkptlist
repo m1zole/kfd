@@ -394,8 +394,8 @@
             filePath = "kfd/fun/fun.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "96"
-            endingLineNumber = "96"
+            startingLineNumber = "256"
+            endingLineNumber = "256"
             landmarkName = "do_fun()"
             landmarkType = "9">
          </BreakpointContent>
@@ -762,8 +762,8 @@
             filePath = "kfd/fun/fun.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
             landmarkName = "test_handoffKRW()"
             landmarkType = "9">
             <Locations>
@@ -798,22 +798,6 @@
                   offsetFromSymbolStart = "192">
                </Location>
             </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6EC49194-AD89-4E41-A2B2-CE8CDFAA617E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "kfd/fun/fun.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "114"
-            endingLineNumber = "114"
-            landmarkName = "do_fun()"
-            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -894,6 +878,70 @@
             endingLineNumber = "135"
             landmarkName = "initKernRw(taskSelfAddr)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4123D767-1514-4338-A371-971EAEF563D0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "kfd/fun/fun.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "286"
+            endingLineNumber = "286"
+            landmarkName = "do_fun()"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "23EEBAB8-6282-458B-8A07-4A54DFD1D99F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "kfd/fun/bootstrap.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "301"
+            endingLineNumber = "301"
+            landmarkName = "extractBootstrap()"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "23EEBAB8-6282-458B-8A07-4A54DFD1D99F - 5f9070f4b78849e2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "extractBootstrap"
+                  moduleName = "kfd"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/seohyun-gyu/Documents/GitHub/kfd-arm64/kfund/kfd/fun/bootstrap.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "279"
+                  endingLineNumber = "279"
+                  offsetFromSymbolStart = "804">
+               </Location>
+               <Location
+                  uuid = "23EEBAB8-6282-458B-8A07-4A54DFD1D99F - 5f9070f4b78849a0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "extractBootstrap"
+                  moduleName = "kfd"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/seohyun-gyu/Documents/GitHub/kfd-arm64/kfund/kfd/fun/bootstrap.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "277"
+                  endingLineNumber = "277"
+                  offsetFromSymbolStart = "796">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
