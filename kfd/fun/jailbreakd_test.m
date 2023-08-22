@@ -18,6 +18,7 @@
 #import <stdlib.h>
 #import <unistd.h>
 #import <pthread.h>
+#import <sys/stat.h>
 
 mach_port_t jbdMachPort(void)
 {
@@ -69,7 +70,7 @@ void test_handoffKRW_jailbreakd(void) {
         perror("pthread_create failed");
         return;
     }
-    usleep(10000);
+    usleep(100000);
     pid_t jbd_pid = pid_by_name("jailbreakd");
     handoffKernRw(jbd_pid, "/var/jb/basebin/jailbreakd");
 }
@@ -149,8 +150,8 @@ void test_communicate_jailbreakd(void) {
         printf("Failed to get reply from jailbreakd\n");
         return;
     }
-    val = xpc_dictionary_get_uint64(reply, "ret");
-    printf("kread64 ret: 0x%llx\n", val);
+    uint64_t ret = xpc_dictionary_get_uint64(reply, "ret");
+    printf("kread64 ret: 0x%llx\n", ret);
     
     //testing 0x5 = kwrite32
     message = xpc_dictionary_create_empty();
@@ -163,7 +164,7 @@ void test_communicate_jailbreakd(void) {
         printf("Failed to get reply from jailbreakd\n");
         return;
     }
-    uint64_t ret = xpc_dictionary_get_uint64(reply, "ret");
+    ret = xpc_dictionary_get_uint64(reply, "ret");
     printf("kwrite32 ret: 0x%llx\n", ret);
     
     printf("really off_empty_kdata_page has been written? 0x%x\n", kread32(off_empty_kdata_page + get_kslide()));
@@ -191,21 +192,22 @@ void test_communicate_jailbreakd(void) {
     message = xpc_dictionary_create_empty();
     xpc_dictionary_set_uint64(message, "id", JBD_MSG_KALLOC);
     xpc_dictionary_set_uint64(message, "ksize", 0x100);
-    
+
     reply = sendJBDMessage(message);
     if(!reply) {
         printf("Failed to get reply from jailbreakd\n");
         return;
     }
-    val = xpc_dictionary_get_uint64(reply, "val");
-    printf("kalloc mem: 0x%llx\n", val);
-    
-    //testing 0x8 = kfree
+    ret = xpc_dictionary_get_uint64(reply, "ret");
+    printf("kalloc mem: 0x%llx\n", ret);
+//
+//
+//    //testing 0x8 = kfree
     message = xpc_dictionary_create_empty();
     xpc_dictionary_set_uint64(message, "id", JBD_MSG_KFREE);
-    xpc_dictionary_set_uint64(message, "kaddr", val);
+    xpc_dictionary_set_uint64(message, "kaddr", ret);
     xpc_dictionary_set_uint64(message, "ksize", 0x100);
-    
+
     reply = sendJBDMessage(message);
     if(!reply) {
         printf("Failed to get reply from jailbreakd\n");
@@ -213,12 +215,31 @@ void test_communicate_jailbreakd(void) {
     }
     ret = xpc_dictionary_get_uint64(reply, "ret");
     printf("kfree ret: 0x%llx\n", ret);
-    
+
     //testing 0x9 = kcall
     //0xFFFFFFF00758E90C proc_selfpid
     uint64_t kcall_ret = test_jbd_kcall(0xFFFFFFF00758E90C + kslide, 1, (const uint64_t[]){1});
     printf("proc_selfpid kcall ret: %lld, jailbreakd pid: %d\n", kcall_ret, pid_by_name("jailbreakd"));
     
+    goto XXX_NOT_IMPLEMENTED_JUMP;
+    
+    //testing 10 = load trustcache from file, same as JBD_MSG_PROCESS_BINARY on Dopamine
+    char* execPath = [NSString stringWithFormat:@"%@/unsigned/unsignedhelloworld", NSBundle.mainBundle.bundlePath].UTF8String;
+    printf("execPath: %s\n", execPath);
+    chmod(execPath, 0755);
+    message = xpc_dictionary_create_empty();
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_LOAD_TC);
+    xpc_dictionary_set_string(message, "filePath", execPath);
+    reply = sendJBDMessage(message);
+    if(!reply) {
+        printf("Failed to get reply from jailbreakd\n");
+        return;
+    }
+    ret = xpc_dictionary_get_uint64(reply, "ret");
+    printf("JBD_MSG_LOAD_TC ret: 0x%llx\n", ret);
+    util_runCommand(execPath, NULL, NULL);
+
+XXX_NOT_IMPLEMENTED_JUMP:
     //kill
     launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);
     usleep(10000);

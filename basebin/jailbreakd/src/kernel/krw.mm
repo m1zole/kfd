@@ -178,15 +178,20 @@ uint64_t kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2,
 }
 
 uint64_t kalloc(size_t ksize) {
+  init_kcall();
   uint64_t allocated_kmem =
       kcall(bootInfo_getUInt64(@"off_kalloc_data_external") + get_kslide(),
             ksize, 1, 0, 0, 0, 0, 0);
-  return zm_fix_addr_kalloc(allocated_kmem);
+  allocated_kmem = zm_fix_addr_kalloc(allocated_kmem);
+  term_kcall();
+  return allocated_kmem;
 }
 
 void kfree(uint64_t kaddr, size_t ksize) {
+  init_kcall();
   kcall(bootInfo_getUInt64(@"off_kfree_data_external") + get_kslide(), kaddr,
         ksize, 0, 0, 0, 0, 0);
+  term_kcall();
 }
 
 int init_kcall(void) {
@@ -209,6 +214,7 @@ int init_kcall(void) {
     printf(" [-] unable to get user client connection\n");
     exit(EXIT_FAILURE);
   }
+  IOObjectRelease(service);
   uint64_t uc_port = port_name_to_ipc_port(_user_client);
   uint64_t uc_addr = kread64(uc_port + off_ipc_port_ip_kobject);
   uint64_t uc_vtab = kread64(uc_addr);
@@ -228,7 +234,7 @@ int init_kcall(void) {
 }
 
 int term_kcall(void) {
-  mach_port_deallocate(mach_task_self(), _user_client);
+  IOServiceClose(_user_client);
   _user_client = 0;
 
   return 0;

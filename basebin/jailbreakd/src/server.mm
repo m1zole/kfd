@@ -1,6 +1,7 @@
 #import "server.h"
 #import "kernel/krw.h"
 #import "kernel/offsets.h"
+#import "trustcache.h"
 #import <kern_memorystatus.h>
 #import <libproc.h>
 
@@ -150,20 +151,16 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
       //  kalloc
       if (msgId == JBD_MSG_KALLOC) {
         uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
-        init_kcall();
         uint64_t allocated_kmem = kalloc(ksize);
         xpc_dictionary_set_uint64(reply, "ret", allocated_kmem);
-        term_kcall();
       }
 
       //  kfree
       if (msgId == JBD_MSG_KFREE) {
         uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
         uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
-        init_kcall();
         kfree(kaddr, ksize);
         xpc_dictionary_set_uint64(reply, "ret", 0);
-        term_kcall();
       }
 
       //  kcall
@@ -183,6 +180,19 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
                                    argv[4], argv[5], argv[6]);
         xpc_dictionary_set_uint64(reply, "ret", kcall_ret);
         term_kcall();
+      }
+
+      //  load trustcache from bin
+      if (msgId == JBD_MSG_LOAD_TC) {
+        int64_t ret = 0;
+        const char *filePath = xpc_dictionary_get_string(message, "filePath");
+        if (filePath) {
+          NSString *nsFilePath = [NSString stringWithUTF8String:filePath];
+          ret = processBinary(nsFilePath);
+        } else {
+          ret = -1;
+        }
+        xpc_dictionary_set_int64(reply, "ret", ret);
       }
     }
 

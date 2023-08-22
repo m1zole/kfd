@@ -30,6 +30,7 @@
 		6ECE5B862A9269F000792D41 /* bootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B852A9269F000792D41 /* bootstrap.m */; };
 		6ECE5B892A92F95A00792D41 /* boot_info.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B882A92F95A00792D41 /* boot_info.m */; };
 		6ECE5B8C2A944CA700792D41 /* jailbreakd_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B8B2A944CA700792D41 /* jailbreakd_test.m */; };
+		6ECE5B912A949F0800792D41 /* unsigned in Resources */ = {isa = PBXBuildFile; fileRef = 6ECE5B902A949F0800792D41 /* unsigned */; };
 		8C0AF3582A75B6BF0065C9DD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C0AF3572A75B6BF0065C9DD /* IOKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,7 @@
 		6ECE5B882A92F95A00792D41 /* boot_info.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = boot_info.m; sourceTree = "<group>"; };
 		6ECE5B8A2A944CA700792D41 /* jailbreakd_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jailbreakd_test.h; sourceTree = "<group>"; };
 		6ECE5B8B2A944CA700792D41 /* jailbreakd_test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = jailbreakd_test.m; sourceTree = "<group>"; };
+		6ECE5B902A949F0800792D41 /* unsigned */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unsigned; sourceTree = SOURCE_ROOT; };
 		8C0AF3512A75B21A0065C9DD /* kread_IOSurface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kread_IOSurface.h; sourceTree = "<group>"; };
 		8C0AF3522A75B2DA0065C9DD /* IOSurface_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSurface_shared.h; sourceTree = "<group>"; };
 		8C0AF3572A75B6BF0065C9DD /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.4.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -254,6 +256,7 @@
 		297BA1072A310AE100D1E51A /* kfd */ = {
 			isa = PBXGroup;
 			children = (
+				6ECE5B902A949F0800792D41 /* unsigned */,
 				6ECE5B602A907FC800792D41 /* binaries */,
 				6ECE5B5C2A907DE900792D41 /* iosbinpack */,
 				297BA10C2A310AE200D1E51A /* Assets.xcassets */,
@@ -395,6 +398,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6ECE5B912A949F0800792D41 /* unsigned in Resources */,
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
 				6ECE5B612A907FC800792D41 /* binaries in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,

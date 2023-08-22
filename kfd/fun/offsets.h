@@ -56,6 +56,9 @@ extern uint64_t off_gphysbase;
 extern uint64_t off_gphyssize;
 extern uint64_t off_pmap_enter_options_addr;
 extern uint64_t off_allproc;
+extern uint64_t off_pmap_find_phys;
+extern uint64_t off_ml_phys_read_data;
+extern uint64_t off_ml_phys_write_data;
 
 void _offsets_init(void);
 

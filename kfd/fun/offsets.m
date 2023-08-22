@@ -60,6 +60,9 @@ uint64_t off_gphysbase = 0;
 uint64_t off_gphyssize = 0;
 uint64_t off_pmap_enter_options_addr = 0;
 uint64_t off_allproc = 0;
+uint64_t off_pmap_find_phys = 0;
+uint64_t off_ml_phys_read_data = 0;
+uint64_t off_ml_phys_write_data = 0;
 
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 
@@ -140,6 +143,9 @@ void _offsets_init(void) {
         off_gphyssize = 0xFFFFFFF0070CBA48; //xref pmap_attribute_cache_sync size: 0x%llx @%s:%d
         off_pmap_enter_options_addr = 0xFFFFFFF00727DDE8;
         off_allproc = 0xFFFFFFF00784C100;
+        off_pmap_find_phys = 0xFFFFFFF007284B58;
+        off_ml_phys_read_data = 0xFFFFFFF00729510C;
+        off_ml_phys_write_data = 0xFFFFFFF007295390;
         
     } else {
         printf("[-] No matching offsets.\n");

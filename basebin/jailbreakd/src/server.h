@@ -23,4 +23,6 @@ typedef enum {
     JBD_MSG_KALLOC = 7,
     JBD_MSG_KFREE = 8,
     JBD_MSG_KCALL = 9,
+
+    JBD_MSG_LOAD_TC = 10, // same as JBD_MSG_PROCESS_BINARY on Dopamine
 } JBD_MESSAGE_ID;

@@ -12,6 +12,7 @@
 #import "vnode.h"
 #import "boot_info.h"
 #import "offsets.h"
+#import "krw.h"
 
 #import <stdbool.h>
 #import <Foundation/Foundation.h>
@@ -344,8 +345,8 @@ int extractBootstrap(void) {
 //        try createSymbolicLink(atPath: "/var/jb/usr/lib/libfilecom.dylib", withDestinationPath: procursusPath + "/basebin/libfilecom.dylib")
 //    }
     //1. Copy kr.h4ck.jailbreak.plist to LaunchDaemons
-    if(access("/var/jb/basebin/LaunchDaemons", F_OK) != 0)
-        mkdir("/var/jb/basebin/LaunchDaemons", 0755);
+    [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/LaunchDaemons" error:nil];
+    mkdir("/var/jb/basebin/LaunchDaemons", 0755);
     [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist" error:nil];
     [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/kr.h4ck.jailbreakd.plist", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist" error:nil];
     chown("/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist", 0, 0);
@@ -404,6 +405,7 @@ int extractBootstrap(void) {
     NSDictionary *tmp_kfd_arm64 = [NSDictionary dictionaryWithContentsOfFile:@"/tmp/kfd-arm64.plist"];
     bootInfo_setObject(@"kcall_fake_vtable_allocations", @([tmp_kfd_arm64[@"kcall_fake_vtable_allocations"] unsignedLongLongValue]));
     bootInfo_setObject(@"kcall_fake_client_allocations", @([tmp_kfd_arm64[@"kcall_fake_client_allocations"] unsignedLongLongValue]));
+    bootInfo_setObject(@"kernelslide", @(get_kslide()));
     
     return 0;
 }

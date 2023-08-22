@@ -32,12 +32,16 @@ void kfree(uint64_t kaddr, size_t ksize);
 extern "C" {
 #endif
 
+extern const mach_port_t kIOMainPortDefault;
 typedef mach_port_t io_connect_t;
 typedef mach_port_t io_service_t;
+kern_return_t IOConnectCallMethod(io_connect_t client, uint32_t selector, const uint64_t *in, uint32_t inCnt, const void *inStruct, size_t inStructCnt, uint64_t *out, uint32_t *outCnt, void *outStruct, size_t *outStructCnt);
 uint64_t IOConnectTrap6(io_connect_t, uint32_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t);
 kern_return_t IOServiceOpen(io_service_t service, task_port_t owningTask, uint32_t type,io_connect_t *connect);
+kern_return_t IOServiceClose(io_connect_t client);
 io_service_t IOServiceGetMatchingService(mach_port_t masterPort, CFDictionaryRef matching);
 CFMutableDictionaryRef IOServiceMatching(const char *name);
+kern_return_t IOObjectRelease(mach_port_t object);
 extern const mach_port_t kIOMasterPortDefault;
 #define IO_OBJECT_NULL 0
 

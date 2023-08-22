@@ -232,6 +232,7 @@ uint64_t init_kcall(void) {
       printf(" [-] unable to get user client connection\n");
       exit(EXIT_FAILURE);
     }
+    IOObjectRelease(service);
     uint64_t uc_port = port_name_to_ipc_port(_user_client);
     uint64_t uc_addr = kread64(uc_port + off_ipc_port_ip_kobject);    //#define IPC_PORT_IP_KOBJECT_OFF
     uint64_t uc_vtab = kread64(uc_addr);
@@ -339,7 +340,7 @@ int prepare_kcall(void) {
 }
 
 int term_kcall(void) {
-    mach_port_deallocate(mach_task_self(), _user_client);
+    IOServiceClose(_user_client);
     _user_client = 0;
     
     return 0;
