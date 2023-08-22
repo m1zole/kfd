@@ -5,9 +5,6 @@
 //  Created by Seo Hyun-gyu on 2023/08/19.
 //
 
-#ifndef proc_h
-#define proc_h
-
 #include <stdio.h>
 
 pid_t pid_by_name(char* nm);
@@ -17,5 +14,3 @@ uint64_t proc_get_task(uint64_t proc);
 uint64_t task_get_vm_map(uint64_t task);
 uint64_t vm_map_get_pmap(uint64_t vm_map);
 uint64_t pmap_get_ttep(uint64_t pmap);
-
-#endif /* proc_h */

@@ -96,6 +96,26 @@ void test_launchdhook(void) {
     launch("/var/jb/basebin/opainject", "1", "/var/jb/basebin/launchdhook.dylib", NULL, NULL, NULL, NULL, NULL);
 }
 
+void test_physrw(void) {
+    //physread test
+    uint64_t target_kaddr = off_empty_kdata_page + get_kslide();
+    kwrite64(target_kaddr, 0x4142434445464748);
+    
+    uint64_t phys_addr = kvtophys(target_kaddr);
+    printf("off_empty_kdata_page kerneladdr -> physaddr: 0x%llx\n", phys_addr);
+    printf("physread64 test: 0x%llx\n", physread64(phys_addr));
+    
+    //Restore
+    kwrite64(off_empty_kdata_page + get_kslide(), 0x0);
+    
+    //physwrite test
+    physwrite64(phys_addr, 0x12345678CAFEBABE);
+    printf("physread64 test: 0x%llx\n", physread64(phys_addr));
+    printf("kread64 test: 0x%llx\n", kread64(target_kaddr));
+    //Restore again
+    physwrite64(phys_addr, 0x0);
+}
+
 int do_fun(void) {
     printf("do_fun start!\n");
     usleep(1000000);
@@ -118,6 +138,7 @@ int do_fun(void) {
     
     //do some stuff here...
     loadTrustCache();
+    test_physrw();
     term_kcall();   //Since term_kcall called, kalloc/kfree NOT work.
     
     extractBootstrap();

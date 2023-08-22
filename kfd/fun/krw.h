@@ -11,9 +11,14 @@
 #include "fun.h"
 #include <mach/mach.h>
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct {
+    uint64_t obj, func, delta;
+} io_external_trap_t;
 
 typedef mach_port_t io_connect_t;
 
@@ -57,6 +62,10 @@ uint64_t clean_dirty_kalloc(uint64_t addr, size_t size);
 int kalloc_using_empty_kdata_page(void);
 
 int term_kcall(void);
+
+uint64_t kvtophys(uint64_t kvaddr);
+uint64_t physread64(uint64_t pa);
+void physwrite64(uint64_t paddr, uint64_t value);
 
 #ifdef __cplusplus
 }
