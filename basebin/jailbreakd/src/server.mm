@@ -1,5 +1,6 @@
 #import "server.h"
-#import "krw.h"
+#import "kernel/krw.h"
+#import "kernel/offsets.h"
 #import <kern_memorystatus.h>
 #import <libproc.h>
 
@@ -145,6 +146,25 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
         kwrite64(kaddr, val);
         xpc_dictionary_set_uint64(reply, "ret", kread64(kaddr) != val);
       }
+
+      //  kalloc
+      if (msgId == JBD_MSG_KALLOC) {
+        uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
+        init_kcall();
+        uint64_t allocated_kmem = kalloc(ksize);
+        xpc_dictionary_set_uint64(reply, "val", allocated_kmem);
+        term_kcall();
+      }
+
+      //  kfree
+      if (msgId == JBD_MSG_KFREE) {
+        uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+        uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
+        init_kcall();
+        kfree(kaddr, ksize);
+        xpc_dictionary_set_uint64(reply, "ret", 0);
+        term_kcall();
+      }
     }
 
     if (reply) {
@@ -163,6 +183,7 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
 int main(int argc, char *argv[]) {
   @autoreleasepool {
     NSLog(@"[jailbreakd] Hello from the other side!");
+    _offsets_init();
 
     get_kernel_rw();
 

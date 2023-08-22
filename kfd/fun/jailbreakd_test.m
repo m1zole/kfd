@@ -170,6 +170,33 @@ void test_communicate_jailbreakd(void) {
     //Restore
     kwrite64(off_empty_kdata_page + get_kslide(), 0x0);
     
+    //testing 0x7 = kalloc
+    message = xpc_dictionary_create_empty();
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_KALLOC);
+    xpc_dictionary_set_uint64(message, "ksize", 0x100);
+    
+    reply = sendJBDMessage(message);
+    if(!reply) {
+        printf("Failed to get reply from jailbreakd\n");
+        return;
+    }
+    val = xpc_dictionary_get_uint64(reply, "val");
+    printf("kalloc mem: 0x%llx\n", val);
+    
+    //testing 0x8 = kfree
+    message = xpc_dictionary_create_empty();
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_KFREE);
+    xpc_dictionary_set_uint64(message, "kaddr", val);
+    xpc_dictionary_set_uint64(message, "ksize", 0x100);
+    
+    reply = sendJBDMessage(message);
+    if(!reply) {
+        printf("Failed to get reply from jailbreakd\n");
+        return;
+    }
+    ret = xpc_dictionary_get_uint64(reply, "ret");
+    printf("kfree ret: 0x%llx\n", ret);
+    
     //kill
     launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);
     usleep(10000);
