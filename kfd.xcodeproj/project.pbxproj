@@ -29,6 +29,7 @@
 		6ECE5B802A9217D000792D41 /* KernelRW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B782A9217CF00792D41 /* KernelRW.cpp */; };
 		6ECE5B862A9269F000792D41 /* bootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B852A9269F000792D41 /* bootstrap.m */; };
 		6ECE5B892A92F95A00792D41 /* boot_info.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B882A92F95A00792D41 /* boot_info.m */; };
+		6ECE5B8C2A944CA700792D41 /* jailbreakd_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B8B2A944CA700792D41 /* jailbreakd_test.m */; };
 		8C0AF3582A75B6BF0065C9DD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C0AF3572A75B6BF0065C9DD /* IOKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -111,6 +112,8 @@
 		6ECE5B852A9269F000792D41 /* bootstrap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = bootstrap.m; sourceTree = "<group>"; };
 		6ECE5B872A92F95A00792D41 /* boot_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = boot_info.h; sourceTree = "<group>"; };
 		6ECE5B882A92F95A00792D41 /* boot_info.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = boot_info.m; sourceTree = "<group>"; };
+		6ECE5B8A2A944CA700792D41 /* jailbreakd_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jailbreakd_test.h; sourceTree = "<group>"; };
+		6ECE5B8B2A944CA700792D41 /* jailbreakd_test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = jailbreakd_test.m; sourceTree = "<group>"; };
 		8C0AF3512A75B21A0065C9DD /* kread_IOSurface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kread_IOSurface.h; sourceTree = "<group>"; };
 		8C0AF3522A75B2DA0065C9DD /* IOSurface_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSurface_shared.h; sourceTree = "<group>"; };
 		8C0AF3572A75B6BF0065C9DD /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.4.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -292,6 +295,8 @@
 				6ECE5B502A905FDE00792D41 /* proc.h */,
 				6ECE5B512A905FDE00792D41 /* proc.c */,
 				6ECE5B3E2A9030FF00792D41 /* sandbox.h */,
+				6ECE5B8A2A944CA700792D41 /* jailbreakd_test.h */,
+				6ECE5B8B2A944CA700792D41 /* jailbreakd_test.m */,
 				6ECE5B872A92F95A00792D41 /* boot_info.h */,
 				6ECE5B882A92F95A00792D41 /* boot_info.m */,
 				6ECE5B3F2A903B8000792D41 /* trustcache.m */,
@@ -407,6 +412,7 @@
 				6ECE5B3D2A9030F000792D41 /* sandbox.m in Sources */,
 				6E75BFAE2A847A980056ABDA /* offsets.m in Sources */,
 				6ECE5B7E2A9217D000792D41 /* libgeneral_exception.cpp in Sources */,
+				6ECE5B8C2A944CA700792D41 /* jailbreakd_test.m in Sources */,
 				297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */,
 				6ECE5B582A9065B300792D41 /* vnode.c in Sources */,
 				6E75BFA82A8475C70056ABDA /* fun.m in Sources */,

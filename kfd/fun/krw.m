@@ -58,8 +58,21 @@ void set_kernproc(void) {
     _kern_proc = ((struct kfd*)_kfd)->info.kernel.kernel_proc;
 }
 
+
+
 uint64_t do_kopen(uint64_t puaf_pages, uint64_t puaf_method, uint64_t kread_method, uint64_t kwrite_method)
 {
+//    return 0;
+//    NSString *sbToken = @"e41596ddb5c43cd9c0cc9bfac6f018f19390713bd265d69298ac63cb5ef2f6ea;00;00000000;00000000;00000000;000000000000001a;com.apple.app-sandbox.read;01;01000006;00000000000016ae;01;/private/preboot/127DC80EC101C00AD08A5335A1BFB1E021D98F31/jb-8BpYhc/procursus|e598328a7eb88bffd213cda22962d58b93a6f14c88cedc27dd54d52624a83476;00;00000000;00000000;00000000;000000000000001c;com.apple.sandbox.executable;01;01000006;00000000000016ae;01;/private/preboot/127DC80EC101C00AD08A5335A1BFB1E021D98F31/jb-8BpYhc/procursus|cf678ea8900c98e7be870ceb5b95eb0d9d0f67056d562f9e0c17a5c2395b4fb4;01;00000000;00000000;00000000;000000000000001a;com.apple.app-sandbox.mach;kr.h4ck.jailbreakd.systemwide|e2d7e992512ff0740a9309e36542072caa534996fd0550bcc3834061c1ee2227;01;00000000;00000000;00000000;0000000000000034;com.apple.security.exception.mach-lookup.global-name;kr.h4ck.jailbreakd.systemwide";
+//    NSArray *components = [sbToken componentsSeparatedByString:@"|"];
+//    for(NSString *token in components) {
+//        printf("consume ret: %lld\n", sandbox_extension_consume(token.UTF8String));
+//    }
+//    NSLog(@"dirs: %@", [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/var/jb" error:nil]);
+//
+//
+//    usleep(1000000);
+//    exit(0);
     _kfd = kopen(puaf_pages, puaf_method, kread_method, kwrite_method);
     
     set_selftask();

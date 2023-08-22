@@ -262,8 +262,8 @@ int extractBootstrap(void) {
     
     bool bootstrapNeedsExtract = false;
     NSString* procursusPath = [NSString stringWithFormat:@"%s%s", fakeRootPath, "/procursus"];
-    NSString* installedPath = [NSString stringWithFormat:@"%@%s", procursusPath, "/.installed_dopamine"];
-    NSString* prereleasePath = [NSString stringWithFormat:@"%@%s", procursusPath, "/.used_dopamine_prerelease"];
+    NSString* installedPath = [NSString stringWithFormat:@"%@%s", procursusPath, "/.installed_kfund"];
+    NSString* prereleasePath = [NSString stringWithFormat:@"%@%s", procursusPath, "/.used_kfund_prerelease"];
     
     if(access(procursusPath.UTF8String, F_OK) == 0) {
         if(access(installedPath.UTF8String, F_OK) != 0) {
@@ -361,6 +361,16 @@ int extractBootstrap(void) {
     [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/jbinit", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/jbinit" error:nil];
     chown("/var/jb/basebin/jbinit", 0, 0);
     chmod("/var/jb/basebin/jbinit", 0755);
+    //4. Copy launchdhook.dylib to basebin
+    [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/launchdhook.dylib" error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/launchdhook.dylib", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/launchdhook.dylib" error:nil];
+    chown("/var/jb/basebin/launchdhook.dylib", 0, 0);
+    chmod("/var/jb/basebin/launchdhook.dylib", 0755);
+    //5. Copy opainject to basebin
+    [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/opainject" error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/opainject", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/opainject" error:nil];
+    chown("/var/jb/basebin/opainject", 0, 0);
+    chmod("/var/jb/basebin/opainject", 0755);
     
     // Create preferences directory if it does not exist
     NSFileManager *fileManager = [NSFileManager defaultManager];

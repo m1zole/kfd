@@ -330,9 +330,17 @@ enum {
 /* Memorystatus control */
 #define MEMORYSTATUS_BUFFERSIZE_MAX 65536
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef KERNEL
 int memorystatus_get_level(user_addr_t level);
 int memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 /* Commands */
