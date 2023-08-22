@@ -12,3 +12,12 @@ extern uint64_t gSelfProc;
 extern uint64_t gSelfTask;
 
 void primitivesInitializedCallback(void);
+
+typedef enum {
+    JBD_MSG_KRW_READY = 1,
+    JBD_MSG_KERNINFO = 2,
+    JBD_MSG_KREAD32 = 3,
+    JBD_MSG_KREAD64 = 4,
+    JBD_MSG_KWRITE32 = 5,
+    JBD_MSG_KWRITE64 = 6,
+} JBD_MESSAGE_ID;

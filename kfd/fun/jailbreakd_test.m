@@ -74,11 +74,10 @@ void test_handoffKRW_jailbreakd(void) {
     handoffKernRw(jbd_pid, "/var/jb/basebin/jailbreakd");
 }
 
-
 void test_communicate_jailbreakd(void) {
     //testing 0x1 = check if kernel r/w received
     xpc_object_t message = xpc_dictionary_create_empty();
-    xpc_dictionary_set_uint64(message, "id", 0x1);
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_KRW_READY);
     
     xpc_object_t reply = sendJBDMessage(message);
     if(!reply) {
@@ -91,7 +90,7 @@ void test_communicate_jailbreakd(void) {
     
     //testing 0x2 = grab kernel info
     message = xpc_dictionary_create_empty();
-    xpc_dictionary_set_uint64(message, "id", 0x2);
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_KERNINFO);
     
     reply = sendJBDMessage(message);
     if(!reply) {
@@ -112,7 +111,7 @@ void test_communicate_jailbreakd(void) {
     
     //testing 0x3 = kread32
     message = xpc_dictionary_create_empty();
-    xpc_dictionary_set_uint64(message, "id", 0x3);
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_KREAD32);
     xpc_dictionary_set_uint64(message, "kaddr", kbase);
     
     reply = sendJBDMessage(message);
@@ -125,7 +124,7 @@ void test_communicate_jailbreakd(void) {
     
     //testing 0x4 = kread64
     message = xpc_dictionary_create_empty();
-    xpc_dictionary_set_uint64(message, "id", 0x4);
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_KREAD64);
     xpc_dictionary_set_uint64(message, "kaddr", kbase);
     
     reply = sendJBDMessage(message);
@@ -138,7 +137,7 @@ void test_communicate_jailbreakd(void) {
     
     //testing 0x5 = kwrite32
     message = xpc_dictionary_create_empty();
-    xpc_dictionary_set_uint64(message, "id", 0x5);
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_KWRITE32);
     xpc_dictionary_set_uint64(message, "kaddr", off_empty_kdata_page + kslide);
     xpc_dictionary_set_uint64(message, "val", 0x41424344);
     
@@ -154,7 +153,7 @@ void test_communicate_jailbreakd(void) {
     
     //testing 0x6 = kwrite64
     message = xpc_dictionary_create_empty();
-    xpc_dictionary_set_uint64(message, "id", 0x6);
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_KWRITE64);
     xpc_dictionary_set_uint64(message, "kaddr", off_empty_kdata_page + kslide);
     xpc_dictionary_set_uint64(message, "val", 0x4141414141414141);
     
@@ -170,4 +169,9 @@ void test_communicate_jailbreakd(void) {
     
     //Restore
     kwrite64(off_empty_kdata_page + get_kslide(), 0x0);
+    
+    //kill
+    launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);
+    usleep(10000);
+    launch("/var/jb/bin/launchctl", "unload", "/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist", NULL, NULL, NULL, NULL, NULL);
 }

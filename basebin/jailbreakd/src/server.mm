@@ -103,7 +103,7 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
     // handle
     if (msgId) {
       // check if kernel r/w received
-      if (msgId == 0x1) {
+      if (msgId == JBD_MSG_KRW_READY) {
         if (get_kbase() != 0)
           xpc_dictionary_set_uint64(reply, "krw_ready", 1);
         else
@@ -111,7 +111,7 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
       }
 
       // grab kernel info
-      if (msgId == 0x2) {
+      if (msgId == JBD_MSG_KERNINFO) {
         xpc_dictionary_set_uint64(reply, "kbase", get_kbase());
         xpc_dictionary_set_uint64(reply, "kslide", get_kslide());
         xpc_dictionary_set_uint64(reply, "allproc", get_allproc());
@@ -119,19 +119,19 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
       }
 
       // kread32
-      if (msgId == 0x3) {
+      if (msgId == JBD_MSG_KREAD32) {
         uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
         xpc_dictionary_set_uint64(reply, "val", kread32(kaddr));
       }
 
       // kread64
-      if (msgId == 0x4) {
+      if (msgId == JBD_MSG_KREAD64) {
         uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
         xpc_dictionary_set_uint64(reply, "val", kread64(kaddr));
       }
 
       //  kwrite32
-      if (msgId == 0x5) {
+      if (msgId == JBD_MSG_KWRITE32) {
         uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
         uint32_t val = xpc_dictionary_get_uint64(message, "val");
         kwrite32(kaddr, val);
@@ -139,7 +139,7 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
       }
 
       //  kwrite64
-      if (msgId == 0x6) {
+      if (msgId == JBD_MSG_KWRITE64) {
         uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
         uint64_t val = xpc_dictionary_get_uint64(message, "val");
         kwrite64(kaddr, val);

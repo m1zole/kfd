@@ -16,6 +16,15 @@
 //  Created by Seo Hyun-gyu on 2023/08/22.
 //
 
+typedef enum {
+    JBD_MSG_KRW_READY = 1,
+    JBD_MSG_KERNINFO = 2,
+    JBD_MSG_KREAD32 = 3,
+    JBD_MSG_KREAD64 = 4,
+    JBD_MSG_KWRITE32 = 5,
+    JBD_MSG_KWRITE64 = 6,
+} JBD_MESSAGE_ID;
+
 typedef void * xpc_object_t;
 typedef xpc_object_t xpc_pipe_t;
 xpc_object_t xpc_array_create_empty(void);
@@ -35,6 +44,7 @@ int xpc_pipe_routine (xpc_object_t xpc_pipe, xpc_object_t inDict, xpc_object_t *
 #define XPC_ARRAY_APPEND ((size_t)(-1))
 #define ROUTINE_LOAD   800
 #define ROUTINE_UNLOAD 801
+
 
 mach_port_t jbdMachPort(void);
 xpc_object_t sendJBDMessage(xpc_object_t xdict);
