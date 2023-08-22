@@ -22,4 +22,5 @@ typedef enum {
     JBD_MSG_KWRITE64 = 6,
     JBD_MSG_KALLOC = 7,
     JBD_MSG_KFREE = 8,
+    JBD_MSG_KCALL = 9,
 } JBD_MESSAGE_ID;

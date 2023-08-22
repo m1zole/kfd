@@ -74,6 +74,23 @@ void test_handoffKRW_jailbreakd(void) {
     handoffKernRw(jbd_pid, "/var/jb/basebin/jailbreakd");
 }
 
+uint64_t test_jbd_kcall(uint64_t func, uint64_t argc, const uint64_t *argv)
+{
+    xpc_object_t message = xpc_dictionary_create_empty();
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_KCALL);
+    xpc_dictionary_set_uint64(message, "kaddr", func);
+
+    xpc_object_t args = xpc_array_create_empty();
+    for (uint64_t i = 0; i < argc; i++) {
+        xpc_array_set_uint64(args, XPC_ARRAY_APPEND, argv[i]);
+    }
+    xpc_dictionary_set_value(message, "args", args);
+
+    xpc_object_t reply = sendJBDMessage(message);
+    if (!reply) return -1;
+    return xpc_dictionary_get_uint64(reply, "ret");
+}
+
 void test_communicate_jailbreakd(void) {
     //testing 0x1 = check if kernel r/w received
     xpc_object_t message = xpc_dictionary_create_empty();
@@ -119,8 +136,8 @@ void test_communicate_jailbreakd(void) {
         printf("Failed to get reply from jailbreakd\n");
         return;
     }
-    uint64_t val = xpc_dictionary_get_uint64(reply, "val");
-    printf("kread32 val: 0x%llx\n", val);
+    uint64_t val = xpc_dictionary_get_uint64(reply, "ret");
+    printf("kread32 ret: 0x%llx\n", val);
     
     //testing 0x4 = kread64
     message = xpc_dictionary_create_empty();
@@ -132,8 +149,8 @@ void test_communicate_jailbreakd(void) {
         printf("Failed to get reply from jailbreakd\n");
         return;
     }
-    val = xpc_dictionary_get_uint64(reply, "val");
-    printf("kread64 val: 0x%llx\n", val);
+    val = xpc_dictionary_get_uint64(reply, "ret");
+    printf("kread64 ret: 0x%llx\n", val);
     
     //testing 0x5 = kwrite32
     message = xpc_dictionary_create_empty();
@@ -196,6 +213,11 @@ void test_communicate_jailbreakd(void) {
     }
     ret = xpc_dictionary_get_uint64(reply, "ret");
     printf("kfree ret: 0x%llx\n", ret);
+    
+    //testing 0x9 = kcall
+    //0xFFFFFFF00758E90C proc_selfpid
+    uint64_t kcall_ret = test_jbd_kcall(0xFFFFFFF00758E90C + kslide, 1, (const uint64_t[]){1});
+    printf("proc_selfpid kcall ret: %lld, jailbreakd pid: %d\n", kcall_ret, pid_by_name("jailbreakd"));
     
     //kill
     launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);

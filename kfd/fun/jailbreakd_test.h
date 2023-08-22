@@ -25,12 +25,14 @@ typedef enum {
     JBD_MSG_KWRITE64 = 6,
     JBD_MSG_KALLOC = 7,
     JBD_MSG_KFREE = 8,
+    JBD_MSG_KCALL = 9,
 } JBD_MESSAGE_ID;
 
 typedef void * xpc_object_t;
 typedef xpc_object_t xpc_pipe_t;
 xpc_object_t xpc_array_create_empty(void);
 xpc_object_t xpc_dictionary_create_empty(void);
+void xpc_array_set_uint64(xpc_object_t xarray, size_t index, uint64_t value);
 void xpc_array_set_string(xpc_object_t xarray, size_t index, const char *string);
 void xpc_dictionary_set_uint64(xpc_object_t xdict, const char *key, uint64_t value);
 void xpc_dictionary_set_bool(xpc_object_t xdict, const char *key, bool value);
