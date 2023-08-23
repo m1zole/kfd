@@ -24,6 +24,7 @@ JBDTCPage *trustCacheFindFreePage(void) {
   }
 
   // No page found, allocate new one
+  NSLog(@"[jailbreakd] trustCacheFindFreePage No page found, allocate new one");
   return [[JBDTCPage alloc] initAllocateAndLink];
 }
 
@@ -162,10 +163,12 @@ void dynamicTrustCacheUploadCDHashesFromArray(NSArray *cdHashArray) {
       if (!mappedInPage || mappedInPage.amountOfSlotsLeft == 0) {
         // If there is still a page mapped, map it out now
         if (mappedInPage) {
+          NSLog(@"[jailbreakd] there is still a page mapped, map it out now");
           [mappedInPage sort];
         }
-
         mappedInPage = trustCacheFindFreePage();
+        NSLog(@"[jailbreakd] mappedInPage self: %@, kaddr: 0x%llx\n",
+              mappedInPage, mappedInPage.kaddr);
       }
 
       trustcache_entry entry;
@@ -182,6 +185,7 @@ void dynamicTrustCacheUploadCDHashesFromArray(NSArray *cdHashArray) {
   if (mappedInPage) {
     [mappedInPage sort];
   }
+  [mappedInPage updateTCPage];
 }
 
 int processBinary(NSString *binaryPath) {
@@ -243,4 +247,88 @@ int processBinary(NSString *binaryPath) {
   }
 
   return ret;
+}
+
+void fileEnumerateTrustCacheEntries(
+    NSURL *fileURL, void (^enumerateBlock)(trustcache_entry entry)) {
+  NSData *cdHash = nil;
+  BOOL adhocSigned = NO;
+  int evalRet = evaluateSignature(fileURL, &cdHash, &adhocSigned);
+  if (evalRet == 0) {
+    NSLog(@"[jailbreakd] %s cdHash: %s, adhocSigned: %d",
+          fileURL.path.UTF8String, cdHash.description.UTF8String, adhocSigned);
+    if (adhocSigned) {
+      if ([cdHash length] == CS_CDHASH_LEN) {
+        trustcache_entry entry;
+        memcpy(&entry.hash, [cdHash bytes], CS_CDHASH_LEN);
+        entry.hash_type = 0x2;
+        entry.flags = 0x0;
+        enumerateBlock(entry);
+      }
+    }
+  } else if (evalRet != 4) {
+    NSLog(@"[jailbreakd] evaluateSignature failed with error %d", evalRet);
+  }
+}
+
+void dynamicTrustCacheUploadDirectory(NSString *directoryPath) {
+  NSString *basebinPath = [[prebootPath(@"basebin")
+      stringByResolvingSymlinksInPath] stringByStandardizingPath];
+  NSString *resolvedPath = [[directoryPath stringByResolvingSymlinksInPath]
+      stringByStandardizingPath];
+  NSDirectoryEnumerator<NSURL *> *directoryEnumerator =
+      [[NSFileManager defaultManager]
+                     enumeratorAtURL:[NSURL fileURLWithPath:resolvedPath
+                                                isDirectory:YES]
+          includingPropertiesForKeys:@[ NSURLIsSymbolicLinkKey ]
+                             options:0
+                        errorHandler:nil];
+  __block JBDTCPage *mappedInPage = nil;
+  for (NSURL *enumURL in directoryEnumerator) {
+    @autoreleasepool {
+      NSNumber *isSymlink;
+      [enumURL getResourceValue:&isSymlink
+                         forKey:NSURLIsSymbolicLinkKey
+                          error:nil];
+      if (isSymlink && ![isSymlink boolValue]) {
+        // never inject basebin binaries here
+        if ([[[enumURL.path stringByResolvingSymlinksInPath]
+                stringByStandardizingPath] hasPrefix:basebinPath])
+          continue;
+        fileEnumerateTrustCacheEntries(enumURL, ^(trustcache_entry entry) {
+          if (!mappedInPage || mappedInPage.amountOfSlotsLeft == 0) {
+            // If there is still a page mapped, map it out now
+            if (mappedInPage) {
+              [mappedInPage sort];
+            }
+            NSLog(@"[jailbreakd] mapping in a new tc page");
+            mappedInPage = trustCacheFindFreePage();
+          }
+
+          // [mappedInPage updateTCPage];
+          NSLog(@"[jailbreakd] [dynamicTrustCacheUploadDirectory %s] Uploading "
+                @"cdhash of %s",
+                directoryPath.UTF8String, enumURL.path.UTF8String);
+          [mappedInPage addEntry:entry];
+        });
+      }
+    }
+  }
+
+  if (mappedInPage) {
+    [mappedInPage sort];
+  }
+}
+
+void rebuildDynamicTrustCache(void) {
+  // nuke existing
+  for (JBDTCPage *page in [gTCPages reverseObjectEnumerator]) {
+    @autoreleasepool {
+      [page unlinkAndFree];
+    }
+  }
+
+  NSLog(@"[jailbreakd] Triggering initial trustcache upload...");
+  dynamicTrustCacheUploadDirectory(prebootPath(nil));
+  NSLog(@"[jailbreakd] Initial TrustCache upload done!");
 }

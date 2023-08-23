@@ -195,6 +195,12 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
         }
         xpc_dictionary_set_int64(reply, "ret", ret);
       }
+
+      if (msgId == JBD_MSG_REBUILD_TRUSTCACHE) {
+        int64_t ret = 0;
+        rebuildDynamicTrustCache();
+        xpc_dictionary_set_int64(reply, "ret", ret);
+      }
     }
 
     if (reply) {

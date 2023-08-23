@@ -39,6 +39,11 @@ void tcPagesChanged(void) {
 
 @implementation JBDTCPage
 
+- (void)updateTCPage {
+  NSLog(@"[jailbreakd] updateTCPage, kaddr: 0x%llx", _kaddr);
+  kwritebuf(self.kaddr, _page, ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
+}
+
 - (instancetype)initWithKernelAddress:(uint64_t)kaddr {
   self = [super init];
   if (self) {
@@ -74,7 +79,9 @@ void tcPagesChanged(void) {
   _kaddr = kaddr;
   if (kaddr) {
     NSLog(@"[jailbreakd] setKaddr: 0x%llx\n", kaddr);
-    _page = (trustcache_page *)malloc(ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
+    if (_page == NULL) {
+      _page = (trustcache_page *)malloc(ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
+    }
     kreadbuf(kaddr, _page, ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
   } else {
     _page = 0;
@@ -86,7 +93,7 @@ void tcPagesChanged(void) {
   if (gTCUnusedAllocations.count) {
     kaddr = [gTCUnusedAllocations.firstObject unsignedLongLongValue];
     [gTCUnusedAllocations removeObjectAtIndex:0];
-    NSLog(@"[jailbreakd] got existing trust cache page at 0x%llX", self.kaddr);
+    NSLog(@"[jailbreakd] got existing trust cache page at 0x%llX", kaddr);
   } else {
     kaddr = kalloc(ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
   }

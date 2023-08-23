@@ -215,11 +215,23 @@ void test_communicate_jailbreakd(void) {
     }
     ret = xpc_dictionary_get_uint64(reply, "ret");
     printf("kfree ret: 0x%llx\n", ret);
-
+    
     //testing 0x9 = kcall
-    //0xFFFFFFF00758E90C proc_selfpid
-    uint64_t kcall_ret = test_jbd_kcall(0xFFFFFFF00758E90C + kslide, 1, (const uint64_t[]){1});
+    uint64_t proc_selfpid_kfunc = 0xFFFFFFF00758E90C + kslide;
+    uint64_t kcall_ret = test_jbd_kcall(proc_selfpid_kfunc, 1, (const uint64_t[]){1});
     printf("proc_selfpid kcall ret: %lld, jailbreakd pid: %d\n", kcall_ret, pid_by_name("jailbreakd"));
+    
+    //testing 11 = rebuild trustcache (load trustcache /var/jb)
+    message = xpc_dictionary_create_empty();
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_REBUILD_TRUSTCACHE);
+
+    reply = sendJBDMessage(message);
+    if(!reply) {
+        printf("Failed to get reply from jailbreakd\n");
+        return;
+    }
+    ret = xpc_dictionary_get_int64(reply, "ret");
+    printf("JBD_MSG_REBUILD_TRUSTCACHE ret: 0x%llx\n", ret);
     
     //testing 10 = load trustcache from file
     char* execPath = [NSString stringWithFormat:@"%@/unsigned/unsignedhelloworld", NSBundle.mainBundle.bundlePath].UTF8String;
@@ -233,12 +245,13 @@ void test_communicate_jailbreakd(void) {
         printf("Failed to get reply from jailbreakd\n");
         return;
     }
-    ret = xpc_dictionary_get_uint64(reply, "ret");
+    ret = xpc_dictionary_get_int64(reply, "ret");
     printf("JBD_MSG_PROCESS_BINARY ret: 0x%llx\n", ret);
     util_runCommand(execPath, NULL, NULL);
+    
 
     //kill
-    launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);
-    usleep(10000);
-    launch("/var/jb/bin/launchctl", "unload", "/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist", NULL, NULL, NULL, NULL, NULL);
+//    launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);
+//    usleep(10000);
+//    launch("/var/jb/bin/launchctl", "unload", "/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist", NULL, NULL, NULL, NULL, NULL);
 }

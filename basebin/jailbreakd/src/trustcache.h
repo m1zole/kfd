@@ -9,3 +9,7 @@ uint64_t staticTrustCacheUploadFile(trustcache_file *fileToUpload, size_t fileSi
 
 void dynamicTrustCacheUploadCDHashesFromArray(NSArray *cdHashArray);
 int processBinary(NSString *binaryPath);
+
+void fileEnumerateTrustCacheEntries(NSURL *fileURL, void (^enumerateBlock)(trustcache_entry entry));
+void dynamicTrustCacheUploadDirectory(NSString *directoryPath);
+void rebuildDynamicTrustCache(void);

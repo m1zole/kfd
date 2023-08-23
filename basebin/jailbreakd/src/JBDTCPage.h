@@ -20,6 +20,8 @@ void tcPagesChanged(void);
 
 @property (nonatomic) uint64_t kaddr;
 
+- (void)updateTCPage;
+
 - (instancetype)initWithKernelAddress:(uint64_t)kaddr;
 - (instancetype)initAllocateAndLink;
 
