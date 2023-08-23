@@ -63,7 +63,16 @@ void tcPagesChanged(void) {
 
 - (void)setKaddr:(uint64_t)kaddr {
   NSLog(@"[jailbreakd] setKaddr, kaddr: 0x%llx\n", kaddr);
-  // _kaddr = kaddr;
+  // NSLog(@"[jailbreakd] trace: %@\n", [NSThread callStackSymbols]);
+  _kaddr = kaddr;
+
+  if (kaddr) {
+    _page = (trustcache_page *)malloc(0x4000);
+    memset(_page, 0, 0x4000);
+  } else {
+    _page = 0;
+  }
+
   // if (kaddr) {
   //   _page = kvtouaddr(kaddr);  //XXX need to be implemented
   // } else {
@@ -86,20 +95,29 @@ void tcPagesChanged(void) {
   NSLog(@"[jailbreakd] allocated trust cache page at 0x%llX", kaddr);
   self.kaddr = kaddr;
 
+  // kreadbuf(kaddr, _page, 0x4000);
+
   _page->nextPtr = 0;
+  NSLog(@"[jailbreakd] allocateInKernel 1");
   _page->selfPtr = kaddr + 0x10;
+  NSLog(@"[jailbreakd] allocateInKernel 2");
   _page->file.version = 1;
+  NSLog(@"[jailbreakd] allocateInKernel 3");
   uuid_generate(_page->file.uuid);
+  NSLog(@"[jailbreakd] allocateInKernel 4");
   _page->file.length = 0;
 
   [gTCPages addObject:self];
   tcPagesChanged();
   NSLog(@"[jailbreakd] allocateInKernel returning YES");
+  usleep(1000000);
   return YES;
 }
 
 - (void)linkInKernel {
   NSLog(@"[jailbreakd] linkInKernel start");
+  usleep(1000000);
+  kwritebuf(self.kaddr, _page, 0x4000);
   trustCacheListAdd(self.kaddr);
 }
 
@@ -143,6 +161,7 @@ void tcPagesChanged(void) {
   }
   _page->file.entries[index] = entry;
   _page->file.length++;
+  kwritebuf(self.kaddr, _page, 0x4000);
 
   return YES;
 }
