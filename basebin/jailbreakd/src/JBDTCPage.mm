@@ -116,7 +116,7 @@ void tcPagesChanged(void) {
 }
 
 - (void)linkInKernel {
-  kwritebuf(self.kaddr, _page, ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
+  [self updateTCPage];
   trustCacheListAdd(self.kaddr);
 }
 
@@ -160,7 +160,6 @@ void tcPagesChanged(void) {
   }
   _page->file.entries[index] = entry;
   _page->file.length++;
-  kwritebuf(self.kaddr, _page, ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
 
   return YES;
 }
@@ -199,7 +198,6 @@ void tcPagesChanged(void) {
   memset(_page->file.entries[entryIndex].hash, 0xFF, CS_CDHASH_LEN);
   [self sort];
   _page->file.length--;
-  kwritebuf(self.kaddr, _page, ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
 
   return YES;
 }

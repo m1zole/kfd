@@ -221,7 +221,7 @@ void test_communicate_jailbreakd(void) {
     uint64_t kcall_ret = test_jbd_kcall(proc_selfpid_kfunc, 1, (const uint64_t[]){1});
     printf("proc_selfpid kcall ret: %lld, jailbreakd pid: %d\n", kcall_ret, pid_by_name("jailbreakd"));
     
-    //testing 11 = rebuild trustcache (load trustcache /var/jb)
+    //testing 10 = rebuild trustcache (load trustcache all from /var/jb)
     message = xpc_dictionary_create_empty();
     xpc_dictionary_set_uint64(message, "id", JBD_MSG_REBUILD_TRUSTCACHE);
 
@@ -232,8 +232,9 @@ void test_communicate_jailbreakd(void) {
     }
     ret = xpc_dictionary_get_int64(reply, "ret");
     printf("JBD_MSG_REBUILD_TRUSTCACHE ret: 0x%llx\n", ret);
+    util_runCommand("/var/jb/usr/bin/id", NULL, NULL);  //check if running /var/jb binaries well.
     
-    //testing 10 = load trustcache from file
+    //testing 11 = load trustcache from unsigned bin (partial file)
     char* execPath = [NSString stringWithFormat:@"%@/unsigned/unsignedhelloworld", NSBundle.mainBundle.bundlePath].UTF8String;
     printf("execPath: %s\n", execPath);
     chmod(execPath, 0755);
@@ -251,7 +252,7 @@ void test_communicate_jailbreakd(void) {
     
 
     //kill
-//    launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);
-//    usleep(10000);
-//    launch("/var/jb/bin/launchctl", "unload", "/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist", NULL, NULL, NULL, NULL, NULL);
+    launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);
+    usleep(10000);
+    launch("/var/jb/bin/launchctl", "unload", "/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist", NULL, NULL, NULL, NULL, NULL);
 }

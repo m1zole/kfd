@@ -318,6 +318,7 @@ void dynamicTrustCacheUploadDirectory(NSString *directoryPath) {
   if (mappedInPage) {
     [mappedInPage sort];
   }
+  [mappedInPage updateTCPage];
 }
 
 void rebuildDynamicTrustCache(void) {

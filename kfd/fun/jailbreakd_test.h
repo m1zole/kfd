@@ -27,8 +27,9 @@ typedef enum {
     JBD_MSG_KFREE = 8,
     JBD_MSG_KCALL = 9,
     
-    JBD_MSG_PROCESS_BINARY = 10,
-    JBD_MSG_REBUILD_TRUSTCACHE = 11,
+    JBD_MSG_REBUILD_TRUSTCACHE = 10,
+    JBD_MSG_PROCESS_BINARY = 11,
+    
 } JBD_MESSAGE_ID;
 
 typedef void * xpc_object_t;
