@@ -1,4 +1,5 @@
 #import "server.h"
+#import "JBDTCPage.h"
 #import "kernel/krw.h"
 #import "kernel/offsets.h"
 #import "trustcache.h"
@@ -218,6 +219,9 @@ int main(int argc, char *argv[]) {
 
     setJetsamEnabled(true);
 
+    gTCPages = [NSMutableArray new];
+    gTCUnusedAllocations = [NSMutableArray new];
+
     mach_port_t machPort = 0;
     kern_return_t kr =
         bootstrap_check_in(bootstrap_port, "kr.h4ck.jailbreakd", &machPort);
@@ -237,6 +241,8 @@ int main(int argc, char *argv[]) {
             kr, mach_error_string(kr));
       return 1;
     }
+
+    tcPagesRecover();
 
     dispatch_source_t source = dispatch_source_create(
         DISPATCH_SOURCE_TYPE_MACH_RECV, (uintptr_t)machPort, 0,

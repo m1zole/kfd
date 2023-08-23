@@ -138,8 +138,8 @@ int do_fun(void) {
     
     //do some stuff here...
     loadTrustCache();
-    test_physrw();
-    term_kcall();   //Since term_kcall called, kalloc/kfree NOT work.
+//    test_physrw();
+    term_kcall();   //Since term_kcall called, kalloc/kfree/physrw NOT work.
     
     extractBootstrap();
     runSSH();

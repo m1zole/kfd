@@ -4,19 +4,18 @@
 #import "trustcache.h"
 #import <uuid/uuid.h>
 
+#define ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE 0x4000
+
 NSMutableArray<JBDTCPage *> *gTCPages = nil;
 NSMutableArray<NSNumber *> *gTCUnusedAllocations = nil;
-
-// extern void trustCacheListAdd(uint64_t trustCacheKaddr);
-// extern void trustCacheListRemove(uint64_t trustCacheKaddr);
-// extern int tcentryComparator(const void *vp1, const void *vp2);
 
 BOOL tcPagesRecover(void) {
   NSArray *existingTCAllocations = bootInfo_getArray(@"trustcache_allocations");
   for (NSNumber *allocNum in existingTCAllocations) {
     @autoreleasepool {
       uint64_t kaddr = [allocNum unsignedLongLongValue];
-      [gTCPages addObject:[[JBDTCPage alloc] initWithKernelAddress:kaddr]];
+      JBDTCPage *jdt = [[JBDTCPage alloc] initWithKernelAddress:kaddr];
+      [gTCPages addObject:jdt];
     }
   }
   NSArray *existingUnusuedTCAllocations =
@@ -62,22 +61,24 @@ void tcPagesChanged(void) {
 }
 
 - (void)setKaddr:(uint64_t)kaddr {
-  NSLog(@"[jailbreakd] setKaddr, kaddr: 0x%llx\n", kaddr);
-  // NSLog(@"[jailbreakd] trace: %@\n", [NSThread callStackSymbols]);
+  // No kvtouaddr :( (self.kaddr 할때 setKaddr: 호출됨)
+  // Since I could't mapping kaddr to userland,
+  // so... use malloc instead of kvtouaddr!
+  // when you changed modify _page everytime, you had to apply into kaddr.
+  //
+  // NOTE: applying _page is being used by this function below
+  // Read: setKaddr
+  // Write: linkInKernel, addEntry, removeEntry
+  // Used: setKaddr, allocateInKernel, sort, addEntry, _indexOfEntry,
+  // removeEntry
   _kaddr = kaddr;
-
   if (kaddr) {
-    _page = (trustcache_page *)malloc(0x4000);
-    memset(_page, 0, 0x4000);
+    NSLog(@"[jailbreakd] setKaddr: 0x%llx\n", kaddr);
+    _page = (trustcache_page *)malloc(ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
+    kreadbuf(kaddr, _page, ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
   } else {
     _page = 0;
   }
-
-  // if (kaddr) {
-  //   _page = kvtouaddr(kaddr);  //XXX need to be implemented
-  // } else {
-  //   _page = 0;
-  // }
 }
 
 - (BOOL)allocateInKernel {
@@ -87,7 +88,7 @@ void tcPagesChanged(void) {
     [gTCUnusedAllocations removeObjectAtIndex:0];
     NSLog(@"[jailbreakd] got existing trust cache page at 0x%llX", self.kaddr);
   } else {
-    kaddr = kalloc(0x4000);
+    kaddr = kalloc(ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
   }
 
   if (kaddr == 0)
@@ -95,29 +96,20 @@ void tcPagesChanged(void) {
   NSLog(@"[jailbreakd] allocated trust cache page at 0x%llX", kaddr);
   self.kaddr = kaddr;
 
-  // kreadbuf(kaddr, _page, 0x4000);
-
   _page->nextPtr = 0;
-  NSLog(@"[jailbreakd] allocateInKernel 1");
   _page->selfPtr = kaddr + 0x10;
-  NSLog(@"[jailbreakd] allocateInKernel 2");
   _page->file.version = 1;
-  NSLog(@"[jailbreakd] allocateInKernel 3");
   uuid_generate(_page->file.uuid);
-  NSLog(@"[jailbreakd] allocateInKernel 4");
   _page->file.length = 0;
 
   [gTCPages addObject:self];
+
   tcPagesChanged();
-  NSLog(@"[jailbreakd] allocateInKernel returning YES");
-  usleep(1000000);
   return YES;
 }
 
 - (void)linkInKernel {
-  NSLog(@"[jailbreakd] linkInKernel start");
-  usleep(1000000);
-  kwritebuf(self.kaddr, _page, 0x4000);
+  kwritebuf(self.kaddr, _page, ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
   trustCacheListAdd(self.kaddr);
 }
 
@@ -161,7 +153,7 @@ void tcPagesChanged(void) {
   }
   _page->file.entries[index] = entry;
   _page->file.length++;
-  kwritebuf(self.kaddr, _page, 0x4000);
+  kwritebuf(self.kaddr, _page, ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
 
   return YES;
 }
@@ -200,6 +192,7 @@ void tcPagesChanged(void) {
   memset(_page->file.entries[entryIndex].hash, 0xFF, CS_CDHASH_LEN);
   [self sort];
   _page->file.length--;
+  kwritebuf(self.kaddr, _page, ALLOCATED_DYNAMIC_TRUSTCACHE_SIZE);
 
   return YES;
 }

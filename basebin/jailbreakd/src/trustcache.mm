@@ -17,6 +17,7 @@ JBDTCPage *trustCacheFindFreePage(void) {
   for (JBDTCPage *page in gTCPages) {
     @autoreleasepool {
       if (page.amountOfSlotsLeft > 0) {
+        NSLog(@"[jailbreakd] trustCacheFindFreePage returning page: %@", page);
         return page;
       }
     }

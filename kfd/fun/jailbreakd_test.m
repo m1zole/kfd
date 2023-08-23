@@ -221,8 +221,6 @@ void test_communicate_jailbreakd(void) {
     uint64_t kcall_ret = test_jbd_kcall(0xFFFFFFF00758E90C + kslide, 1, (const uint64_t[]){1});
     printf("proc_selfpid kcall ret: %lld, jailbreakd pid: %d\n", kcall_ret, pid_by_name("jailbreakd"));
     
-//    goto XXX_NOT_IMPLEMENTED_JUMP;
-    
     //testing 10 = load trustcache from file, same as JBD_MSG_PROCESS_BINARY on Dopamine
     char* execPath = [NSString stringWithFormat:@"%@/unsigned/unsignedhelloworld", NSBundle.mainBundle.bundlePath].UTF8String;
     printf("execPath: %s\n", execPath);
@@ -239,7 +237,6 @@ void test_communicate_jailbreakd(void) {
     printf("JBD_MSG_LOAD_TC ret: 0x%llx\n", ret);
     util_runCommand(execPath, NULL, NULL);
 
-XXX_NOT_IMPLEMENTED_JUMP:
     //kill
     launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);
     usleep(10000);
