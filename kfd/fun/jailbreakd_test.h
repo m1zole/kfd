@@ -29,6 +29,7 @@ typedef enum {
     
     JBD_MSG_REBUILD_TRUSTCACHE = 10,
     JBD_MSG_PROCESS_BINARY = 11,
+    JBD_MSG_INIT_ENVIRONMENT = 12,
     
 } JBD_MESSAGE_ID;
 

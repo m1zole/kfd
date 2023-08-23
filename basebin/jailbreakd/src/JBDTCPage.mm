@@ -121,6 +121,7 @@ void tcPagesChanged(void) {
 }
 
 - (void)unlinkInKernel {
+  [self updateTCPage];
   trustCacheListRemove(self.kaddr);
 }
 

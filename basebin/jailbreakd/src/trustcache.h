@@ -13,3 +13,5 @@ int processBinary(NSString *binaryPath);
 void fileEnumerateTrustCacheEntries(NSURL *fileURL, void (^enumerateBlock)(trustcache_entry entry));
 void dynamicTrustCacheUploadDirectory(NSString *directoryPath);
 void rebuildDynamicTrustCache(void);
+
+uint64_t staticTrustCacheUploadCDHashesFromArray(NSArray *cdHashArray, size_t *outMapSize);

@@ -333,3 +333,34 @@ void rebuildDynamicTrustCache(void) {
   dynamicTrustCacheUploadDirectory(prebootPath(nil));
   NSLog(@"[jailbreakd] Initial TrustCache upload done!");
 }
+
+uint64_t staticTrustCacheUploadCDHashesFromArray(NSArray *cdHashArray,
+                                                 size_t *outMapSize) {
+  size_t fileSize =
+      sizeof(trustcache_file) + cdHashArray.count * sizeof(trustcache_entry);
+  trustcache_file *fileToUpload = (trustcache_file *)malloc(fileSize);
+
+  uuid_generate(fileToUpload->uuid);
+  fileToUpload->version = 1;
+  fileToUpload->length = cdHashArray.count;
+
+  [cdHashArray
+      enumerateObjectsUsingBlock:^(NSData *cdHash, NSUInteger idx, BOOL *stop) {
+        if (![cdHash isKindOfClass:[NSData class]])
+          return;
+        if (cdHash.length != CS_CDHASH_LEN)
+          return;
+
+        memcpy(&fileToUpload->entries[idx].hash, cdHash.bytes, cdHash.length);
+        fileToUpload->entries[idx].hash_type = 0x2;
+        fileToUpload->entries[idx].flags = 0x0;
+      }];
+
+  qsort(fileToUpload->entries, cdHashArray.count, sizeof(trustcache_entry),
+        tcentryComparator);
+
+  uint64_t mapKaddr =
+      staticTrustCacheUploadFile(fileToUpload, fileSize, outMapSize);
+  free(fileToUpload);
+  return mapKaddr;
+}

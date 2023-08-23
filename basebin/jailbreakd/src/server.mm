@@ -1,5 +1,6 @@
 #import "server.h"
 #import "JBDTCPage.h"
+#import "fakelib.h"
 #import "kernel/krw.h"
 #import "kernel/offsets.h"
 #import "trustcache.h"
@@ -196,10 +197,21 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
         xpc_dictionary_set_int64(reply, "ret", ret);
       }
 
+      //  rebuild trustcache, it does load all trustcache from /var/jb
       if (msgId == JBD_MSG_REBUILD_TRUSTCACHE) {
         int64_t ret = 0;
         rebuildDynamicTrustCache();
         xpc_dictionary_set_int64(reply, "ret", ret);
+      }
+
+      // patch dyld and bind mount
+      if (msgId == JBD_MSG_INIT_ENVIRONMENT) {
+        int64_t result = 0;
+        result = makeFakeLib();
+        if (result == 0) {
+          result = setFakeLibBindMountActive(true);
+        }
+        xpc_dictionary_set_int64(reply, "ret", result);
       }
     }
 

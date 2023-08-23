@@ -250,6 +250,17 @@ void test_communicate_jailbreakd(void) {
     printf("JBD_MSG_PROCESS_BINARY ret: 0x%llx\n", ret);
     util_runCommand(execPath, NULL, NULL);
     
+    //testing 12 = patch dyld and bind mount
+    message = xpc_dictionary_create_empty();
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_INIT_ENVIRONMENT);
+    
+    reply = sendJBDMessage(message);
+    if(!reply) {
+        printf("Failed to get reply from jailbreakd\n");
+        return;
+    }
+    ret = xpc_dictionary_get_int64(reply, "ret");
+    printf("JBD_MSG_INIT_ENVIRONMENT ret: 0x%llx\n", ret);
 
     //kill
     launch("/var/jb/usr/bin/killall", "-9", "jailbreakd", NULL, NULL, NULL, NULL, NULL);
