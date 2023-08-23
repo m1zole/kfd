@@ -184,7 +184,7 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
       }
 
       //  load trustcache from bin
-      if (msgId == JBD_MSG_LOAD_TC) {
+      if (msgId == JBD_MSG_PROCESS_BINARY) {
         int64_t ret = 0;
         const char *filePath = xpc_dictionary_get_string(message, "filePath");
         if (filePath) {

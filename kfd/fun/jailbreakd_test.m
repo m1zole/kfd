@@ -221,12 +221,12 @@ void test_communicate_jailbreakd(void) {
     uint64_t kcall_ret = test_jbd_kcall(0xFFFFFFF00758E90C + kslide, 1, (const uint64_t[]){1});
     printf("proc_selfpid kcall ret: %lld, jailbreakd pid: %d\n", kcall_ret, pid_by_name("jailbreakd"));
     
-    //testing 10 = load trustcache from file, same as JBD_MSG_PROCESS_BINARY on Dopamine
+    //testing 10 = load trustcache from file
     char* execPath = [NSString stringWithFormat:@"%@/unsigned/unsignedhelloworld", NSBundle.mainBundle.bundlePath].UTF8String;
     printf("execPath: %s\n", execPath);
     chmod(execPath, 0755);
     message = xpc_dictionary_create_empty();
-    xpc_dictionary_set_uint64(message, "id", JBD_MSG_LOAD_TC);
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_PROCESS_BINARY);
     xpc_dictionary_set_string(message, "filePath", execPath);
     reply = sendJBDMessage(message);
     if(!reply) {
@@ -234,7 +234,7 @@ void test_communicate_jailbreakd(void) {
         return;
     }
     ret = xpc_dictionary_get_uint64(reply, "ret");
-    printf("JBD_MSG_LOAD_TC ret: 0x%llx\n", ret);
+    printf("JBD_MSG_PROCESS_BINARY ret: 0x%llx\n", ret);
     util_runCommand(execPath, NULL, NULL);
 
     //kill
