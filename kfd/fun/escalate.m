@@ -10,6 +10,7 @@
 #include "offsets.h"
 #include "proc.h"
 #include "escalate.h"
+#include "stage2.h"
 
 
 extern char **environ;

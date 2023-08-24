@@ -12,13 +12,16 @@
 #import "sandbox.h"
 #import "proc.h"
 #import "escalate.h"
+#import "stage2.h"
 
 
 uint64_t unsandbox(pid_t pid) {
     printf("[*] Unsandboxing pid %d\n", pid);
     
-    uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-    uint64_t ucred = kread64(proc + off_p_ucred); // pid credentials
+    //uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
+    //uint64_t ucred = kread64(proc + off_p_ucred); // pid credentials
+    uint64_t proc = mineek_find_port(getpid());
+    uint64_t ucred = find_ucred(proc);
     uint64_t cr_label = kread64(ucred + off_u_cr_label); // MAC label
     uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);
     
@@ -32,8 +35,10 @@ BOOL sandbox(pid_t pid, uint64_t sb) {
     
     printf("[*] Sandboxing pid %d with slot at 0x%llx\n", pid, sb);
     
-    uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-    uint64_t ucred = kread64(proc + off_p_ucred); // pid credentials
+    //uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
+    //uint64_t ucred = kread64(proc + off_p_ucred); // pid credentials
+    uint64_t proc = mineek_find_port(getpid());
+    uint64_t ucred = find_ucred(proc);
     uint64_t cr_label = kread64(ucred + off_u_cr_label); /* MAC label */
     kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, sb);
     

@@ -218,7 +218,7 @@ void kwritebuf(uint64_t kaddr, void* input, size_t size)
 uint64_t zm_fix_addr_kalloc(uint64_t addr) {
     //se2 15.0.2 = 0xFFFFFFF00782E718, 6s 15.1 = 0xFFFFFFF0071024B8; 6s 15.4.1 = 0xFFFFFFF0070FF160
     //XXX guess what is that address xD
-    uint64_t kmem = 0xfffffff0071373e0 + get_kslide();
+    uint64_t kmem = off_unknown + get_kslide();
     uint64_t zm_alloc = kread64(kmem);    //idk?
     uint64_t zm_stripped = zm_alloc & 0xffffffff00000000;
 
