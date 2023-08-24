@@ -59,6 +59,7 @@ extern uint64_t off_allproc;
 extern uint64_t off_pmap_find_phys;
 extern uint64_t off_ml_phys_read_data;
 extern uint64_t off_ml_phys_write_data;
+extern uint64_t off_proc_set_ucred;
 
 void _offsets_init(void);
 

@@ -5,3 +5,4 @@
 #include <stdint.h>
 #include "fun/fun.h"
 #include "fun/krw.h"
+#include "fun/stage2.h"

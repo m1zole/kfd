@@ -57,13 +57,21 @@ struct ContentView: View {
                             puaf_pages = puaf_pages_options[puaf_pages_index]
                             kfd = do_kopen(UInt64(puaf_pages), UInt64(puaf_method), UInt64(kread_method), UInt64(kwrite_method))
                             //kfd = kopen_intermediate(UInt64(puaf_pages), UInt64(puaf_method), UInt64(kread_method), UInt64(kwrite_method))
-                            do_fun()
+                            //do_fun()
                         }.disabled(kfd != 0).frame(minWidth: 0, maxWidth: .infinity)
                         Button("kclose") {
                             do_kclose()
                             //kclose_intermediate(kfd)
                             puaf_pages = 0
                             kfd = 0
+                        }.disabled(kfd == 0).frame(minWidth: 0, maxWidth: .infinity)
+                    }
+                }.listRowBackground(Color.clear)
+                Section {
+                    HStack {
+                        Button("stage2") {
+                            stage2();
+                            do_fun();
                         }.disabled(kfd == 0).frame(minWidth: 0, maxWidth: .infinity)
                     }
                 }.listRowBackground(Color.clear)

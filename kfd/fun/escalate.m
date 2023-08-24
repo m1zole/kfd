@@ -62,6 +62,7 @@ bool rootify(pid_t pid) {
     if (!pid) return false;
 
     uint64_t proc = proc_of_pid(pid);
+    printf("[i] Kernel proc:  0x%llx\n", proc);
     uint64_t ucred = kread64(proc + off_p_ucred);
     printf("[i] Kernel ucred:  0x%llx\n", ucred);
     
