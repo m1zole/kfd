@@ -13,6 +13,7 @@
 #import "boot_info.h"
 #import "offsets.h"
 #import "krw.h"
+#import "jailbreakd.h"
 
 #import <stdbool.h>
 #import <Foundation/Foundation.h>
@@ -287,18 +288,12 @@ int extractBootstrap(void) {
     if(access(basebinPath.UTF8String, F_OK) == 0) {
         [[NSFileManager defaultManager] removeItemAtPath:basebinPath error:nil];
     }
-//    let basebinTarPath = Bundle.main.bundlePath + "/basebin.tar"
-//    let basebinPath = procursusPath + "/basebin"  //DONE
-//    if FileManager.default.fileExists(atPath: basebinPath) {//DONE
-//        try FileManager.default.removeItem(atPath: basebinPath)//DONE
-//    }//DONE
+    printf("mkdir ret: %d\n", mkdir(basebinPath.UTF8String, 0755));
 //    let untarRet = untar(tarPath: basebinTarPath, target: procursusPath)
 //    if untarRet != 0 {
 //        throw BootstrapError.custom(String(format:"Failed to untar Basebin: \(String(describing: untarRet))"))
 //    }
-    printf("mkdir ret: %d\n", mkdir(basebinPath.UTF8String, 0755));
     
-//    printf("jbPath: %s, procursusPath: %s\n", jbPath, procursusPath.UTF8String);
     createSymbolicLinkAtPath_withDestinationPath(jbPath, procursusPath.UTF8String);
     
     if(bootstrapNeedsExtract) {
@@ -350,7 +345,7 @@ int extractBootstrap(void) {
     [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist" error:nil];
     [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/kr.h4ck.jailbreakd.plist", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist" error:nil];
     chown("/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist", 0, 0);
-    patchBaseBinLaunchDaemonPlist(@"/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist");
+//    patchBaseBinLaunchDaemonPlist(@"/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist");
     
     //2. Copy jailbreakd to basebin
     [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/jailbreakd" error:nil];
@@ -406,6 +401,57 @@ int extractBootstrap(void) {
     bootInfo_setObject(@"kcall_fake_vtable_allocations", @([tmp_kfd_arm64[@"kcall_fake_vtable_allocations"] unsignedLongLongValue]));
     bootInfo_setObject(@"kcall_fake_client_allocations", @([tmp_kfd_arm64[@"kcall_fake_client_allocations"] unsignedLongLongValue]));
     bootInfo_setObject(@"kernelslide", @(get_kslide()));
+    
+    return 0;
+}
+
+bool needsFinalizeBootstrap(void) {
+    if(access("/var/jb/prep_bootstrap.sh", F_OK) == 0) {
+        return true;
+    }
+    return false;
+}
+
+int finalizeBootstrap(void) {
+    //1. run /var/jb/prep_bootstrap.sh
+    util_runCommand("/var/jb/bin/sh", "/var/jb/prep_bootstrap.sh", NULL);
+    
+    //2. install libjbdrw.deb (NOT IMPLEMENTED)
+    
+    //3. Install package manager(sileo or zebra)
+    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/sileo.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
+    util_runCommand("/var/jb/usr/bin/uicache", "-u", "/var/jb/Applications/Sileo.app", NULL);
+    
+    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/zebra.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
+    util_runCommand("/var/jb/usr/bin/uicache", "-u", "/var/jb/Applications/Zebra.app", NULL);
+    
+    return 0;
+}
+
+int startJBEnvironment(void) {
+    setenv("PATH", "/sbin:/bin:/usr/sbin:/usr/bin:/var/jb/sbin:/var/jb/bin:/var/jb/usr/sbin:/var/jb/usr/bin", 1);
+    setenv("TERM", "xterm-256color", 1);
+    
+    printf("Extracting bootstrap...\n");
+    extractBootstrap();
+    patchBaseBinLaunchDaemonPlists();
+    printf("Starting jailbreakd...\n");
+    startJailbreakd();
+    printf("Rebuilding trustcache...\n");
+    printf("jbdRebuildTrustCache ret: %lld\n", jbdRebuildTrustCache());
+    
+    if (needsFinalizeBootstrap()) {
+        printf("Status: Finalizing Bootstrap...\n");
+        finalizeBootstrap();
+    }
+    
+    printf("Status: Initializing Environment...\n");
+    printf("jbdInitEnvironment ret: %lld\n", jbdInitEnvironment());
+    
+    //Refresh uicache
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "iconservicesagent", NULL);
+    util_runCommand("/var/jb/usr/bin/uicache", "-a", NULL);
+    
     
     return 0;
 }

@@ -122,8 +122,3 @@ void test_communicate_jailbreakd(void) {
     usleep(10000);
     launch("/var/jb/bin/launchctl", "unload", "/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist", NULL, NULL, NULL, NULL, NULL);
 }
-
-
-void test_communicate_jailbreakd_api(void) {
-    
-}

@@ -96,5 +96,8 @@ uint64_t jbdKcall(uint64_t func, uint64_t argc, const uint64_t *argv);   //JBD_M
 int64_t jbdRebuildTrustCache(void); //JBD_MSG_REBUILD_TRUSTCACHE = 10
 int64_t jbdProcessBinary(const char *filePath); //JBD_MSG_PROCESS_BINARY = 11
 int64_t jbdInitEnvironment(void);   //JBD_MSG_INIT_ENVIRONMENT = 12
+int64_t jbdswFixSetuid(void);   //JBD_MSG_SETUID_FIX = 13
+
+int startJailbreakd(void);
 
 #endif /* jailbreakd_h */

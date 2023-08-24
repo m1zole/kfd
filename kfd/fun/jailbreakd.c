@@ -6,6 +6,7 @@
 //
 
 #include "jailbreakd.h"
+#include "jailbreakd_test.h"
 #import <sys/mount.h>
 #import <stdlib.h>
 #import <unistd.h>
@@ -310,4 +311,18 @@ int64_t jbdswFixSetuid(void)
         xpc_release(reply);
     }
     return result;
+}
+
+int startJailbreakd(void) {
+    int ret = -1;
+    
+    //1. Run jailbreakd and handoff
+    test_handoffKRW_jailbreakd();
+    
+    //2. Check if handoff work?
+    if(jbdKRWReady() == 1) {
+        ret = 0;
+    }
+    
+    return ret;
 }

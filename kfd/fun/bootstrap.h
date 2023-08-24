@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 
+void patchBaseBinLaunchDaemonPlists(void);
 int extractBootstrap(void);
+int startJBEnvironment(void);
 
 #endif /* bootstrap_h */

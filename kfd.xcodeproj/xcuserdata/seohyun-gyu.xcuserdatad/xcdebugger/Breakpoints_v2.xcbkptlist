@@ -858,8 +858,8 @@
             filePath = "kfd/fun/fun.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
             landmarkName = "do_fun()"
             landmarkType = "9">
          </BreakpointContent>
@@ -874,8 +874,8 @@
             filePath = "kfd/fun/bootstrap.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "302"
-            endingLineNumber = "302"
+            startingLineNumber = "297"
+            endingLineNumber = "297"
             landmarkName = "extractBootstrap()"
             landmarkType = "9">
             <Locations>

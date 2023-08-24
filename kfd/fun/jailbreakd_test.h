@@ -19,5 +19,3 @@ void test_run_jailbreakd(void);
 void* test_run_jailbreakd_async(void* arg);
 void test_handoffKRW_jailbreakd(void);
 void test_communicate_jailbreakd(void);
-
-void test_communicate_jailbreakd_api(void);

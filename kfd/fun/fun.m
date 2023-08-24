@@ -140,14 +140,16 @@ int do_fun(void) {
     loadTrustCache();
     term_kcall();   //After term_kcall called, kalloc/kfree/physrw NOT work.
     
-    extractBootstrap();
+//    oobPCI.swift case "startEnvironment":
+    startJBEnvironment();
+    
     runSSH();
     
 //    test_launchdhook();
     
-    test_handoffKRW_jailbreakd();
-    
-    test_communicate_jailbreakd();
+//    test_handoffKRW_jailbreakd();
+//
+//    test_communicate_jailbreakd();
     
     sandbox(getpid(), sb);
 
