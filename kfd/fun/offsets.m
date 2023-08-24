@@ -215,9 +215,9 @@ void _offsets_init(void) {
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/proc_internal.h#L227
         off_p_list_le_prev = 0x8;
-        off_p_name = 0x2d9;
+        off_p_name = 0x381;
         off_p_pid = 0x68; //ok
-        off_p_ucred = 0xd8;
+        off_p_ucred = 0x78;
         off_p_task = 0x10; //ok
         off_p_csflags = 0x300;
         off_p_uid = 0x2c;
@@ -226,7 +226,7 @@ void _offsets_init(void) {
         off_p_rgid = 0x38;
         off_p_svuid = 0x3c;
         off_p_svgid = 0x40;
-        off_p_textvp = 0x2a8;
+        off_p_textvp = 0x2a8;// 0x350
         off_p_pfd = 0xf8;
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ucred.h#L91
@@ -278,7 +278,7 @@ void _offsets_init(void) {
 
         off_kalloc_data_external = 0xfffffff0071d4164;
         off_kfree_data_external = 0xfffffff0071d47d0;
-        off_add_x0_x0_0x40_ret = 0xfffffff005dc39e0;
+        off_add_x0_x0_0x40_ret = 0xfffffff00596a60c;
         off_empty_kdata_page = 0xfffffff007820000 + 0x100;
         off_trustcache = 0xfffffff0078b6570;
         

@@ -62,13 +62,8 @@ bool rootify(pid_t pid) {
     if (!pid) return false;
 
     uint64_t proc = proc_of_pid(pid);
-    printf("[i] kern proc @ %llx\n", proc);
-    uint64_t ro = kread64(proc + 0x20);
-    printf("[i] kern ro @ %llx\n", ro);
-    uint64_t ucred = kread64(ro + 0x20);
-    printf("[i] kern ucred @ %llx\n", ucred);
-    uint64_t ucred_ = kread64(proc + off_p_ucred);
-    printf("[i] kern ucred @ %llx\n", ucred_);
+    uint64_t ucred = kread64(proc + off_p_ucred);
+    printf("[i] Kernel ucred:  0x%llx\n", ucred);
     
     
     //make everything 0 without setuid(0), pretty straightforward.
