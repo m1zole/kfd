@@ -3,6 +3,7 @@
 #import "fakelib.h"
 #import "kernel/krw.h"
 #import "kernel/offsets.h"
+#import "kernel/util.h"
 #import "trustcache.h"
 #import <kern_memorystatus.h>
 #import <libproc.h>
@@ -67,15 +68,6 @@ bool boolValueForEntitlement(audit_token_t *token, const char *entitlement) {
   return false;
 }
 
-NSString *proc_get_path(pid_t pid) {
-  char pathbuf[4 * MAXPATHLEN];
-  int ret = proc_pidpath(pid, pathbuf, sizeof(pathbuf));
-  if (ret <= 0)
-    return nil;
-  return [[[NSString stringWithUTF8String:pathbuf]
-      stringByResolvingSymlinksInPath] stringByStandardizingPath];
-}
-
 void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
   @autoreleasepool {
     xpc_object_t message = nil;
@@ -102,127 +94,134 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
             systemwide ? "systemwide" : "", msgId, description,
             proc_get_path(clientPid).UTF8String);
       free(description);
-    }
 
-    // handle
-    if (msgId) {
-      // check if kernel r/w received
-      if (msgId == JBD_MSG_KRW_READY) {
-        if (get_kbase() != 0)
-          xpc_dictionary_set_uint64(reply, "krw_ready", 1);
-        else
-          xpc_dictionary_set_uint64(reply, "krw_ready", 0);
-      }
+      // handle
+      if (msgId) {
+        // check if kernel r/w received
+        if (msgId == JBD_MSG_KRW_READY) {
+          if (get_kbase() != 0)
+            xpc_dictionary_set_uint64(reply, "krw_ready", 1);
+          else
+            xpc_dictionary_set_uint64(reply, "krw_ready", 0);
+        }
 
-      // grab kernel info
-      if (msgId == JBD_MSG_KERNINFO) {
-        xpc_dictionary_set_uint64(reply, "kbase", get_kbase());
-        xpc_dictionary_set_uint64(reply, "kslide", get_kslide());
-        xpc_dictionary_set_uint64(reply, "allproc", get_allproc());
-        xpc_dictionary_set_uint64(reply, "kernproc", get_kernproc());
-      }
+        // grab kernel info
+        if (msgId == JBD_MSG_KERNINFO) {
+          xpc_dictionary_set_uint64(reply, "kbase", get_kbase());
+          xpc_dictionary_set_uint64(reply, "kslide", get_kslide());
+          xpc_dictionary_set_uint64(reply, "allproc", get_allproc());
+          xpc_dictionary_set_uint64(reply, "kernproc", get_kernproc());
+        }
 
-      // kread32
-      if (msgId == JBD_MSG_KREAD32) {
-        uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-        xpc_dictionary_set_uint64(reply, "ret", kread32(kaddr));
-      }
+        // kread32
+        if (msgId == JBD_MSG_KREAD32) {
+          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+          xpc_dictionary_set_uint64(reply, "ret", kread32(kaddr));
+        }
 
-      // kread64
-      if (msgId == JBD_MSG_KREAD64) {
-        uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-        xpc_dictionary_set_uint64(reply, "ret", kread64(kaddr));
-      }
+        // kread64
+        if (msgId == JBD_MSG_KREAD64) {
+          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+          xpc_dictionary_set_uint64(reply, "ret", kread64(kaddr));
+        }
 
-      //  kwrite32
-      if (msgId == JBD_MSG_KWRITE32) {
-        uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-        uint32_t val = xpc_dictionary_get_uint64(message, "val");
-        kwrite32(kaddr, val);
-        xpc_dictionary_set_uint64(reply, "ret", kread32(kaddr) != val);
-      }
+        //  kwrite32
+        if (msgId == JBD_MSG_KWRITE32) {
+          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+          uint32_t val = xpc_dictionary_get_uint64(message, "val");
+          kwrite32(kaddr, val);
+          xpc_dictionary_set_uint64(reply, "ret", kread32(kaddr) != val);
+        }
 
-      //  kwrite64
-      if (msgId == JBD_MSG_KWRITE64) {
-        uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-        uint64_t val = xpc_dictionary_get_uint64(message, "val");
-        kwrite64(kaddr, val);
-        xpc_dictionary_set_uint64(reply, "ret", kread64(kaddr) != val);
-      }
+        //  kwrite64
+        if (msgId == JBD_MSG_KWRITE64) {
+          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+          uint64_t val = xpc_dictionary_get_uint64(message, "val");
+          kwrite64(kaddr, val);
+          xpc_dictionary_set_uint64(reply, "ret", kread64(kaddr) != val);
+        }
 
-      //  kalloc
-      if (msgId == JBD_MSG_KALLOC) {
-        uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
-        uint64_t allocated_kmem = kalloc(ksize);
-        xpc_dictionary_set_uint64(reply, "ret", allocated_kmem);
-      }
+        //  kalloc
+        if (msgId == JBD_MSG_KALLOC) {
+          uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
+          uint64_t allocated_kmem = kalloc(ksize);
+          xpc_dictionary_set_uint64(reply, "ret", allocated_kmem);
+        }
 
-      //  kfree
-      if (msgId == JBD_MSG_KFREE) {
-        uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-        uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
-        kfree(kaddr, ksize);
-        xpc_dictionary_set_uint64(reply, "ret", 0);
-      }
+        //  kfree
+        if (msgId == JBD_MSG_KFREE) {
+          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+          uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
+          kfree(kaddr, ksize);
+          xpc_dictionary_set_uint64(reply, "ret", 0);
+        }
 
-      //  kcall
-      if (msgId == JBD_MSG_KCALL) {
-        uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-        xpc_object_t args = xpc_dictionary_get_value(message, "args");
-        uint64_t argc = xpc_array_get_count(args);
-        uint64_t argv[7] = {0};
-        for (uint64_t i = 0; i < argc; i++) {
-          @autoreleasepool {
-            argv[i] = xpc_array_get_uint64(args, i);
+        //  kcall
+        if (msgId == JBD_MSG_KCALL) {
+          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+          xpc_object_t args = xpc_dictionary_get_value(message, "args");
+          uint64_t argc = xpc_array_get_count(args);
+          uint64_t argv[7] = {0};
+          for (uint64_t i = 0; i < argc; i++) {
+            @autoreleasepool {
+              argv[i] = xpc_array_get_uint64(args, i);
+            }
           }
+
+          init_kcall();
+          uint64_t kcall_ret = kcall(kaddr, argv[0], argv[1], argv[2], argv[3],
+                                     argv[4], argv[5], argv[6]);
+          xpc_dictionary_set_uint64(reply, "ret", kcall_ret);
+          term_kcall();
         }
 
-        init_kcall();
-        uint64_t kcall_ret = kcall(kaddr, argv[0], argv[1], argv[2], argv[3],
-                                   argv[4], argv[5], argv[6]);
-        xpc_dictionary_set_uint64(reply, "ret", kcall_ret);
-        term_kcall();
-      }
-
-      //  load trustcache from bin
-      if (msgId == JBD_MSG_PROCESS_BINARY) {
-        int64_t ret = 0;
-        const char *filePath = xpc_dictionary_get_string(message, "filePath");
-        if (filePath) {
-          NSString *nsFilePath = [NSString stringWithUTF8String:filePath];
-          ret = processBinary(nsFilePath);
-        } else {
-          ret = -1;
+        //  load trustcache from bin
+        if (msgId == JBD_MSG_PROCESS_BINARY) {
+          int64_t ret = 0;
+          const char *filePath = xpc_dictionary_get_string(message, "filePath");
+          if (filePath) {
+            NSString *nsFilePath = [NSString stringWithUTF8String:filePath];
+            ret = processBinary(nsFilePath);
+          } else {
+            ret = -1;
+          }
+          xpc_dictionary_set_int64(reply, "ret", ret);
         }
-        xpc_dictionary_set_int64(reply, "ret", ret);
-      }
 
-      //  rebuild trustcache, it does load all trustcache from /var/jb
-      if (msgId == JBD_MSG_REBUILD_TRUSTCACHE) {
-        int64_t ret = 0;
-        rebuildDynamicTrustCache();
-        xpc_dictionary_set_int64(reply, "ret", ret);
-      }
-
-      // patch dyld and bind mount
-      if (msgId == JBD_MSG_INIT_ENVIRONMENT) {
-        int64_t result = 0;
-        result = makeFakeLib();
-        if (result == 0) {
-          result = setFakeLibBindMountActive(true);
+        //  rebuild trustcache, it does load all trustcache from /var/jb
+        if (msgId == JBD_MSG_REBUILD_TRUSTCACHE) {
+          int64_t ret = 0;
+          rebuildDynamicTrustCache();
+          xpc_dictionary_set_int64(reply, "ret", ret);
         }
-        xpc_dictionary_set_int64(reply, "ret", result);
-      }
-    }
 
-    if (reply) {
-      char *description = xpc_copy_description(reply);
-      NSLog(@"[jailbreakd] responding to %s message %d with %s",
-            systemwide ? "systemwide" : "", msgId, description);
-      free(description);
-      err = xpc_pipe_routine_reply(reply);
-      if (err != 0) {
-        NSLog(@"[jailbreakd] Error %d sending response", err);
+        // patch dyld and bind mount
+        if (msgId == JBD_MSG_INIT_ENVIRONMENT) {
+          int64_t result = 0;
+          result = makeFakeLib();
+          if (result == 0) {
+            result = setFakeLibBindMountActive(true);
+          }
+          xpc_dictionary_set_int64(reply, "ret", result);
+        }
+
+        // setuid
+        if (msgId == JBD_MSG_SETUID_FIX) {
+          int64_t result = 0;
+          proc_fix_setuid(clientPid);
+          xpc_dictionary_set_int64(reply, "ret", result);
+        }
+      }
+
+      if (reply) {
+        char *description = xpc_copy_description(reply);
+        NSLog(@"[jailbreakd] responding to %s message %d with %s",
+              systemwide ? "systemwide" : "", msgId, description);
+        free(description);
+        err = xpc_pipe_routine_reply(reply);
+        if (err != 0) {
+          NSLog(@"[jailbreakd] Error %d sending response", err);
+        }
       }
     }
   }

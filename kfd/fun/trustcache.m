@@ -106,7 +106,6 @@ uint64_t staticTrustCacheUploadFileAtPath(NSString *filePath, size_t *outMapSize
 }
 
 int loadTrustCache(void) {
-    //1. load trustcache
     printf("binaries.tc ret: 0x%llx\n", staticTrustCacheUploadFileAtPath([NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/binaries.tc"], NULL));
     printf("iosbinpack.tc ret: 0x%llx\n", staticTrustCacheUploadFileAtPath([NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/iosbinpack/iosbinpack.tc"], NULL));
     

@@ -10,6 +10,13 @@
 #import <stdlib.h>
 #import <unistd.h>
 #import <string.h>
+#import "sandbox.h"
+
+bool jbdSystemWideIsReachable(void)
+{
+    int sbc = sandbox_check(getpid(), "mach-lookup", SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT, "kr.h4ck.jailbreakd.systemwide");
+    return sbc == 0;
+}
 
 mach_port_t jbdMachPort(void)
 {
@@ -44,6 +51,77 @@ xpc_object_t sendJBDMessage(xpc_object_t xdict)
         mach_port_deallocate(mach_task_self(), jbdPort);
     }
     return xreply;
+}
+
+mach_port_t jbdSystemWideMachPort(void)
+{
+    mach_port_t outPort = MACH_PORT_NULL;
+    kern_return_t kr = KERN_SUCCESS;
+
+    if (getpid() == 1) {
+        mach_port_t self_host = mach_host_self();
+        kr = host_get_special_port(self_host, HOST_LOCAL_NODE, 16, &outPort);
+        mach_port_deallocate(mach_task_self(), self_host);
+    }
+    else {
+        kr = bootstrap_look_up(bootstrap_port, "com.opa334.jailbreakd.systemwide", &outPort);
+    }
+
+    if (kr != KERN_SUCCESS) return MACH_PORT_NULL;
+    return outPort;
+}
+
+xpc_object_t sendLaunchdMessageFallback(xpc_object_t xdict)
+{
+    xpc_dictionary_set_bool(xdict, "jailbreak", true);
+    xpc_dictionary_set_bool(xdict, "jailbreak-systemwide", true);
+
+    void* pipePtr = NULL;
+    if(_os_alloc_once_table[1].once == -1)
+    {
+        pipePtr = _os_alloc_once_table[1].ptr;
+    }
+    else
+    {
+        pipePtr = _os_alloc_once(&_os_alloc_once_table[1], 472, NULL);
+        if (!pipePtr) _os_alloc_once_table[1].once = -1;
+    }
+
+    xpc_object_t xreply = NULL;
+    if (pipePtr) {
+        struct xpc_global_data* globalData = pipePtr;
+        xpc_object_t pipe = globalData->xpc_bootstrap_pipe;
+        if (pipe) {
+            int err = xpc_pipe_routine_with_flags(pipe, xdict, &xreply, 0);
+            if (err != 0) {
+                return NULL;
+            }
+        }
+    }
+    return xreply;
+}
+
+xpc_object_t sendJBDMessageSystemWide(xpc_object_t xdict)
+{
+    xpc_object_t jbd_xreply = NULL;
+    if (jbdSystemWideIsReachable()) {
+        mach_port_t jbdPort = jbdSystemWideMachPort();
+        if (jbdPort != -1) {
+            xpc_object_t pipe = xpc_pipe_create_from_port(jbdPort, 0);
+            if (pipe) {
+                int err = xpc_pipe_routine(pipe, xdict, &jbd_xreply);
+                if (err != 0) jbd_xreply = NULL;
+                xpc_release(pipe);
+            }
+            mach_port_deallocate(mach_task_self(), jbdPort);
+        }
+    }
+
+    if (!jbd_xreply && getpid() != 1) {
+        return sendLaunchdMessageFallback(xdict);
+    }
+
+    return jbd_xreply;
 }
 
 //JBD_MSG_KRW_READY = 1
@@ -218,4 +296,18 @@ int64_t jbdInitEnvironment(void)
     xpc_object_t reply = sendJBDMessage(message);
     if (!reply) return -10;
     return xpc_dictionary_get_int64(reply, "ret");
+}
+
+//JBD_MSG_SETUID_FIX = 13
+int64_t jbdswFixSetuid(void)
+{
+    xpc_object_t message = xpc_dictionary_create_empty();
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_SETUID_FIX);
+    xpc_object_t reply = sendJBDMessageSystemWide(message);
+    int64_t result = -1;
+    if (reply) {
+        result  = xpc_dictionary_get_int64(reply, "ret");
+        xpc_release(reply);
+    }
+    return result;
 }

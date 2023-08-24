@@ -16,6 +16,7 @@ uint32_t off_p_svuid = 0;
 uint32_t off_p_svgid = 0;
 uint32_t off_p_textvp = 0;
 uint32_t off_p_pfd = 0;
+uint32_t off_p_flag = 0;
 uint32_t off_u_cr_label = 0;
 uint32_t off_u_cr_uid = 0;
 uint32_t off_u_cr_ruid = 0;
@@ -78,6 +79,7 @@ void _offsets_init(void) {
     off_p_svgid = 0x40;
     off_p_textvp = 0x2a8;
     off_p_pfd = 0x100;
+    off_p_flag = 0x1bc;
 
     // https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ucred.h#L91
     off_u_cr_label = 0x78;

@@ -15,6 +15,7 @@ extern uint32_t off_p_svuid;
 extern uint32_t off_p_svgid;
 extern uint32_t off_p_textvp;
 extern uint32_t off_p_pfd;
+extern uint32_t off_p_flag;
 extern uint32_t off_u_cr_label;
 extern uint32_t off_u_cr_uid;
 extern uint32_t off_u_cr_ruid;

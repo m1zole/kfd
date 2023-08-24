@@ -7,8 +7,6 @@ uint64_t ipc_entry_lookup(mach_port_t port_name) {
   uint64_t proc = proc_of_pid(getpid());
   uint64_t task = kread64(proc + off_p_task);
   uint64_t itk_space = kread64(task + off_task_itk_space);
-  // uint32_t table_size = kread32(itk_space + 0x14);//OFFSET(ipc_space,
-  // is_table_size));
   uint32_t port_index = MACH_PORT_INDEX(port_name);
   uint64_t is_table = kread64(itk_space + off_ipc_space_is_table);
   uint64_t entry = is_table + port_index * 0x18; // SIZE(ipc_entry);
