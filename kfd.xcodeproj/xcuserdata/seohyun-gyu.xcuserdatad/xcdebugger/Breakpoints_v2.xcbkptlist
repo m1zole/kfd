@@ -858,8 +858,8 @@
             filePath = "kfd/fun/fun.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
+            startingLineNumber = "158"
+            endingLineNumber = "158"
             landmarkName = "do_fun()"
             landmarkType = "9">
          </BreakpointContent>
@@ -973,22 +973,6 @@
             startingLineNumber = "345"
             endingLineNumber = "345"
             landmarkName = "prepare_kcall()"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "24ED0457-FF8F-441B-9468-597FAD813B9A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "kfd/fun/fun.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "141"
-            endingLineNumber = "141"
-            landmarkName = "do_fun()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

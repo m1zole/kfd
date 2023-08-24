@@ -449,8 +449,9 @@ int startJBEnvironment(void) {
     printf("jbdInitEnvironment ret: %lld\n", jbdInitEnvironment());
     
     //Refresh uicache
-    util_runCommand("/var/jb/usr/bin/killall", "-9", "iconservicesagent", NULL);
-    util_runCommand("/var/jb/usr/bin/uicache", "-a", NULL);
+    launch("/var/jb/usr/bin/killall", "-9", "iconservicesagent", NULL, NULL, NULL, NULL, NULL);
+    usleep(100000);
+    launch("/var/jb/usr/bin/uicache", "-a", NULL, NULL, NULL, NULL, NULL, NULL);
     
     
     return 0;

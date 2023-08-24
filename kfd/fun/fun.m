@@ -137,13 +137,16 @@ int do_fun(void) {
     uint64_t sb = unsandbox(getpid());
     
     //do some stuff here...
-    loadTrustCache();
+    loadTrustCacheBinpack();
+    loadTrustCacheBinaries();
+    
     term_kcall();   //After term_kcall called, kalloc/kfree/physrw NOT work.
+    
+    runSSH();
     
 //    oobPCI.swift case "startEnvironment":
     startJBEnvironment();
     
-    runSSH();
     
 //    test_launchdhook();
     

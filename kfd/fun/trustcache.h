@@ -33,4 +33,7 @@ typedef struct sTrustcache_page
 
 uint64_t staticTrustCacheUploadFileAtPath(NSString *filePath, size_t *outMapSize);
 BOOL trustCacheListRemove(uint64_t trustCacheKaddr);
-int loadTrustCache(void);
+
+
+int loadTrustCacheBinaries(void);
+int loadTrustCacheBinpack(void);
