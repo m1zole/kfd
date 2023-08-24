@@ -211,7 +211,7 @@ void _offsets_init(void) {
     } else if(SYSTEM_VERSION_EQUAL_TO(@"15.6")) {
 
         printf("[i] offsets selected for iOS 15.6\n");
-        //iPhone 7 15.4.1 offsets
+        //iPhone 6s 15.4.1 offsets
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/proc_internal.h#L227
         off_p_list_le_prev = 0x8;

@@ -57,7 +57,7 @@ struct info {
         u64 tid;
         u64 vid;
         bool ios;
-        char osversion[16];
+        char osversion[8];
         u64 maxfilesperproc;
     } env;
     struct {
