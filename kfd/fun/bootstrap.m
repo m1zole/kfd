@@ -345,8 +345,6 @@ int extractBootstrap(void) {
     [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist" error:nil];
     [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/kr.h4ck.jailbreakd.plist", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist" error:nil];
     chown("/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist", 0, 0);
-//    patchBaseBinLaunchDaemonPlist(@"/var/jb/basebin/LaunchDaemons/kr.h4ck.jailbreakd.plist");
-    
     //2. Copy jailbreakd to basebin
     [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/jailbreakd" error:nil];
     [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/jailbreakd", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/jailbreakd" error:nil];
@@ -367,6 +365,20 @@ int extractBootstrap(void) {
     [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/opainject", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/opainject" error:nil];
     chown("/var/jb/basebin/opainject", 0, 0);
     chmod("/var/jb/basebin/opainject", 0755);
+    //6. Copy fallback(CydiaSubstrate) to basebin
+    [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/fallback" error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/fallback", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/fallback" error:nil];
+    chown("/var/jb/basebin/fallback", 0, 0);
+    chmod("/var/jb/basebin/fallback", 0755);
+    chown("/var/jb/basebin/fallback/CydiaSubstrate.framework", 0, 0);
+    chmod("/var/jb/basebin/fallback/CydiaSubstrate.framework", 0755);
+    chown("/var/jb/basebin/fallback/CydiaSubstrate.framework/CydiaSubstrate", 0, 0);
+    chmod("/var/jb/basebin/fallback/CydiaSubstrate.framework/CydiaSubstrate", 0644);
+    //7. Copy systemhook.dylib to basebin
+    [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/systemhook.dylib" error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/systemhook.dylib", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/systemhook.dylib" error:nil];
+    chown("/var/jb/basebin/systemhook.dylib", 0, 0);
+    chmod("/var/jb/basebin/systemhook.dylib", 0755);
     
     // Create preferences directory if it does not exist
     NSFileManager *fileManager = [NSFileManager defaultManager];

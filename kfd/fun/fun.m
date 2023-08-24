@@ -138,8 +138,9 @@ int do_fun(void) {
     
     runSSH();
     
-//    oobPCI.swift case "startEnvironment":
-    startJBEnvironment();
+    startJBEnvironment();   //oobPCI.swift -> case "startEnvironment":
+    
+    platformize(1);
     
     
 //    test_launchdhook();

@@ -95,121 +95,155 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
             proc_get_path(clientPid).UTF8String);
       free(description);
 
-      // handle
-      if (msgId) {
-        // check if kernel r/w received
-        if (msgId == JBD_MSG_KRW_READY) {
-          if (get_kbase() != 0)
-            xpc_dictionary_set_uint64(reply, "krw_ready", 1);
-          else
-            xpc_dictionary_set_uint64(reply, "krw_ready", 0);
-        }
+      BOOL isAllowedSystemWide = msgId == JBD_MSG_PROCESS_BINARY ||
+                                 msgId == JBD_MSG_DEBUG_ME ||
+                                 msgId == JBD_MSG_SETUID_FIX; //||
+      //                msgId == JBD_MSG_FORK_FIX ||
+      // msgId == JBD_MSG_INTERCEPT_USERSPACE_PANIC;
 
-        // grab kernel info
-        if (msgId == JBD_MSG_KERNINFO) {
-          xpc_dictionary_set_uint64(reply, "kbase", get_kbase());
-          xpc_dictionary_set_uint64(reply, "kslide", get_kslide());
-          xpc_dictionary_set_uint64(reply, "allproc", get_allproc());
-          xpc_dictionary_set_uint64(reply, "kernproc", get_kernproc());
-        }
+      if (!systemwide || isAllowedSystemWide) {
 
-        // kread32
-        if (msgId == JBD_MSG_KREAD32) {
-          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-          xpc_dictionary_set_uint64(reply, "ret", kread32(kaddr));
-        }
+        // handle
+        if (msgId) {
+          // check if kernel r/w received
+          if (msgId == JBD_MSG_KRW_READY) {
+            if (get_kbase() != 0)
+              xpc_dictionary_set_uint64(reply, "krw_ready", 1);
+            else
+              xpc_dictionary_set_uint64(reply, "krw_ready", 0);
+          }
 
-        // kread64
-        if (msgId == JBD_MSG_KREAD64) {
-          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-          xpc_dictionary_set_uint64(reply, "ret", kread64(kaddr));
-        }
+          // grab kernel info
+          if (msgId == JBD_MSG_KERNINFO) {
+            xpc_dictionary_set_uint64(reply, "kbase", get_kbase());
+            xpc_dictionary_set_uint64(reply, "kslide", get_kslide());
+            xpc_dictionary_set_uint64(reply, "allproc", get_allproc());
+            xpc_dictionary_set_uint64(reply, "kernproc", get_kernproc());
+          }
 
-        //  kwrite32
-        if (msgId == JBD_MSG_KWRITE32) {
-          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-          uint32_t val = xpc_dictionary_get_uint64(message, "val");
-          kwrite32(kaddr, val);
-          xpc_dictionary_set_uint64(reply, "ret", kread32(kaddr) != val);
-        }
+          // kread32
+          if (msgId == JBD_MSG_KREAD32) {
+            uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+            xpc_dictionary_set_uint64(reply, "ret", kread32(kaddr));
+          }
 
-        //  kwrite64
-        if (msgId == JBD_MSG_KWRITE64) {
-          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-          uint64_t val = xpc_dictionary_get_uint64(message, "val");
-          kwrite64(kaddr, val);
-          xpc_dictionary_set_uint64(reply, "ret", kread64(kaddr) != val);
-        }
+          // kread64
+          if (msgId == JBD_MSG_KREAD64) {
+            uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+            xpc_dictionary_set_uint64(reply, "ret", kread64(kaddr));
+          }
 
-        //  kalloc
-        if (msgId == JBD_MSG_KALLOC) {
-          uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
-          uint64_t allocated_kmem = kalloc(ksize);
-          xpc_dictionary_set_uint64(reply, "ret", allocated_kmem);
-        }
+          //  kwrite32
+          if (msgId == JBD_MSG_KWRITE32) {
+            uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+            uint32_t val = xpc_dictionary_get_uint64(message, "val");
+            kwrite32(kaddr, val);
+            xpc_dictionary_set_uint64(reply, "ret", kread32(kaddr) != val);
+          }
 
-        //  kfree
-        if (msgId == JBD_MSG_KFREE) {
-          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-          uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
-          kfree(kaddr, ksize);
-          xpc_dictionary_set_uint64(reply, "ret", 0);
-        }
+          //  kwrite64
+          if (msgId == JBD_MSG_KWRITE64) {
+            uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+            uint64_t val = xpc_dictionary_get_uint64(message, "val");
+            kwrite64(kaddr, val);
+            xpc_dictionary_set_uint64(reply, "ret", kread64(kaddr) != val);
+          }
 
-        //  kcall
-        if (msgId == JBD_MSG_KCALL) {
-          uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
-          xpc_object_t args = xpc_dictionary_get_value(message, "args");
-          uint64_t argc = xpc_array_get_count(args);
-          uint64_t argv[7] = {0};
-          for (uint64_t i = 0; i < argc; i++) {
-            @autoreleasepool {
-              argv[i] = xpc_array_get_uint64(args, i);
+          //  kalloc
+          if (msgId == JBD_MSG_KALLOC) {
+            uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
+            uint64_t allocated_kmem = kalloc(ksize);
+            xpc_dictionary_set_uint64(reply, "ret", allocated_kmem);
+          }
+
+          //  kfree
+          if (msgId == JBD_MSG_KFREE) {
+            uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+            uint64_t ksize = xpc_dictionary_get_uint64(message, "ksize");
+            kfree(kaddr, ksize);
+            xpc_dictionary_set_uint64(reply, "ret", 0);
+          }
+
+          //  kcall
+          if (msgId == JBD_MSG_KCALL) {
+            uint64_t kaddr = xpc_dictionary_get_uint64(message, "kaddr");
+            xpc_object_t args = xpc_dictionary_get_value(message, "args");
+            uint64_t argc = xpc_array_get_count(args);
+            uint64_t argv[7] = {0};
+            for (uint64_t i = 0; i < argc; i++) {
+              @autoreleasepool {
+                argv[i] = xpc_array_get_uint64(args, i);
+              }
             }
+
+            init_kcall();
+            uint64_t kcall_ret = kcall(kaddr, argv[0], argv[1], argv[2],
+                                       argv[3], argv[4], argv[5], argv[6]);
+            xpc_dictionary_set_uint64(reply, "ret", kcall_ret);
+            term_kcall();
           }
 
-          init_kcall();
-          uint64_t kcall_ret = kcall(kaddr, argv[0], argv[1], argv[2], argv[3],
-                                     argv[4], argv[5], argv[6]);
-          xpc_dictionary_set_uint64(reply, "ret", kcall_ret);
-          term_kcall();
-        }
-
-        //  load trustcache from bin
-        if (msgId == JBD_MSG_PROCESS_BINARY) {
-          int64_t ret = 0;
-          const char *filePath = xpc_dictionary_get_string(message, "filePath");
-          if (filePath) {
-            NSString *nsFilePath = [NSString stringWithUTF8String:filePath];
-            ret = processBinary(nsFilePath);
-          } else {
-            ret = -1;
+          //  load trustcache from bin
+          if (msgId == JBD_MSG_PROCESS_BINARY) {
+            int64_t ret = 0;
+            const char *filePath =
+                xpc_dictionary_get_string(message, "filePath");
+            if (filePath) {
+              NSString *nsFilePath = [NSString stringWithUTF8String:filePath];
+              ret = processBinary(nsFilePath);
+            } else {
+              ret = -1;
+            }
+            xpc_dictionary_set_int64(reply, "ret", ret);
           }
-          xpc_dictionary_set_int64(reply, "ret", ret);
-        }
 
-        //  rebuild trustcache, it does load all trustcache from /var/jb
-        if (msgId == JBD_MSG_REBUILD_TRUSTCACHE) {
-          int64_t ret = 0;
-          rebuildDynamicTrustCache();
-          xpc_dictionary_set_int64(reply, "ret", ret);
-        }
-
-        // patch dyld and bind mount
-        if (msgId == JBD_MSG_INIT_ENVIRONMENT) {
-          int64_t result = 0;
-          result = makeFakeLib();
-          if (result == 0) {
-            result = setFakeLibBindMountActive(true);
+          //  rebuild trustcache, it does load all trustcache from /var/jb
+          if (msgId == JBD_MSG_REBUILD_TRUSTCACHE) {
+            int64_t ret = 0;
+            rebuildDynamicTrustCache();
+            xpc_dictionary_set_int64(reply, "ret", ret);
           }
-          xpc_dictionary_set_int64(reply, "ret", result);
-        }
 
-        // setuid
-        if (msgId == JBD_MSG_SETUID_FIX) {
-          int64_t result = 0;
-          proc_fix_setuid(clientPid);
-          xpc_dictionary_set_int64(reply, "ret", result);
+          // patch dyld and bind mount
+          if (msgId == JBD_MSG_INIT_ENVIRONMENT) {
+            int64_t result = 0;
+            result = makeFakeLib();
+            if (result == 0) {
+              result = setFakeLibBindMountActive(true);
+            }
+            xpc_dictionary_set_int64(reply, "ret", result);
+          }
+
+          // setuid
+          if (msgId == JBD_MSG_SETUID_FIX) {
+            int64_t result = 0;
+            proc_fix_setuid(clientPid);
+            xpc_dictionary_set_int64(reply, "ret", result);
+          }
+
+          if (msgId == JBD_MSG_PROC_SET_DEBUGGED) {
+            int64_t result = 0;
+            pid_t pid = xpc_dictionary_get_int64(message, "pid");
+            NSLog(@"[jailbreakd] setting other process %s as debugged",
+                  proc_get_path(pid).UTF8String);
+            result = proc_set_debugged_pid(pid, true);
+            xpc_dictionary_set_int64(reply, "ret", result);
+          }
+
+          if (msgId == JBD_MSG_DEBUG_ME) { // XXX BROKEN, when hook launchd, it
+                                           // just panic :(
+            int64_t result = 0;
+            result = proc_set_debugged_pid(clientPid, false);
+            xpc_dictionary_set_int64(reply, "ret", result);
+          }
+
+          if (msgId == JBD_MSG_PLATFORMIZE) {
+            int64_t result = 0;
+            pid_t pid = xpc_dictionary_get_int64(message, "pid");
+            NSLog(@"[jailbreakd] Platformizing pid: %d\n", pid);
+            platformize(pid);
+            xpc_dictionary_set_int64(reply, "ret", result);
+          }
         }
       }
 

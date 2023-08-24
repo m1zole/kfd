@@ -2,7 +2,7 @@ TARGET = launchdhook.dylib
 CC = clang
 
 CFLAGS = -framework Foundation -framework CoreServices -framework Security -framework IOKit -I./src/_shared -I./src -isysroot $(shell xcrun --sdk iphoneos --show-sdk-path) -arch arm64 -miphoneos-version-min=15.0 -fobjc-arc -O2
-LDFLAGS = -dynamiclib -rpath @loader_path/fallback  -L./src/_shared -lbsm 
+LDFLAGS = -dynamiclib -rpath @loader_path/fallback  -L./src/_shared -lbsm -lellekit
 
 sign: $(TARGET)
 	@ldid -S $^

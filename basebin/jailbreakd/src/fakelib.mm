@@ -124,18 +124,18 @@ int setFakeLibVisible(bool visible) {
         prebootPath(@"basebin/.fakelib/systemhook.dylib");
 
     if (visible) {
-      //   if (![[NSFileManager defaultManager] copyItemAtPath:systemhookPath
-      //                                                toPath:systemhookFakeLibPath
-      //                                                 error:nil])
-      //     return 10; //XXX systemhook.dylib is NOT READY!
+      if (![[NSFileManager defaultManager] copyItemAtPath:systemhookPath
+                                                   toPath:systemhookFakeLibPath
+                                                    error:nil])
+        return 10; // XXX systemhook.dylib is NOT READY!
       if (carbonCopy(patchedDyldPath, dyldFakeLibPath) != 0)
         return 11;
       NSLog(@"[jailbreakd] Made fakelib visible");
     } else {
-      //   if (![[NSFileManager defaultManager]
-      //           removeItemAtPath:systemhookFakeLibPath
-      //                      error:nil])
-      //     return 12;   //XXX systemhook.dylib is NOT READY!
+      if (![[NSFileManager defaultManager]
+              removeItemAtPath:systemhookFakeLibPath
+                         error:nil])
+        return 12; // XXX systemhook.dylib is NOT READY!
       if (carbonCopy(stockDyldPath, dyldFakeLibPath) != 0)
         return 13;
       NSLog(@"[jailbreakd] Made fakelib not visible");

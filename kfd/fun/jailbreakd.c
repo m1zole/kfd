@@ -65,7 +65,7 @@ mach_port_t jbdSystemWideMachPort(void)
         mach_port_deallocate(mach_task_self(), self_host);
     }
     else {
-        kr = bootstrap_look_up(bootstrap_port, "com.opa334.jailbreakd.systemwide", &outPort);
+        kr = bootstrap_look_up(bootstrap_port, "kr.h4ck.jailbreakd.systemwide", &outPort);
     }
 
     if (kr != KERN_SUCCESS) return MACH_PORT_NULL;
@@ -288,6 +288,39 @@ int64_t jbdProcessBinary(const char *filePath)
     return xpc_dictionary_get_int64(reply, "ret");;
 }
 
+// JBD_MSG_PROCESS_BINARY = 11 - 1
+int64_t jbdswProcessBinary(const char *filePath) {
+  // if file doesn't exist, bail out
+  if (access(filePath, F_OK) != 0)
+    return 0;
+
+  // if file is on rootfs mount point, it doesn't need to be
+  // processed as it's guaranteed to be in static trust cache
+  // same goes for our /usr/lib bind mount (which is guaranteed to be in dynamic
+  // trust cache)
+  struct statfs fs;
+  int sfsret = statfs(filePath, &fs);
+  if (sfsret == 0) {
+    if (!strcmp(fs.f_mntonname, "/") || !strcmp(fs.f_mntonname, "/usr/lib"))
+      return -1;
+  }
+
+  char absolutePath[PATH_MAX];
+  if (realpath(filePath, absolutePath) == NULL)
+    return -1;
+
+  xpc_object_t message = xpc_dictionary_create_empty();
+  xpc_dictionary_set_uint64(message, "id", JBD_MSG_PROCESS_BINARY);
+  xpc_dictionary_set_string(message, "filePath", absolutePath);
+
+  xpc_object_t reply = sendJBDMessageSystemWide(message);
+  int64_t result = -1;
+  if (reply) {
+    result = xpc_dictionary_get_int64(reply, "ret");
+  }
+  return result;
+}
+
 //JBD_MSG_INIT_ENVIRONMENT = 12
 int64_t jbdInitEnvironment(void)
 {
@@ -311,6 +344,29 @@ int64_t jbdswFixSetuid(void)
         xpc_release(reply);
     }
     return result;
+}
+
+//JBD_MSG_PROC_SET_DEBUGGED = 14
+int64_t jbdProcSetDebugged(pid_t pid)
+{
+    xpc_object_t message = xpc_dictionary_create_empty();
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_PROC_SET_DEBUGGED);
+    xpc_dictionary_set_int64(message, "pid", pid);
+
+    xpc_object_t reply = sendJBDMessage(message);
+    if (!reply) return -10;
+    return xpc_dictionary_get_int64(reply, "ret");
+}
+
+//JBD_MSG_DEBUG_ME = 15
+int64_t jbdDebugMe(void)
+{
+    xpc_object_t message = xpc_dictionary_create_empty();
+    xpc_dictionary_set_uint64(message, "id", JBD_MSG_DEBUG_ME);
+
+    xpc_object_t reply = sendJBDMessage(message);
+    if (!reply) return -10;
+    return xpc_dictionary_get_int64(reply, "ret");
 }
 
 int startJailbreakd(void) {
