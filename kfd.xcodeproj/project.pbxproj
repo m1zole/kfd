@@ -14,6 +14,7 @@
 		6E75BFA82A8475C70056ABDA /* fun.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFA72A8475C70056ABDA /* fun.m */; };
 		6E75BFAB2A8476340056ABDA /* krw.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFAA2A8476340056ABDA /* krw.m */; };
 		6E75BFAE2A847A980056ABDA /* offsets.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFAD2A847A980056ABDA /* offsets.m */; };
+		6EC787902A970190005B3A63 /* jailbreakd.c in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7878F2A970190005B3A63 /* jailbreakd.c */; };
 		6ECE5B3D2A9030F000792D41 /* sandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B3C2A9030F000792D41 /* sandbox.m */; };
 		6ECE5B402A903B8000792D41 /* trustcache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B3F2A903B8000792D41 /* trustcache.m */; };
 		6ECE5B4F2A905F5000792D41 /* escalate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B4E2A905F5000792D41 /* escalate.m */; };
@@ -83,6 +84,8 @@
 		6E75BFAC2A8476400056ABDA /* krw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = krw.h; sourceTree = "<group>"; };
 		6E75BFAD2A847A980056ABDA /* offsets.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = offsets.m; sourceTree = "<group>"; };
 		6E75BFAF2A847AC50056ABDA /* offsets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = offsets.h; sourceTree = "<group>"; };
+		6EC7878E2A970190005B3A63 /* jailbreakd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jailbreakd.h; sourceTree = "<group>"; };
+		6EC7878F2A970190005B3A63 /* jailbreakd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jailbreakd.c; sourceTree = "<group>"; };
 		6ECE5B3C2A9030F000792D41 /* sandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = sandbox.m; sourceTree = "<group>"; };
 		6ECE5B3E2A9030FF00792D41 /* sandbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sandbox.h; sourceTree = "<group>"; };
 		6ECE5B3F2A903B8000792D41 /* trustcache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = trustcache.m; sourceTree = "<group>"; };
@@ -296,6 +299,8 @@
 				6ECE5B642A90802100792D41 /* dropbear.h */,
 				6ECE5B5A2A90662200792D41 /* ipc.c */,
 				6ECE5B502A905FDE00792D41 /* proc.h */,
+				6EC7878E2A970190005B3A63 /* jailbreakd.h */,
+				6EC7878F2A970190005B3A63 /* jailbreakd.c */,
 				6ECE5B512A905FDE00792D41 /* proc.c */,
 				6ECE5B3E2A9030FF00792D41 /* sandbox.h */,
 				6ECE5B8A2A944CA700792D41 /* jailbreakd_test.h */,
@@ -423,6 +428,7 @@
 				6ECE5B522A905FDE00792D41 /* proc.c in Sources */,
 				6ECE5B5B2A90662200792D41 /* ipc.c in Sources */,
 				6ECE5B4F2A905F5000792D41 /* escalate.m in Sources */,
+				6EC787902A970190005B3A63 /* jailbreakd.c in Sources */,
 				6ECE5B892A92F95A00792D41 /* boot_info.m in Sources */,
 				6ECE5B862A9269F000792D41 /* bootstrap.m in Sources */,
 				6ECE5B5F2A907DFE00792D41 /* dropbear.m in Sources */,
