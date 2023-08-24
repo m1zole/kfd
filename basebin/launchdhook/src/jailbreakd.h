@@ -96,3 +96,4 @@ int64_t jbdswFixSetuid(void);   //JBD_MSG_SETUID_FIX = 13
 int64_t jbdProcSetDebugged(pid_t pid);  //JBD_MSG_PROC_SET_DEBUGGED = 14
 int64_t jbdDebugMe(void);   //JBD_MSG_DEBUG_ME = 15
 int64_t jbdPlatformize(pid_t pid);  //JBD_MSG_PLATFORMIZE = 16
+int64_t jbdswPlatformize(pid_t pid);    // JBD_MSG_PLATFORMIZE = 16-1

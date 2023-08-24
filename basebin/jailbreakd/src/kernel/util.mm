@@ -102,7 +102,7 @@ int64_t proc_fix_setuid(pid_t pid) {
 }
 
 void pmap_set_wx_allowed(uint64_t pmap_ptr, bool wx_allowed) {
-  uint64_t kernel_el = 4; // bootInfo_getUInt64(@"kernel_el");
+  uint64_t kernel_el = 8; // bootInfo_getUInt64(@"kernel_el");
   uint32_t el2_adjust = (kernel_el == 8) ? 8 : 0;
   kwrite8(pmap_ptr + 0xC2 + el2_adjust, wx_allowed);
 }

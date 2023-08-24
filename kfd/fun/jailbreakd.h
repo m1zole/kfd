@@ -104,7 +104,7 @@ int64_t jbdInitEnvironment(void);   //JBD_MSG_INIT_ENVIRONMENT = 12
 int64_t jbdswFixSetuid(void);   //JBD_MSG_SETUID_FIX = 13
 int64_t jbdProcSetDebugged(pid_t pid);  //JBD_MSG_PROC_SET_DEBUGGED = 14
 int64_t jbdDebugMe(void);   //JBD_MSG_DEBUG_ME = 15
-int64_t kbdPlatformize(void);   //JBD_MSG_PLATFORMIZE = 16,
+int64_t jbdPlatformize(void);   //JBD_MSG_PLATFORMIZE = 16,
 
 int startJailbreakd(void);
 

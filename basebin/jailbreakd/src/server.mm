@@ -95,9 +95,9 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
             proc_get_path(clientPid).UTF8String);
       free(description);
 
-      BOOL isAllowedSystemWide = msgId == JBD_MSG_PROCESS_BINARY ||
-                                 msgId == JBD_MSG_DEBUG_ME ||
-                                 msgId == JBD_MSG_SETUID_FIX; //||
+      BOOL isAllowedSystemWide =
+          msgId == JBD_MSG_PROCESS_BINARY || msgId == JBD_MSG_DEBUG_ME ||
+          msgId == JBD_MSG_SETUID_FIX || msgId == JBD_MSG_PLATFORMIZE; //||
       //                msgId == JBD_MSG_FORK_FIX ||
       // msgId == JBD_MSG_INTERCEPT_USERSPACE_PANIC;
 
@@ -230,7 +230,7 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
             xpc_dictionary_set_int64(reply, "ret", result);
           }
 
-          if (msgId == JBD_MSG_DEBUG_ME) { // XXX BROKEN, when hook launchd, it
+          if (msgId == JBD_MSG_DEBUG_ME) { // XXX BROKEN? when hook launchd, it
                                            // just panic :(
             int64_t result = 0;
             result = proc_set_debugged_pid(clientPid, false);

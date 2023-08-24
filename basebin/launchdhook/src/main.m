@@ -83,12 +83,13 @@ __attribute__((constructor)) static void initializer(void) {
 
   //   proc_set_debugged_pid(getpid(), false);
   // jbdDebugMe(); // XXX BROKEN, when hook launchd, it just panic :(
-  //   jbdPlatformize(getpid());	<- implemented in kfd app
+  //   jbdPlatformize(getpid());	<- implemented in kfd app instead, idk
+  //   why stuck here?
 
   //   initXPCHooks(void)	//XXX NOT IMPLEMENETED
-  //   initDaemonHooks();
+  initDaemonHooks();
   initSpawnHooks();
-  //   initIPCHooks();
+  initIPCHooks();
 
   // This will ensure launchdhook is always reinjected after userspace
   // reboots As this launchd will pass environ to the next launchd...
