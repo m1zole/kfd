@@ -196,7 +196,7 @@ void _offsets_init(void) {
         off_vnode_vu_ubcinfo = 0x78;
         off_vnode_v_name = 0xb8;
         off_vnode_v_parent = 0xc0;
-        off_vnode_v_data = 0xe0; // 0xd8
+        off_vnode_v_data = 0xe0; // 0xd8?
         
         off_fp_glob = 0x10;
 

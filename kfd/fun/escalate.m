@@ -59,6 +59,24 @@ void unborrow_ucreds(pid_t to_pid, uint64_t to_ucred) {
     kwrite64(to_proc + off_p_ucred, to_ucred);
 }
 
+uint64_t get_ucred(uint64_t proc) {
+    uint64_t ucred = 0;
+    if(off_p_ucred == 0){
+        uint64_t kslide = get_kslide();
+        uint64_t ro = kread64(proc + kslide + 0x20);
+        printf("[i] Kernel ro: 0x%llx\n", ro);
+        uint64_t ucred_addr = kread64(ro + 0x20);
+        printf("[i] Kernel ucred addr: 0x%llx\n", ucred_addr);
+        ucred = kread64(ucred_addr);
+        return ucred;
+    } else {
+        ucred = kread64(proc + off_p_ucred);
+        printf("[i] Kernel ucred:  0x%llx\n", ucred);
+        return ucred;
+    }
+    return ucred;
+}
+
 bool rootify(pid_t pid) {
     if (!pid) return false;
 
@@ -66,7 +84,6 @@ bool rootify(pid_t pid) {
     printf("[i] Kernel proc:  0x%llx\n", proc);
     uint64_t ucred = kread64(proc + off_p_ucred);
     printf("[i] Kernel ucred:  0x%llx\n", ucred);
-    
     
     //make everything 0 without setuid(0), pretty straightforward.
     kwrite32(proc + off_p_uid, 0);
@@ -146,11 +163,23 @@ bool set_task_platform(pid_t pid, bool set) {
 
 void set_proc_csflags(pid_t pid) {
     uint64_t proc = proc_of_pid(pid);
-    
-    uint32_t csflags = kread32(proc + off_p_csflags);
+    uint32_t csflags = 0;
+    if(off_p_csflags == 0x1c) {
+        uint64_t self_ro = kread64(proc + 0x20);
+        csflags = kread32(self_ro + off_p_csflags);
+    } else {
+        csflags = kread32(proc + off_p_csflags);
+    }
+    printf("[i] csflags before: 0x%x\n", csflags);
     csflags = csflags | CS_DEBUGGED | CS_PLATFORM_BINARY | CS_INSTALLER | CS_GET_TASK_ALLOW;
     csflags &= ~(CS_RESTRICT | CS_HARD | CS_KILL);
-    kwrite32(proc + off_p_csflags, csflags);
+    printf("[i] csflags will:   0x%x\n", csflags);
+    if(off_p_csflags == 0x1c) {
+        uint64_t self_ro = kread64(proc + 0x20);
+        kwrite32(self_ro + off_p_csflags, csflags);
+    } else {
+        kwrite32(proc + off_p_csflags, csflags);
+    }
 }
 
 uint64_t get_cs_blob(pid_t pid) {
