@@ -159,16 +159,16 @@ void _offsets_init(void) {
         off_p_list_le_prev = 0x8;
         off_p_name = 0x381;
         off_p_pid = 0x68;
-        off_p_ucred = 0x78;
+        off_p_ucred = 0;
         off_p_task = 0x10; //ok
-        off_p_csflags = 0x300;
+        off_p_csflags = 0x1c;
         off_p_uid = 0x2c;//0x18
         off_p_gid = 0x30;//0x28
         off_p_ruid = 0x34;//0x60
         off_p_rgid = 0x38;
-        off_p_svuid = 0x3c;
-        off_p_svgid = 0x40;
-        off_p_textvp = 0x2a8;// 0x350
+        off_p_svuid = 0x44;
+        off_p_svgid = 0x48;
+        off_p_textvp = 0x350;
         off_p_pfd = 0xf8;
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ucred.h#L91
@@ -196,7 +196,7 @@ void _offsets_init(void) {
         off_vnode_vu_ubcinfo = 0x78;
         off_vnode_v_name = 0xb8;
         off_vnode_v_parent = 0xc0;
-        off_vnode_v_data = 0xe0;
+        off_vnode_v_data = 0xe0; // 0xd8
         
         off_fp_glob = 0x10;
 
@@ -243,16 +243,16 @@ void _offsets_init(void) {
         off_p_list_le_prev = 0x8;
         off_p_name = 0x381;
         off_p_pid = 0x68; //ok
-        off_p_ucred = 0x78;
+        off_p_ucred = 0;
         off_p_task = 0x10; //ok
-        off_p_csflags = 0x300;
+        off_p_csflags = 0x1c;
         off_p_uid = 0x2c;
         off_p_gid = 0x30;
         off_p_ruid = 0x34;
         off_p_rgid = 0x38;
-        off_p_svuid = 0x3c;
-        off_p_svgid = 0x40;
-        off_p_textvp = 0x2a8;// 0x350
+        off_p_svuid = 0x44;
+        off_p_svgid = 0x48;
+        off_p_textvp = 0x350;
         off_p_pfd = 0xf8;
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ucred.h#L91
@@ -280,7 +280,7 @@ void _offsets_init(void) {
         off_vnode_vu_ubcinfo = 0x78;
         off_vnode_v_name = 0xb8;
         off_vnode_v_parent = 0xc0;
-        off_vnode_v_data = 0xe0;
+        off_vnode_v_data = 0xe0; // 0xd8?
         
         off_fp_glob = 0x10;
 
