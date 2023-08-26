@@ -361,6 +361,11 @@ int extractBootstrap(void) {
     [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/systemhook.dylib", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/systemhook.dylib" error:nil];
     chown("/var/jb/basebin/systemhook.dylib", 0, 0);
     chmod("/var/jb/basebin/systemhook.dylib", 0755);
+    //8. Copy rootlesshooks.dylib to basebin
+    [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/rootlesshooks.dylib" error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/rootlesshooks.dylib", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/systemhook.dylib" error:nil];
+    chown("/var/jb/basebin/rootlesshooks.dylib", 0, 0);
+    chmod("/var/jb/basebin/rootlesshooks.dylib", 0755);
     
     // Create preferences directory if it does not exist
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -458,6 +463,9 @@ int startJBEnvironment(void) {
     //Refreshing uicache
     util_runCommand("/var/jb/usr/bin/killall", "-9", "iconservicesagent", NULL);
     util_runCommand("/var/jb/usr/bin/uicache", "-a", NULL);
+    
+    //Kill cfprefsd to inject rootlesshooks.dylib
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "cfprefsd", NULL);
     
     return 0;
 }

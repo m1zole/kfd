@@ -230,8 +230,7 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
             xpc_dictionary_set_int64(reply, "ret", result);
           }
 
-          if (msgId == JBD_MSG_DEBUG_ME) { // XXX BROKEN? when hook launchd, it
-                                           // just panic :(
+          if (msgId == JBD_MSG_DEBUG_ME) {
             int64_t result = 0;
             result = proc_set_debugged_pid(clientPid, false);
             xpc_dictionary_set_int64(reply, "ret", result);

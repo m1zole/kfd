@@ -403,15 +403,14 @@ __attribute__((constructor)) static void initializer(void) {
                "/System/Library/CoreServices/SpringBoard.app/SpringBoard") ==
         0) {
       applyKbdFix();
+    } else if (strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0) {
+      int64_t debugErr = jbdswDebugMe();
+      if (debugErr == 0) {
+        dlopen_hook(JB_ROOT_PATH("/basebin/rootlesshooks.dylib"), RTLD_NOW);
+      }
     }
+
     // XXX NOT IMPLEMENTED
-    //  else if (strcmp(gExecutablePath, "/usr/sbin/cfprefsd") == 0) {
-    //  	int64_t debugErr = jbdswDebugMe();
-    //  	if (debugErr == 0) {
-    //  		dlopen_hook(JB_ROOT_PATH("/basebin/rootlesshooks.dylib"),
-    //  RTLD_NOW);
-    //  	}
-    //  }
     //  else if (strcmp(gExecutablePath, "/usr/libexec/watchdogd") == 0) {
     //  	int64_t debugErr = jbdswDebugMe();
     //  	if (debugErr == 0) {
