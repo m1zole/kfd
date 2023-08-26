@@ -14,9 +14,6 @@
 #include "escalate.h"
 #include "sandbox.h"
 
-mach_port_t user_client;
-uint64_t fake_client;
-
 uint64_t mineek_find_port(mach_port_name_t port){
     uint64_t task_addr = get_selftask();
     uint64_t itk_space = kread64(task_addr + 0x308);
@@ -166,7 +163,7 @@ void stage2(void) {
     mineek_getRoot(proc_addr);
     usleep(10000);
     ucred_test(proc_addr);
-    //kalloc_using_empty_kdata_page();
-    run_unsandboxed((^{sandbox_test();}), pid);
+    //kalloc_using_empty_kdata_page_stage2();
+    run_unsandboxed((^{unsandbox_stage2();}), pid);
     init_kcall();
 }

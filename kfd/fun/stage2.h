@@ -15,6 +15,7 @@ void mineek_getRoot(uint64_t proc_addr);
 void stage2(void);
 void ucred_test(uint64_t proc_addr);
 
+mach_port_t user_client;
 uint64_t fake_vtable;
 uint64_t fake_client;
 

