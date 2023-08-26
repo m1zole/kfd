@@ -13,6 +13,7 @@
 #import "proc.h"
 #import "escalate.h"
 #import "stage2.h"
+#import "boot_info.h"
 
 uint64_t get_ucred(uint64_t proc) {
     uint64_t ucred = 0;
@@ -94,4 +95,36 @@ char* token_by_sandbox_extension_issue_file(const char *extension_class, const c
     unborrow_ucreds(getpid(), self_ucreds);
     
     return ret;
+}
+
+char *generateSystemWideSandboxExtensions(void) {
+    uint64_t self_ucreds = borrow_ucreds(getpid(), 1);
+    
+  NSMutableString *extensionString = [NSMutableString new];
+
+  // Make /var/jb readable
+  [extensionString appendString:[NSString stringWithUTF8String:sandbox_extension_issue_file("com.apple.app-sandbox.read", prebootPath(nil).fileSystemRepresentation, 0)]];
+  [extensionString appendString:@"|"];
+
+  // Make binaries in /var/jb executable
+    [extensionString appendString:[NSString stringWithUTF8String:sandbox_extension_issue_file("com.apple.sandbox.executable", prebootPath(nil).fileSystemRepresentation, 0)]];
+  [extensionString appendString:@"|"];
+
+  // Ensure the whole system has access to kr.h4ck.jailbreakd.systemwide
+  [extensionString appendString:[NSString stringWithUTF8String:sandbox_extension_issue_mach("com.apple.app-sandbox.mach", "kr.h4ck.jailbreakd.systemwide", 0)]];
+  [extensionString appendString:@"|"];
+  [extensionString appendString:[NSString stringWithUTF8String:sandbox_extension_issue_mach("com.apple.security.exception." "mach-lookup.global-name", "kr.h4ck.jailbreakd.systemwide", 0)]];
+    unborrow_ucreds(getpid(), self_ucreds);
+
+  return extensionString.UTF8String;
+}
+
+void unsandbox_rootless(char* extensions) {
+  char extensionsCopy[strlen(extensions)];
+  strcpy(extensionsCopy, extensions);
+  char *extensionToken = strtok(extensionsCopy, "|");
+  while (extensionToken != NULL) {
+    sandbox_extension_consume(extensionToken);
+    extensionToken = strtok(NULL, "|");
+  }
 }

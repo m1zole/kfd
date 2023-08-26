@@ -11,12 +11,12 @@
 		297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297BA10A2A310AE100D1E51A /* ContentView.swift */; };
 		297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA10C2A310AE200D1E51A /* Assets.xcassets */; };
 		297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA1102A310AE200D1E51A /* Preview Assets.xcassets */; };
+		6E08ABFC2A9A39B000BF5B0D /* debs in Resources */ = {isa = PBXBuildFile; fileRef = 6E08ABFB2A9A39B000BF5B0D /* debs */; };
+		6E08ABFE2A9A3B9800BF5B0D /* helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E08ABFD2A9A3B9800BF5B0D /* helpers.m */; };
 		6E75BFA82A8475C70056ABDA /* fun.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFA72A8475C70056ABDA /* fun.m */; };
 		6E75BFAB2A8476340056ABDA /* krw.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFAA2A8476340056ABDA /* krw.m */; };
 		6E75BFAE2A847A980056ABDA /* offsets.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFAD2A847A980056ABDA /* offsets.m */; };
 		6EC787902A970190005B3A63 /* jailbreakd.c in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7878F2A970190005B3A63 /* jailbreakd.c */; };
-		6EC787932A971EE4005B3A63 /* sileo.deb in Resources */ = {isa = PBXBuildFile; fileRef = 6EC787912A971EE4005B3A63 /* sileo.deb */; };
-		6EC787942A971EE4005B3A63 /* zebra.deb in Resources */ = {isa = PBXBuildFile; fileRef = 6EC787922A971EE4005B3A63 /* zebra.deb */; };
 		6ECE5B3D2A9030F000792D41 /* sandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B3C2A9030F000792D41 /* sandbox.m */; };
 		6ECE5B402A903B8000792D41 /* trustcache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B3F2A903B8000792D41 /* trustcache.m */; };
 		6ECE5B4F2A905F5000792D41 /* escalate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B4E2A905F5000792D41 /* escalate.m */; };
@@ -81,6 +81,9 @@
 		29A765312A3943F6006617E8 /* vm_named_entry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vm_named_entry.h; sourceTree = "<group>"; };
 		29A765322A394407006617E8 /* vm_object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vm_object.h; sourceTree = "<group>"; };
 		29A765332A394412006617E8 /* vm_page.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vm_page.h; sourceTree = "<group>"; };
+		6E08ABFB2A9A39B000BF5B0D /* debs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = debs; sourceTree = SOURCE_ROOT; };
+		6E08ABFD2A9A3B9800BF5B0D /* helpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = helpers.m; sourceTree = "<group>"; };
+		6E08ABFF2A9A3BA600BF5B0D /* helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
 		6E75BFA72A8475C70056ABDA /* fun.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = fun.m; sourceTree = "<group>"; };
 		6E75BFA92A8475D30056ABDA /* fun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fun.h; sourceTree = "<group>"; };
 		6E75BFAA2A8476340056ABDA /* krw.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = krw.m; sourceTree = "<group>"; };
@@ -89,8 +92,6 @@
 		6E75BFAF2A847AC50056ABDA /* offsets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = offsets.h; sourceTree = "<group>"; };
 		6EC7878E2A970190005B3A63 /* jailbreakd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jailbreakd.h; sourceTree = "<group>"; };
 		6EC7878F2A970190005B3A63 /* jailbreakd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jailbreakd.c; sourceTree = "<group>"; };
-		6EC787912A971EE4005B3A63 /* sileo.deb */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = sileo.deb; sourceTree = SOURCE_ROOT; };
-		6EC787922A971EE4005B3A63 /* zebra.deb */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = zebra.deb; sourceTree = SOURCE_ROOT; };
 		6ECE5B3C2A9030F000792D41 /* sandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = sandbox.m; sourceTree = "<group>"; };
 		6ECE5B3E2A9030FF00792D41 /* sandbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sandbox.h; sourceTree = "<group>"; };
 		6ECE5B3F2A903B8000792D41 /* trustcache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = trustcache.m; sourceTree = "<group>"; };
@@ -276,8 +277,7 @@
 		297BA1072A310AE100D1E51A /* kfd */ = {
 			isa = PBXGroup;
 			children = (
-				6EC787912A971EE4005B3A63 /* sileo.deb */,
-				6EC787922A971EE4005B3A63 /* zebra.deb */,
+				6E08ABFB2A9A39B000BF5B0D /* debs */,
 				6ECE5B902A949F0800792D41 /* unsigned */,
 				6ECE5B602A907FC800792D41 /* binaries */,
 				6ECE5B5C2A907DE900792D41 /* iosbinpack */,
@@ -306,10 +306,11 @@
 			isa = PBXGroup;
 			children = (
 				6ECE5B832A92188900792D41 /* common */,
-				6ECE5B3C2A9030F000792D41 /* sandbox.m */,
 				6ECE5B4D2A905F5000792D41 /* escalate.h */,
 				6ECE5B4E2A905F5000792D41 /* escalate.m */,
 				6ECE5B562A9065B300792D41 /* vnode.h */,
+				6E08ABFD2A9A3B9800BF5B0D /* helpers.m */,
+				6E08ABFF2A9A3BA600BF5B0D /* helpers.h */,
 				6ECE5B572A9065B300792D41 /* vnode.c */,
 				6ECE5B842A9269F000792D41 /* bootstrap.h */,
 				6ECE5B852A9269F000792D41 /* bootstrap.m */,
@@ -321,6 +322,7 @@
 				6EC7878E2A970190005B3A63 /* jailbreakd.h */,
 				6EC7878F2A970190005B3A63 /* jailbreakd.c */,
 				6ECE5B512A905FDE00792D41 /* proc.c */,
+				6ECE5B3C2A9030F000792D41 /* sandbox.m */,
 				6ECE5B3E2A9030FF00792D41 /* sandbox.h */,
 				6ECE5B8A2A944CA700792D41 /* jailbreakd_test.h */,
 				6ECE5B8B2A944CA700792D41 /* jailbreakd_test.m */,
@@ -444,13 +446,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E08ABFC2A9A39B000BF5B0D /* debs in Resources */,
 				6ECE5B912A949F0800792D41 /* unsigned in Resources */,
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
 				6ECE5B612A907FC800792D41 /* binaries in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
-				6EC787932A971EE4005B3A63 /* sileo.deb in Resources */,
 				6ECE5B5D2A907DE900792D41 /* iosbinpack in Resources */,
-				6EC787942A971EE4005B3A63 /* zebra.deb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -495,6 +496,7 @@
 				6EC787902A970190005B3A63 /* jailbreakd.c in Sources */,
 				6ECE5B892A92F95A00792D41 /* boot_info.m in Sources */,
 				6ECE5B862A9269F000792D41 /* bootstrap.m in Sources */,
+				6E08ABFE2A9A3B9800BF5B0D /* helpers.m in Sources */,
 				6ECE5B5F2A907DFE00792D41 /* dropbear.m in Sources */,
 				6ECE5B402A903B8000792D41 /* trustcache.m in Sources */,
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,

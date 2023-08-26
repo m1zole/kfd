@@ -302,29 +302,11 @@ int extractBootstrap(void) {
 
         [@"" writeToFile:installedPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     }
-    
-    NSString *defaultSources = @"\
-    Types: deb\n\
-    URIs: https://repo.chariz.com/\n\
-    Suites: ./\n\
-    Components:\n\
-    \n\
-    Types: deb\n\
-    URIs: https://havoc.app/\n\
-    Suites: ./\n\
-    Components:\n\
-    \n\
-    Types: deb\n\
-    URIs: http://apt.thebigboss.org/repofiles/cydia/\n\
-    Suites: stable\n\
-    Components: main\n\
-    \n\
-    Types: deb\n\
-    URIs: https://ellekit.space/\n\
-    Suites: ./\n\
-    Components:\n";
-    
-    [defaultSources writeToFile:@"/var/jb/etc/apt/sources.list.d/default.sources" atomically:NO encoding:NSUTF8StringEncoding error:nil];
+
+    NSString *default_sources_path = [NSString stringWithFormat:@"%@/binaries/default.sources", NSBundle.mainBundle.resourcePath];
+    [[NSFileManager defaultManager] copyItemAtPath:default_sources_path toPath:@"/var/jb/etc/apt/sources.list.d/default.sources" error:nil];
+    chmod("/var/jb/etc/apt/sources.list.d/default.sources", 0644);
+    chown("/var/jb/etc/apt/sources.list.d/default.sources", 0, 0);
     
     // Create basebin symlinks if they don't exist
 //    if !fileOrSymlinkExists(atPath: "/var/jb/usr/bin/opainject") {
@@ -429,13 +411,22 @@ int finalizeBootstrap(void) {
     util_runCommand("/var/jb/bin/sh", "/var/jb/prep_bootstrap.sh", NULL);
     
     //2. install libjbdrw.deb (NOT IMPLEMENTED)
+    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/debs/libjbdrw_fake.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
     
     //3. Install package manager(sileo or zebra)
-    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/sileo.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
-    util_runCommand("/var/jb/usr/bin/uicache", "-u", "/var/jb/Applications/Sileo.app", NULL);
+    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/debs/sileo.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
+    util_runCommand("/var/jb/usr/bin/uicache", "-p", "/var/jb/Applications/Sileo.app", NULL);
     
-    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/zebra.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
-    util_runCommand("/var/jb/usr/bin/uicache", "-u", "/var/jb/Applications/Zebra.app", NULL);
+    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/debs/zebra.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
+    util_runCommand("/var/jb/usr/bin/uicache", "-p", "/var/jb/Applications/Zebra.app", NULL);
+    
+    //4. Install NewTerm3
+    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/debs/newterm3.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
+    util_runCommand("/var/jb/usr/bin/uicache", "-p", "/var/jb/Applications/NewTerm.app", NULL);
+    
+    //5. Install Tweak Injector (Ellekit)
+    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/debs/ellekit_noautoload.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
+    
     
     return 0;
 }
@@ -460,11 +451,13 @@ int startJBEnvironment(void) {
     printf("Status: Initializing Environment...\n");
     printf("jbdInitEnvironment ret: %lld\n", jbdInitEnvironment());
     
-    //Refresh uicache
-    launch("/var/jb/usr/bin/killall", "-9", "iconservicesagent", NULL, NULL, NULL, NULL, NULL);
-    usleep(100000);
-    launch("/var/jb/usr/bin/uicache", "-a", NULL, NULL, NULL, NULL, NULL, NULL);
+    printf("Status: Initializing System Hook...\n");
+    platformize(1);    //orginally implemented from launchdhook
+    util_runCommand("/var/jb/basebin/opainject", "1", "/var/jb/basebin/launchdhook.dylib", NULL);
     
+    //Refreshing uicache
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "iconservicesagent", NULL);
+    util_runCommand("/var/jb/usr/bin/uicache", "-a", NULL);
     
     return 0;
 }

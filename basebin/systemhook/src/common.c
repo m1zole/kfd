@@ -628,3 +628,15 @@ int64_t jbdPlatformize(pid_t pid) {
     return -10;
   return xpc_dictionary_get_int64(reply, "ret");
 }
+
+// JBD_MSG_PLATFORMIZE = 16-1
+int64_t jbdswPlatformize(pid_t pid) {
+  xpc_object_t message = xpc_dictionary_create_empty();
+  xpc_dictionary_set_uint64(message, "id", JBD_MSG_PLATFORMIZE);
+  xpc_dictionary_set_int64(message, "pid", pid);
+
+  xpc_object_t reply = sendJBDMessageSystemWide(message);
+  if (!reply)
+    return -10;
+  return xpc_dictionary_get_int64(reply, "ret");
+}

@@ -24,6 +24,7 @@
 #import "boot_info.h"
 #import "jailbreakd_test.h"
 #import "stage2.h"
+#import "helpers.h"
 
 void test_kalloc_kfree(void) {
     size_t allocated_size = 0x1000;
@@ -135,14 +136,14 @@ int do_fun(void) {
     loadTrustCacheBinaries();
     
     term_kcall();   //After term_kcall called, kalloc/kfree/physrw NOT work.
+//    goto TEMP_JUMP;
     
-    runSSH();
+    cleanDropbearBootstrap();
+//    runSSH(); //This would not be used anymore since have working JB.
     
     startJBEnvironment();   //oobPCI.swift -> case "startEnvironment":
-//    platformize(1); //orginally implemented from launchdhook
-    set_proc_csflags(1);
-    
-    
+
+//TEMP_JUMP:
 //    test_launchdhook();
     
 //    test_handoffKRW_jailbreakd();
@@ -150,6 +151,14 @@ int do_fun(void) {
 //    test_communicate_jailbreakd();
     
     sandbox(getpid(), sb);
+    
+    //jb done, kclose and sbreload
+    usleep(1000000);
+    do_kclose();
+    printf("Status: Done, sbreloading now...\n");
+    usleep(3000000);
+    restartBackboard();
+    
 
     return 0;
 }

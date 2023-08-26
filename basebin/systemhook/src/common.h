@@ -30,3 +30,4 @@ int spawn_hook_common(pid_t *restrict pid, const char *restrict path,
 					   void *pspawn_org);
 int64_t jbdProcSetDebugged(pid_t pid);
 int64_t jbdPlatformize(pid_t pid) ;
+int64_t jbdswPlatformize(pid_t pid);
