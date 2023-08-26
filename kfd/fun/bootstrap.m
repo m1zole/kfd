@@ -460,12 +460,19 @@ int startJBEnvironment(void) {
     platformize(1);    //orginally implemented from launchdhook
     util_runCommand("/var/jb/basebin/opainject", "1", "/var/jb/basebin/launchdhook.dylib", NULL);
     
+    printf("Status: Starting Launch Daemons...\n");
+    util_runCommand("/var/jb/usr/bin/launchctl", "bootstrap", "system", "/var/jb/Library/LaunchDaemons", NULL);
+    
     //Refreshing uicache
     util_runCommand("/var/jb/usr/bin/killall", "-9", "iconservicesagent", NULL);
     util_runCommand("/var/jb/usr/bin/uicache", "-a", NULL);
     
     //Kill cfprefsd to inject rootlesshooks.dylib
     util_runCommand("/var/jb/usr/bin/killall", "-9", "cfprefsd", NULL);
+    
+    //Anything else... to inject tweaks
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "chronod", NULL);
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "mediaserverd", NULL);
     
     return 0;
 }

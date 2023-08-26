@@ -167,7 +167,8 @@ int proc_set_debugged_pid(pid_t pid, bool fully_debugged) {
     if (proc != 0) {
       // retval = proc_set_debugged(proc, fully_debugged);  //XXX panic
       retval = 0;
-      platformize(pid);
+      // platformize(pid);
+      set_proc_csflags(pid);
     }
   }
   return retval;

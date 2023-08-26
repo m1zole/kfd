@@ -421,8 +421,7 @@ __attribute__((constructor)) static void initializer(void) {
   }
 
   if (shouldEnableTweaks()) {
-    int64_t debugErr = jbdswPlatformize(
-        getpid()); // jbdswDebugMe();	//XXX Broken jbdswDebugMe
+    int64_t debugErr = jbdswDebugMe();
     if (debugErr == 0) {
       const char *tweakLoaderPath = "/var/jb/usr/lib/TweakLoader.dylib";
       if (access(tweakLoaderPath, F_OK) == 0) {
