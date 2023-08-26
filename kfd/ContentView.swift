@@ -67,12 +67,12 @@ struct ContentView: View {
                 }.listRowBackground(Color.clear)
                 Section {
                     HStack {
-                        Button("stage2") {
+                        Button("15.2<") {
                             stage2()
                         }.frame(minWidth: 0, maxWidth: .infinity, maxHeight: 50)
                     }
                     HStack {
-                        Button("do_fun") {
+                        Button(">15.3") {
                             do_fun()
                         }.frame(minWidth: 0, maxWidth: .infinity, maxHeight: 50)
                     }

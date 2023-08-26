@@ -23,6 +23,7 @@
 #import "bootstrap.h"
 #import "boot_info.h"
 #import "jailbreakd_test.h"
+#import "stage2.h"
 
 void test_kalloc_kfree(void) {
     size_t allocated_size = 0x1000;
@@ -127,6 +128,7 @@ int do_fun(void) {
     printf("[i] Kernel slide: 0x%llx\n", kslide);
     printf("[i] Kernel base kread64 ret: 0x%llx\n", kread64(kbase));
     
+    init_kcall();
     printf("[i] rootify ret: %d\n", rootify(getpid()));
     printf("[i] uid: %d, gid: %d\n", getuid(), getgid());
 

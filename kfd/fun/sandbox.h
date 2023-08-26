@@ -12,6 +12,7 @@
 char *sandbox_extension_issue_file(const char *extension_class, const char *path, uint32_t flags);
 
 uint64_t unsandbox(pid_t pid);
+void run_unsandboxed(void (^block)(void), pid_t pid);
 bool sandbox(pid_t pid, uint64_t sb);
 
 int64_t sandbox_extension_consume(const char *extension_token);

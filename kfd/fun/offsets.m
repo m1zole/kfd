@@ -159,7 +159,7 @@ void _offsets_init(void) {
         off_p_list_le_prev = 0x8;
         off_p_name = 0x381;
         off_p_pid = 0x68;
-        off_p_ucred = 0;
+        off_p_ucred = 0; //0x78?
         off_p_task = 0x10; //ok
         off_p_csflags = 0x1c;
         off_p_uid = 0x2c;//0x18
@@ -169,7 +169,7 @@ void _offsets_init(void) {
         off_p_svuid = 0x44;
         off_p_svgid = 0x48;
         off_p_textvp = 0x350;
-        off_p_pfd = 0xf8;
+        off_p_pfd = 0xf8; //?
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ucred.h#L91
         off_u_cr_label = 0x78;
@@ -187,7 +187,7 @@ void _offsets_init(void) {
         off_task_map = 0x28;    //_get_task_pmap
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/vm/vm_map.h#L471
-        off_vm_map_pmap = 0x40; //need to check 0x38
+        off_vm_map_pmap = 0x40;
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/arm/pmap.h#L377
         off_pmap_ttep = 0x8;
@@ -243,17 +243,17 @@ void _offsets_init(void) {
         off_p_list_le_prev = 0x8;
         off_p_name = 0x381;
         off_p_pid = 0x68; //ok
-        off_p_ucred = 0;
+        off_p_ucred = 0; //0x78?
         off_p_task = 0x10; //ok
         off_p_csflags = 0x1c;
-        off_p_uid = 0x2c;
-        off_p_gid = 0x30;
-        off_p_ruid = 0x34;
+        off_p_uid = 0x2c;//0x18
+        off_p_gid = 0x30;//0x28
+        off_p_ruid = 0x34;//0x60
         off_p_rgid = 0x38;
         off_p_svuid = 0x44;
         off_p_svgid = 0x48;
         off_p_textvp = 0x350;
-        off_p_pfd = 0xf8;
+        off_p_pfd = 0xf8; //?
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ucred.h#L91
         off_u_cr_label = 0x78;
@@ -271,7 +271,7 @@ void _offsets_init(void) {
         off_task_map = 0x28;    //_get_task_pmap
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/vm/vm_map.h#L471
-        off_vm_map_pmap = 0x40; //need to check 0x38
+        off_vm_map_pmap = 0x40;
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/arm/pmap.h#L377
         off_pmap_ttep = 0x8;

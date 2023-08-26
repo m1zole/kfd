@@ -61,6 +61,8 @@ void kfree(uint64_t kaddr, size_t ksize);
 uint64_t clean_dirty_kalloc(uint64_t addr, size_t size);
 int kalloc_using_empty_kdata_page(void);
 
+void sandbox_test(void);
+
 int term_kcall(void);
 
 uint64_t kvtophys(uint64_t kvaddr);

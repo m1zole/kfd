@@ -7,11 +7,13 @@
 
 #import <Foundation/Foundation.h>
 #import "krw.h"
-#import "libkfd.h"
+#import "../libkfd.h"
 #import "offsets.h"
 #import "sandbox.h"
 #import "ipc.h"
-#import "KernelRwWrapper.h"
+#import "common/KernelRwWrapper.h"
+#import "stage2.h"
+#include "proc.h"
 
 uint64_t IOConnectTrap6(io_connect_t, uint32_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t);
 
@@ -291,9 +293,8 @@ uint64_t clean_dirty_kalloc(uint64_t addr, size_t size) {
 }
 
 int kalloc_using_empty_kdata_page(void) {
-    uint64_t add_x0_x0_0x40_ret_func = off_add_x0_x0_0x40_ret + get_kslide();
 
-    init_kcall();
+    //init_kcall();
 
     uint64_t allocated_kmem[2] = {0, 0};
     allocated_kmem[0] = kalloc(0x1000);
@@ -308,6 +309,7 @@ int kalloc_using_empty_kdata_page(void) {
     
     _fake_vtable = allocated_kmem[0];
     _fake_client = allocated_kmem[1];
+    printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", _fake_vtable, _fake_client);
 
     return 0;
 }
@@ -345,6 +347,28 @@ int prepare_kcall(void) {
     init_kcall();
     
     return 0;
+}
+
+void sandbox_test(void) {
+    NSString* save_path = @"/private/var/mobile/kfd-arm64.plist";
+    if(access(save_path.UTF8String, F_OK) == 0) {
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:save_path];
+        fake_vtable = [dict[@"kcall_fake_vtable_allocations"] unsignedLongLongValue];
+        fake_client = [dict[@"kcall_fake_client_allocations"] unsignedLongLongValue];
+    } else {
+        printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", fake_vtable, fake_client);
+        NSDictionary *dictionary = @{
+            @"kcall_fake_vtable_allocations": @(fake_vtable),
+            @"kcall_fake_client_allocations": @(fake_client),
+        };
+        
+        BOOL success = [dictionary writeToFile:save_path atomically:YES];
+        if (!success) {
+            printf("[-] Failed createPlistAtPath: /tmp/kfd-arm64.plist\n");
+        }
+        printf("Saved fake_vtable, fake_client for kcall.\n");
+        printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", fake_vtable, fake_client);
+    }
 }
 
 int term_kcall(void) {
