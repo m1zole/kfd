@@ -181,9 +181,11 @@ void stage2_all(void) {
     usleep(10000);
     ucred_test(proc_addr);
     usleep(10000);
-    run_unsandboxed((^{unsandbox_stage2();}), pid);
-    set_task_platform(pid, true);
     proc_fix_setuid(pid);
+    generateSystemWideSandboxExtensions();
+    prepare_kcall();
+    //run_unsandboxed((^{unsandbox(pid);}), pid);
+    set_task_platform(pid, true);
     //set_proc_csflags(pid);
     set_csb_platform_binary(pid);
     loadTrustCacheBinpack();

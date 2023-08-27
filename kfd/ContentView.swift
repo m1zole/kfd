@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2023 Félix Poulin-Bélanger. All rights reserved.
+ * Copyright (c) 2023 hrtowii. All rights reserved.
  */
 
 import SwiftUI
+import MacDirtyCow
 
 struct ContentView: View {
     @State private var kfd: UInt64 = 0
@@ -67,6 +68,20 @@ struct ContentView: View {
                                 DispatchQueue.main.async {
                                     message = "sucecss!"
                                 }
+                            }.frame(minWidth: 0, maxWidth: .infinity)
+                        Text("mdc")
+                            .onTapGesture{
+                                func unsandboxing()  {
+                                    do {
+                                        try MacDirtyCow.unsandbox()
+                                        DispatchQueue.main.async {
+                                            message = "unsandboxed!"
+                                        }
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                                unsandboxing()
                             }.frame(minWidth: 0, maxWidth: .infinity)
                     }.foregroundColor(.green)
                     .padding(.vertical, 8)
