@@ -12,8 +12,3 @@ Types: deb
 URIs: http://apt.thebigboss.org/repofiles/cydia/
 Suites: stable
 Components: main
-
-Types: deb
-URIs: https://ellekit.space/
-Suites: ./
-Components:

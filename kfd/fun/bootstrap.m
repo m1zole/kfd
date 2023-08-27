@@ -366,6 +366,11 @@ int extractBootstrap(void) {
     [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/rootlesshooks.dylib", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/systemhook.dylib" error:nil];
     chown("/var/jb/basebin/rootlesshooks.dylib", 0, 0);
     chmod("/var/jb/basebin/rootlesshooks.dylib", 0755);
+    //9. Copy jbctl to basebin
+    [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/jbctl" error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/jbctl", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/jbctl" error:nil];
+    chown("/var/jb/basebin/jbctl", 0, 0);
+    chmod("/var/jb/basebin/jbctl", 0755);
     
     // Create preferences directory if it does not exist
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -415,8 +420,8 @@ int finalizeBootstrap(void) {
     //1. run /var/jb/prep_bootstrap.sh
     util_runCommand("/var/jb/bin/sh", "/var/jb/prep_bootstrap.sh", NULL);
     
-    //2. install libjbdrw.deb (NOT IMPLEMENTED)
-    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/debs/libjbdrw_fake.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
+    //2. install libkrw0-kfund.deb (libjbdrw)
+    util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/debs/libkrw0-kfund.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
     
     //3. Install package manager(sileo or zebra)
     util_runCommand("/var/jb/usr/bin/dpkg", "-i", [NSString stringWithFormat:@"%@/debs/sileo.deb", NSBundle.mainBundle.bundlePath].UTF8String, NULL);
@@ -473,6 +478,14 @@ int startJBEnvironment(void) {
     //Anything else... to inject tweaks
     util_runCommand("/var/jb/usr/bin/killall", "-9", "chronod", NULL);
     util_runCommand("/var/jb/usr/bin/killall", "-9", "mediaserverd", NULL);
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "securityd", NULL);
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "runningboardd", NULL);
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "installd", NULL);
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "profiled", NULL);
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "assertiond", NULL);
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "quicklookd", NULL);
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "InCallService", NULL);
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "SharingViewService", NULL);
     
     return 0;
 }
