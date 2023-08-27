@@ -13,6 +13,7 @@
 		297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 297BA1102A310AE200D1E51A /* Preview Assets.xcassets */; };
 		6E08ABFC2A9A39B000BF5B0D /* debs in Resources */ = {isa = PBXBuildFile; fileRef = 6E08ABFB2A9A39B000BF5B0D /* debs */; };
 		6E08ABFE2A9A3B9800BF5B0D /* helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E08ABFD2A9A3B9800BF5B0D /* helpers.m */; };
+		6E08AC092A9B87A300BF5B0D /* binaries.tar in Resources */ = {isa = PBXBuildFile; fileRef = 6E08AC082A9B87A300BF5B0D /* binaries.tar */; };
 		6E75BFA82A8475C70056ABDA /* fun.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFA72A8475C70056ABDA /* fun.m */; };
 		6E75BFAB2A8476340056ABDA /* krw.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFAA2A8476340056ABDA /* krw.m */; };
 		6E75BFAE2A847A980056ABDA /* offsets.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E75BFAD2A847A980056ABDA /* offsets.m */; };
@@ -26,10 +27,9 @@
 		6ECE5B5B2A90662200792D41 /* ipc.c in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B5A2A90662200792D41 /* ipc.c */; };
 		6ECE5B5D2A907DE900792D41 /* iosbinpack in Resources */ = {isa = PBXBuildFile; fileRef = 6ECE5B5C2A907DE900792D41 /* iosbinpack */; };
 		6ECE5B5F2A907DFE00792D41 /* dropbear.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B5E2A907DFE00792D41 /* dropbear.m */; };
-		6ECE5B612A907FC800792D41 /* binaries in Resources */ = {isa = PBXBuildFile; fileRef = 6ECE5B602A907FC800792D41 /* binaries */; };
 		6ECE5B7E2A9217D000792D41 /* libgeneral_exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B7C2A9217D000792D41 /* libgeneral_exception.cpp */; };
-		6ECE5B7F2A9217D000792D41 /* KernelRwWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B792A9217CF00792D41 /* KernelRwWrapper.cpp */; };
-		6ECE5B802A9217D000792D41 /* KernelRW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B782A9217CF00792D41 /* KernelRW.cpp */; };
+		6ECE5B7F2A9217D000792D41 /* KernelRwWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B792A9217CF00792D41 /* KernelRwWrapper.mm */; };
+		6ECE5B802A9217D000792D41 /* KernelRW.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B782A9217CF00792D41 /* KernelRW.mm */; };
 		6ECE5B862A9269F000792D41 /* bootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B852A9269F000792D41 /* bootstrap.m */; };
 		6ECE5B892A92F95A00792D41 /* boot_info.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B882A92F95A00792D41 /* boot_info.m */; };
 		6ECE5B8C2A944CA700792D41 /* jailbreakd_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B8B2A944CA700792D41 /* jailbreakd_test.m */; };
@@ -84,6 +84,7 @@
 		6E08ABFB2A9A39B000BF5B0D /* debs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = debs; sourceTree = SOURCE_ROOT; };
 		6E08ABFD2A9A3B9800BF5B0D /* helpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = helpers.m; sourceTree = "<group>"; };
 		6E08ABFF2A9A3BA600BF5B0D /* helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
+		6E08AC082A9B87A300BF5B0D /* binaries.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = binaries.tar; sourceTree = SOURCE_ROOT; };
 		6E75BFA72A8475C70056ABDA /* fun.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = fun.m; sourceTree = "<group>"; };
 		6E75BFA92A8475D30056ABDA /* fun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fun.h; sourceTree = "<group>"; };
 		6E75BFAA2A8476340056ABDA /* krw.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = krw.m; sourceTree = "<group>"; };
@@ -108,11 +109,10 @@
 		6ECE5B5A2A90662200792D41 /* ipc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ipc.c; sourceTree = "<group>"; };
 		6ECE5B5C2A907DE900792D41 /* iosbinpack */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = iosbinpack; sourceTree = SOURCE_ROOT; };
 		6ECE5B5E2A907DFE00792D41 /* dropbear.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = dropbear.m; sourceTree = "<group>"; };
-		6ECE5B602A907FC800792D41 /* binaries */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = binaries; sourceTree = SOURCE_ROOT; };
 		6ECE5B642A90802100792D41 /* dropbear.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dropbear.h; sourceTree = "<group>"; };
 		6ECE5B772A9217CF00792D41 /* KernelRW.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = KernelRW.hpp; sourceTree = "<group>"; };
-		6ECE5B782A9217CF00792D41 /* KernelRW.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KernelRW.cpp; sourceTree = "<group>"; };
-		6ECE5B792A9217CF00792D41 /* KernelRwWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KernelRwWrapper.cpp; sourceTree = "<group>"; };
+		6ECE5B782A9217CF00792D41 /* KernelRW.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = KernelRW.mm; sourceTree = "<group>"; };
+		6ECE5B792A9217CF00792D41 /* KernelRwWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = KernelRwWrapper.mm; sourceTree = "<group>"; };
 		6ECE5B7A2A9217CF00792D41 /* KernelRwWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KernelRwWrapper.h; sourceTree = "<group>"; };
 		6ECE5B7B2A9217CF00792D41 /* macros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
 		6ECE5B7C2A9217D000792D41 /* libgeneral_exception.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = libgeneral_exception.cpp; sourceTree = "<group>"; };
@@ -277,9 +277,9 @@
 		297BA1072A310AE100D1E51A /* kfd */ = {
 			isa = PBXGroup;
 			children = (
+				6E08AC082A9B87A300BF5B0D /* binaries.tar */,
 				6E08ABFB2A9A39B000BF5B0D /* debs */,
 				6ECE5B902A949F0800792D41 /* unsigned */,
-				6ECE5B602A907FC800792D41 /* binaries */,
 				6ECE5B5C2A907DE900792D41 /* iosbinpack */,
 				297BA10C2A310AE200D1E51A /* Assets.xcassets */,
 				297BA10A2A310AE100D1E51A /* ContentView.swift */,
@@ -348,10 +348,10 @@
 		6ECE5B832A92188900792D41 /* common */ = {
 			isa = PBXGroup;
 			children = (
-				6ECE5B782A9217CF00792D41 /* KernelRW.cpp */,
+				6ECE5B782A9217CF00792D41 /* KernelRW.mm */,
 				6ECE5B822A92183F00792D41 /* iokit.h */,
 				6ECE5B772A9217CF00792D41 /* KernelRW.hpp */,
-				6ECE5B792A9217CF00792D41 /* KernelRwWrapper.cpp */,
+				6ECE5B792A9217CF00792D41 /* KernelRwWrapper.mm */,
 				6ECE5B7A2A9217CF00792D41 /* KernelRwWrapper.h */,
 				6ECE5B7C2A9217D000792D41 /* libgeneral_exception.cpp */,
 				6ECE5B7D2A9217D000792D41 /* libgeneral_exception.hpp */,
@@ -448,8 +448,8 @@
 			files = (
 				6E08ABFC2A9A39B000BF5B0D /* debs in Resources */,
 				6ECE5B912A949F0800792D41 /* unsigned in Resources */,
+				6E08AC092A9B87A300BF5B0D /* binaries.tar in Resources */,
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
-				6ECE5B612A907FC800792D41 /* binaries in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
 				6ECE5B5D2A907DE900792D41 /* iosbinpack in Resources */,
 			);
@@ -502,8 +502,8 @@
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,
 				6E75BFAB2A8476340056ABDA /* krw.m in Sources */,
 				6ECE5B552A90609100792D41 /* utils.c in Sources */,
-				6ECE5B802A9217D000792D41 /* KernelRW.cpp in Sources */,
-				6ECE5B7F2A9217D000792D41 /* KernelRwWrapper.cpp in Sources */,
+				6ECE5B802A9217D000792D41 /* KernelRW.mm in Sources */,
+				6ECE5B7F2A9217D000792D41 /* KernelRwWrapper.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

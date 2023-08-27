@@ -9,6 +9,7 @@
 #include "macros.h"
 #include <thread>
 #include <unistd.h>
+#include <Foundation/Foundation.h>
 #include "iokit.h"
 #include "../krw.h"
 #include "../offsets.h"
@@ -41,10 +42,8 @@ struct primpatches{
 
 static primpatches getPrimitivepatches(std::function<uint64_t(uint64_t)> kread64, uint64_t dstTaskAddr, mach_port_t context_write_port, mach_port_t context_read_port, mach_port_t IOSurfaceRootUserClient, uint32_t surfaceID){
     primpatches ret = {};
-
     uint64_t context_write_port_addr = getPortAddr(context_write_port, dstTaskAddr, kread64);
     debug("context_write_port_addr=0x%016llx",context_write_port_addr);
-
     uint64_t context_read_port_addr = getPortAddr(context_read_port, dstTaskAddr, kread64);
     debug("context_read_port_addr=0x%016llx",context_read_port_addr);
 
@@ -61,7 +60,6 @@ static primpatches getPrimitivepatches(std::function<uint64_t(uint64_t)> kread64
 
     ret.context_write_context_addr = context_write_port_addr + ip_context_offset;
     debug("ret.context_write_context_addr=0x%016llx",ret.context_write_context_addr);
-
     uint64_t surface_port_addr = getPortAddr(IOSurfaceRootUserClient, dstTaskAddr, kread64);
     debug("surface_port_addr=0x%016llx",surface_port_addr);
 
@@ -70,7 +68,6 @@ static primpatches getPrimitivepatches(std::function<uint64_t(uint64_t)> kread64
 
     uint64_t surface_clients_array = MAKE_KPTR(kread64(surface_kobject_addr + off_IOSurfaceRootUserClient_surfaceClients));
     debug("surface_clients_array=0x%016llx",surface_clients_array);
-
     //backup
     ret.backup = {
         .where = surface_clients_array+8*surfaceID,
@@ -114,9 +111,7 @@ _IOSurface_id_write(0), _context_write_context_addr(0), _backup{}
     size_t lock_result_size = sizeof(IOSurfaceLockResult);
 
     retassure(_IOSurfaceRoot = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOSurfaceRoot")), "Failed to open IOSurfaceRoot");
-
     retassure(!(kr = IOServiceOpen(_IOSurfaceRoot, mach_task_self(), 0, &_IOSurfaceRootUserClient)), "Failed to open IOSurfaceRootUserClient with error=0x%08x",kr);
-
     do{
         retassure(--lock_result_size, "Failed to find lock_result_size");
         kr = IOConnectCallMethod(
@@ -161,7 +156,6 @@ KernelRW::patch KernelRW::getPrimitivepatches(std::function<uint64_t(uint64_t)> 
 
     _context_write_context_addr = primpatches.context_write_context_addr;
     debug("_context_write_context_addr=0x%016llx",_context_write_context_addr);
-
     //backup array
     _backup = primpatches.backup;
 
@@ -196,11 +190,8 @@ void KernelRW::handoffPrimitivePatching(mach_port_t transmissionPort){
     });
     mymsg_t msg = {};
     kern_return_t kr = 0;
-
     retassure(!(kr = mach_port_set_context(mach_task_self(), _context_read_port, READ_CONTEXT_MAGIC)), "failed to set READ_CONTEXT_MAGIC");
-
     retassure(!(kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listenPort)), "Failed to alloc listenPort");
-
     msg.Head.msgh_bits = MACH_MSGH_BITS_SET(MACH_MSG_TYPE_COPY_SEND, MACH_MSG_TYPE_MAKE_SEND_ONCE, 0, 0);
     msg.Head.msgh_id = 1336;
     msg.Head.msgh_remote_port = transmissionPort;
@@ -213,14 +204,11 @@ void KernelRW::handoffPrimitivePatching(mach_port_t transmissionPort){
     msg.context_write_port = _context_write_port;
     msg.IOSurfaceRootUserClient = _IOSurfaceRootUserClient;
     msg.surfaceid = _IOSurface_id_write;
-
     retassure(!(kr = mach_msg((mach_msg_header_t*)&msg, MACH_SEND_MSG, msg.Head.msgh_size, 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL)),"handoffPrimitivePatching send1 failed with error=0x%08x",kr);
     debug("handoffPrimitivePatching send=0x%08x",kr);
-
     retassure(!(kr = mach_msg((mach_msg_header_t*)&msg, MACH_RCV_MSG|MACH_RCV_LARGE, 0, sizeof(msg), listenPort, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL)),"handoffPrimitivePatching rcv1 failed with error=0x%08x",kr);
     debug("handoffPrimitivePatching rcv=0x%08x",kr);
     retassure(msg.Head.msgh_id == 1337, "received bad msgh_id");
-
     _backup = {
         .where = msg.backupWhere,
         .what = msg.backupWhat
@@ -239,11 +227,9 @@ void KernelRW::handoffPrimitivePatching(mach_port_t transmissionPort){
     retassure(!(kr = mach_msg((mach_msg_header_t*)&msg, MACH_SEND_MSG, msg.Head.msgh_size, 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL)),"handoffPrimitivePatching send2 failed with error=0x%08x",kr);
     debug("handoffPrimitivePatching send2=0x%08x",kr);
 
-
     retassure(!(kr = mach_msg((mach_msg_header_t*)&msg, MACH_RCV_MSG|MACH_RCV_LARGE, 0, sizeof(msg), listenPort, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL)),"handoffPrimitivePatching rcv2 failed with error=0x%08x",kr);
     debug("handoffPrimitivePatching rcv2=0x%08x",kr);
     retassure(msg.Head.msgh_id == 1339, "received bad msgh_id");
-
     retassure(msg.protocolDone == READ_CONTEXT_MAGIC, "bad protocol done magic");
 }
 
@@ -253,7 +239,6 @@ void KernelRW::doRemotePrimitivePatching(mach_port_t transmissionPort, uint64_t 
     kern_return_t kr = 0;
     retassure(!(kr = mach_msg((mach_msg_header_t*)&msg, MACH_RCV_MSG|MACH_RCV_LARGE, 0, sizeof(msg), transmissionPort, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL)),"doRemotePrimitivePatching rcv1 failed with error=0x%08x",kr);
     debug("doRemotePrimitivePatching rcv=0x%08x",kr);
-
     retassure(msg.Head.msgh_id == 1336, "received bad msgh_id");
 
     primpatches ppp = ::getPrimitivepatches([this](uint64_t where)->uint64_t{
@@ -273,13 +258,10 @@ void KernelRW::doRemotePrimitivePatching(mach_port_t transmissionPort, uint64_t 
     msg.kernel_base_addr = _kernel_base_addr;
     msg.kernel_proc_addr = _kernel_proc_addr;
     msg.all_proc_addr = _all_proc_addr;
-
     retassure(!(kr = mach_msg((mach_msg_header_t*)&msg, MACH_SEND_MSG, msg.Head.msgh_size, 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL)),"doRemotePrimitivePatching send1 failed with error=0x%08x",kr);
     debug("doRemotePrimitivePatching send=0x%08x",kr);
-
     retassure(!(kr = mach_msg((mach_msg_header_t*)&msg, MACH_RCV_MSG|MACH_RCV_LARGE, 0, sizeof(msg), transmissionPort, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL)),"doRemotePrimitivePatching rcv2 failed with error=0x%08x",kr);
     debug("doRemotePrimitivePatching rcv2=0x%08x",kr);
-
     retassure(msg.Head.msgh_id == 1338, "received bad msgh_id");
 
     kwrite64(ppp.patch.where, ppp.patch.what);

@@ -37,12 +37,12 @@ int untarDropbearBootstrap(void) {
     posix_spawnattr_init(&attr);
     posix_spawnattr_setflags(&attr, POSIX_SPAWN_START_SUSPENDED);
     
-    NSString *tarPath = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/tar"];
+    NSString *tarPath = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/iosbinpack/tar"];
     chmod(tarPath.UTF8String, 0755);
     char* iosbinpackPath = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/iosbinpack/iosbinpack.tar"].UTF8String;
     
     pid_t pid;
-    const char* args[] = {"tar", "--preserve-permissions", "-xkf", iosbinpackPath, "-C", "/var/containers/Bundle/", NULL};
+    const char* args[] = {"tar.bin", "--preserve-permissions", "-xkf", iosbinpackPath, "-C", "/var/containers/Bundle/", NULL};
     
     int status = posix_spawn(&pid, tarPath.UTF8String, NULL, &attr, (char **)&args, environ);
     if(status == 0) {

@@ -13,6 +13,7 @@
 #import "./common/KernelRwWrapper.h"
 #import "proc.h"
 #import "jailbreakd.h"
+#import "escalate.h"
 
 #import <stdbool.h>
 #import <mach/mach.h>
@@ -22,14 +23,40 @@
 #import <sys/stat.h>
 #import <sys/mount.h>
 
+extern char **environ;
+
 void test_run_jailbreakd(void) {
     util_runCommand("/var/jb/basebin/jbinit", NULL, NULL);
 }
 
 void* test_run_jailbreakd_async(void* arg) {
     util_runCommand("/var/jb/basebin/jbinit", NULL, NULL);
+//
+//    posix_spawnattr_t attr;
+//    posix_spawnattr_init(&attr);
+//    posix_spawnattr_setflags(&attr, POSIX_SPAWN_START_SUSPENDED);
+//
+//    NSString *jbinitPath = @"/var/jb/basebin/jbinit";
+//
+//    pid_t pid;
+//    const char* args[] = {"jbinitPath", NULL};
+//
+//    int status = posix_spawn(&pid, jbinitPath.UTF8String, NULL, &attr, (char **)&args, environ);
+//    if(status == 0) {
+//        platformize(pid);
+//        kill(pid, SIGCONT);
+//
+//        if(waitpid(pid, &status, 0) == -1) {
+//            printf("waitpid error\n");
+//        }
+//
+//    }
+//    NSLog(@"jbinit posix_spawn status: %d\n", status);
+    
     return NULL;
 }
+
+
 
 void test_handoffKRW_jailbreakd(void) {
     pthread_t thread;
@@ -37,9 +64,14 @@ void test_handoffKRW_jailbreakd(void) {
         perror("pthread_create failed");
         return;
     }
-    usleep(100000);
+    usleep(1000000);
     pid_t jbd_pid = pid_by_name("jailbreakd");
+//    set_proc_csflags(jbd_pid);
+//    handoffKernRw(jbd_pid, "/var/jb/basebin/jailbreakd");
+    NSLog(@"[kfund-arm64] jbd_pid: %d\n", jbd_pid);
+//    handoffUnsafeKernRw(jbd_pid, NULL);
     handoffKernRw(jbd_pid, "/var/jb/basebin/jailbreakd");
+    usleep(1000000);
 }
 
 uint64_t test_jbd_kcall(uint64_t func, uint64_t argc, const uint64_t *argv)

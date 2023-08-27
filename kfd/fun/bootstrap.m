@@ -193,7 +193,7 @@ int untar(char* tarPath, char* target) {
     posix_spawnattr_init(&attr);
     posix_spawnattr_setflags(&attr, POSIX_SPAWN_START_SUSPENDED);
     
-    NSString *tarBinary = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/tar"];
+    NSString *tarBinary = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/iosbinpack/tar"];
     chmod(tarBinary.UTF8String, 0755);
     
     pid_t pid;
@@ -237,6 +237,33 @@ void patchBaseBinLaunchDaemonPlists(void)
     for (NSURL *launchDaemonPlistURL in launchDaemonPlistURLs) {
         patchBaseBinLaunchDaemonPlist(launchDaemonPlistURL.path);
     }
+}
+
+int untarBinaries(void) {
+    posix_spawnattr_t attr;
+    posix_spawnattr_init(&attr);
+    posix_spawnattr_setflags(&attr, POSIX_SPAWN_START_SUSPENDED);
+    
+    NSString *tarPath = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/iosbinpack/tar"];
+    chmod(tarPath.UTF8String, 0755);
+    char* binariesTar = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries.tar"].UTF8String;
+    
+    pid_t pid;
+    const char* args[] = {"tar", "--preserve-permissions", "-xkf", binariesTar, "-C", NSBundle.mainBundle.bundlePath.UTF8String, NULL};
+    
+    int status = posix_spawn(&pid, tarPath.UTF8String, NULL, &attr, (char **)&args, environ);
+    if(status == 0) {
+        rootify(pid);
+        kill(pid, SIGCONT);
+        
+        if(waitpid(pid, &status, 0) == -1) {
+            printf("waitpid error\n");
+        }
+        
+    }
+    NSLog(@"untarBinaries posix_spawn status: %d\n", status);
+    
+    return 0;
 }
 
 int extractBootstrap(void) {
@@ -302,11 +329,6 @@ int extractBootstrap(void) {
 
         [@"" writeToFile:installedPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     }
-
-    NSString *default_sources_path = [NSString stringWithFormat:@"%@/binaries/default.sources", NSBundle.mainBundle.resourcePath];
-    [[NSFileManager defaultManager] copyItemAtPath:default_sources_path toPath:@"/var/jb/etc/apt/sources.list.d/default.sources" error:nil];
-    chmod("/var/jb/etc/apt/sources.list.d/default.sources", 0644);
-    chown("/var/jb/etc/apt/sources.list.d/default.sources", 0, 0);
     
     // Create basebin symlinks if they don't exist
 //    if !fileOrSymlinkExists(atPath: "/var/jb/usr/bin/opainject") {
@@ -321,6 +343,11 @@ int extractBootstrap(void) {
 //    if !fileOrSymlinkExists(atPath: "/var/jb/usr/lib/libfilecom.dylib") {
 //        try createSymbolicLink(atPath: "/var/jb/usr/lib/libfilecom.dylib", withDestinationPath: procursusPath + "/basebin/libfilecom.dylib")
 //    }
+    
+//    0.untar
+    untarBinaries();
+    usleep(1500000);
+    
     //1. Copy kr.h4ck.jailbreak.plist to LaunchDaemons
     [[NSFileManager defaultManager] removeItemAtPath:@"/var/jb/basebin/LaunchDaemons" error:nil];
     mkdir("/var/jb/basebin/LaunchDaemons", 0755);
@@ -371,6 +398,15 @@ int extractBootstrap(void) {
     [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithFormat:@"%@/binaries/jbctl", NSBundle.mainBundle.bundlePath] toPath:@"/var/jb/basebin/jbctl" error:nil];
     chown("/var/jb/basebin/jbctl", 0, 0);
     chmod("/var/jb/basebin/jbctl", 0755);
+    //10. Copy default.sources
+    NSString *default_sources_path = [NSString stringWithFormat:@"%@/binaries/default.sources", NSBundle.mainBundle.resourcePath];
+    [[NSFileManager defaultManager] copyItemAtPath:default_sources_path toPath:@"/var/jb/etc/apt/sources.list.d/default.sources" error:nil];
+    chmod("/var/jb/etc/apt/sources.list.d/default.sources", 0644);
+    chown("/var/jb/etc/apt/sources.list.d/default.sources", 0, 0);
+    //Final. Remove
+    printf("binaries access ret: %d\n", access([NSString stringWithFormat:@"%@/binaries", NSBundle.mainBundle.bundlePath].UTF8String, F_OK));
+    [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@/binaries", NSBundle.mainBundle.bundlePath] error:nil];
+    printf("binaries access ret2: %d\n", access([NSString stringWithFormat:@"%@/binaries", NSBundle.mainBundle.bundlePath].UTF8String, F_OK));
     
     // Create preferences directory if it does not exist
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -468,10 +504,6 @@ int startJBEnvironment(void) {
     printf("Status: Starting Launch Daemons...\n");
     util_runCommand("/var/jb/usr/bin/launchctl", "bootstrap", "system", "/var/jb/Library/LaunchDaemons", NULL);
     
-    //Refreshing uicache
-    util_runCommand("/var/jb/usr/bin/killall", "-9", "iconservicesagent", NULL);
-    util_runCommand("/var/jb/usr/bin/uicache", "-a", NULL);
-    
     //Kill cfprefsd to inject rootlesshooks.dylib
     util_runCommand("/var/jb/usr/bin/killall", "-9", "cfprefsd", NULL);
     
@@ -486,6 +518,10 @@ int startJBEnvironment(void) {
     util_runCommand("/var/jb/usr/bin/killall", "-9", "quicklookd", NULL);
     util_runCommand("/var/jb/usr/bin/killall", "-9", "InCallService", NULL);
     util_runCommand("/var/jb/usr/bin/killall", "-9", "SharingViewService", NULL);
+    
+    //Refreshing uicache
+    util_runCommand("/var/jb/usr/bin/killall", "-9", "iconservicesagent", NULL);
+    util_runCommand("/var/jb/usr/bin/uicache", "-a", NULL);
     
     return 0;
 }

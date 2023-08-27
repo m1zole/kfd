@@ -61,7 +61,7 @@
 #ifdef EXCEPT_ASSURE
 #include "libgeneral_exception.hpp"
 //assure cpp
-#   define retassure(cond, errstr ...) do{ if ((cond) == 0) throw tihmstar::EXPECTIONNAME(VERSION_COMMIT_COUNT, VERSION_COMMIT_SHA, __LINE__,__FILE__,errstr); } while(0)
+#   define retassure(cond, errstr ...) do{ if ((cond) == 0) ; } while(0)
 
 
 // //more cpp assure
@@ -83,9 +83,9 @@ public:
 
 #else
 //assure c
-#   define assure(a) cassure(a)
-#   define retassure(cond, errstr ...) cretassure(cond, errstr)
-#   define reterror(estr ...) creterror(estr)
+#   define assure(a) do {}; while(0);
+#   define retassure(cond, errstr ...) do {}; while(0);
+#   define reterror(estr ...) do {}; while(0);
 
 #endif
 

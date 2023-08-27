@@ -26,6 +26,8 @@ void terminateKernRw(void);
 
 void handoffKernRw(pid_t spawnedPID, const char *processPath);
 
+void handoffUnsafeKernRw(pid_t spawnedPID, const char *processPath);
+
 void ksetOffsets(uint64_t kernBaseAddr, uint64_t kernProcAddr, uint64_t allProcAddr);
 
 
