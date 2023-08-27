@@ -17,15 +17,15 @@ uid_t audit_token_to_euid(audit_token_t);
 uid_t audit_token_to_pid(audit_token_t);
 
 void JBLogDebug(const char *format, ...) {
-  va_list va;
-  va_start(va, format);
+  // va_list va;
+  // va_start(va, format);
 
-  FILE *launchdLog = fopen("/var/mobile/Media/jailbreakd-xpc.log", "a");
-  vfprintf(launchdLog, format, va);
-  fprintf(launchdLog, "\n");
-  fclose(launchdLog);
+  // FILE *launchdLog = fopen("/var/mobile/Media/jailbreakd-xpc.log", "a");
+  // vfprintf(launchdLog, format, va);
+  // fprintf(launchdLog, "\n");
+  // fclose(launchdLog);
 
-  va_end(va);
+  // va_end(va);
 }
 
 kern_return_t bootstrap_check_in(mach_port_t bootstrap_port,
