@@ -161,15 +161,11 @@ int proc_set_debugged(uint64_t proc_ptr, bool fully_debugged) {
 }
 
 int proc_set_debugged_pid(pid_t pid, bool fully_debugged) {
-  int retval = -1;
+  int retval = 0;
   if (pid > 0) {
-    uint64_t proc = proc_of_pid(pid);
-    if (proc != 0) {
-      // retval = proc_set_debugged(proc, fully_debugged);  //XXX panic
-      retval = 0;
-      // platformize(pid);
-      set_proc_csflags(pid);
-    }
+    // retval = proc_set_debugged(proc, fully_debugged);  //XXX panic
+    // platformize(pid);
+    set_proc_csflags(pid);
   }
   return retval;
 }
@@ -194,7 +190,8 @@ bool set_task_platform(pid_t pid, bool set) {
 
 void set_proc_csflags(pid_t pid) {
   uint64_t proc = proc_of_pid(pid);
-
+  if (proc == -1)
+    return;
   uint32_t csflags = kread32(proc + off_p_csflags);
   csflags = csflags | CS_DEBUGGED | CS_PLATFORM_BINARY | CS_INSTALLER |
             CS_GET_TASK_ALLOW;

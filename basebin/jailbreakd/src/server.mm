@@ -16,19 +16,17 @@ xpc_object_t launchd_xpc_send_message(xpc_object_t xdict);
 uid_t audit_token_to_euid(audit_token_t);
 uid_t audit_token_to_pid(audit_token_t);
 
-/*#undef JBLogDebug
-void JBLogDebug(const char *format, ...)
-{
-        va_list va;
-        va_start(va, format);
+void JBLogDebug(const char *format, ...) {
+  va_list va;
+  va_start(va, format);
 
-        FILE *launchdLog = fopen("/var/mobile/jailbreakd-xpc.log", "a");
-        vfprintf(launchdLog, format, va);
-        fprintf(launchdLog, "\n");
-        fclose(launchdLog);
+  FILE *launchdLog = fopen("/var/mobile/Media/jailbreakd-xpc.log", "a");
+  vfprintf(launchdLog, format, va);
+  fprintf(launchdLog, "\n");
+  fclose(launchdLog);
 
-        va_end(va);
-}*/
+  va_end(va);
+}
 
 kern_return_t bootstrap_check_in(mach_port_t bootstrap_port,
                                  const char *service, mach_port_t *server_port);
@@ -73,7 +71,7 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
     xpc_object_t message = nil;
     int err = xpc_pipe_receive(machPort, &message);
     if (err != 0) {
-      NSLog(@"[jailbreakd] xpc_pipe_receive error %d", err);
+      JBLogDebug("[jailbreakd] xpc_pipe_receive error %d", err);
       return;
     }
 
@@ -89,10 +87,10 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
       msgId = xpc_dictionary_get_uint64(message, "id");
 
       char *description = xpc_copy_description(message);
-      NSLog(@"[jailbreakd] received %s message %d with dictionary: %s (from "
-            @"binary: %s)",
-            systemwide ? "systemwide" : "", msgId, description,
-            proc_get_path(clientPid).UTF8String);
+      JBLogDebug("[jailbreakd] received %s message %d with dictionary: %s "
+                 "(from binary: %s)",
+                 systemwide ? "systemwide" : "", msgId, description,
+                 proc_get_path(clientPid).UTF8String);
       free(description);
 
       BOOL isAllowedSystemWide =
@@ -224,8 +222,8 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
           if (msgId == JBD_MSG_PROC_SET_DEBUGGED) {
             int64_t result = 0;
             pid_t pid = xpc_dictionary_get_int64(message, "pid");
-            NSLog(@"[jailbreakd] setting other process %s as debugged",
-                  proc_get_path(pid).UTF8String);
+            JBLogDebug("[jailbreakd] setting other process %s as debugged",
+                       proc_get_path(pid).UTF8String);
             result = proc_set_debugged_pid(pid, true);
             xpc_dictionary_set_int64(reply, "ret", result);
           }
@@ -239,7 +237,7 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
           if (msgId == JBD_MSG_PLATFORMIZE) {
             int64_t result = 0;
             pid_t pid = xpc_dictionary_get_int64(message, "pid");
-            NSLog(@"[jailbreakd] Platformizing pid: %d\n", pid);
+            JBLogDebug("[jailbreakd] Platformizing pid: %d\n", pid);
             platformize(pid);
             xpc_dictionary_set_int64(reply, "ret", result);
           }
@@ -248,12 +246,12 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
 
       if (reply) {
         char *description = xpc_copy_description(reply);
-        NSLog(@"[jailbreakd] responding to %s message %d with %s",
-              systemwide ? "systemwide" : "", msgId, description);
+        JBLogDebug("[jailbreakd] responding to %s message %d with %s",
+                   systemwide ? "systemwide" : "", msgId, description);
         free(description);
         err = xpc_pipe_routine_reply(reply);
         if (err != 0) {
-          NSLog(@"[jailbreakd] Error %d sending response", err);
+          JBLogDebug("[jailbreakd] Error %d sending response", err);
         }
       }
     }
@@ -262,7 +260,8 @@ void jailbreakd_received_message(mach_port_t machPort, bool systemwide) {
 
 int main(int argc, char *argv[]) {
   @autoreleasepool {
-    NSLog(@"[jailbreakd] Hello from the other side!");
+    remove("/var/mobile/Media/jailbreakd-xpc.log");
+    JBLogDebug("[jailbreakd] Hello from the other side!");
     _offsets_init();
 
     get_kernel_rw();
@@ -276,8 +275,8 @@ int main(int argc, char *argv[]) {
     kern_return_t kr =
         bootstrap_check_in(bootstrap_port, "kr.h4ck.jailbreakd", &machPort);
     if (kr != KERN_SUCCESS) {
-      NSLog(
-          @"[jailbreakd] Failed kr.h4ck.jailbreakd bootstrap check in: %d (%s)",
+      JBLogDebug(
+          "[jailbreakd] Failed kr.h4ck.jailbreakd bootstrap check in: %d (%s)",
           kr, mach_error_string(kr));
       return 1;
     }
@@ -286,9 +285,9 @@ int main(int argc, char *argv[]) {
     kr = bootstrap_check_in(bootstrap_port, "kr.h4ck.jailbreakd.systemwide",
                             &machPortSystemWide);
     if (kr != KERN_SUCCESS) {
-      NSLog(@"[jailbreakd] Failed kr.h4ck.jailbreakd.systemwide bootstrap "
-            @"check in: %d (%s)",
-            kr, mach_error_string(kr));
+      JBLogDebug("[jailbreakd] Failed kr.h4ck.jailbreakd.systemwide bootstrap "
+                 "check in: %d (%s)",
+                 kr, mach_error_string(kr));
       return 1;
     }
 
