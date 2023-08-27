@@ -17,6 +17,8 @@
 #define CS_HARD (0x00000100)
 #define CS_KILL (0x00000200)
 #define CS_DEBUGGED                    0x10000000  /* process is currently or has previously been debugged and allowed to run with invalid pages */
+#define CS_VALID                    0x00000001
+#define P_SUGID 0x00000100
 
 uint64_t borrow_entitlements(pid_t to_pid, pid_t from_pid);
 void unborrow_entitlements(pid_t to_pid, uint64_t to_amfi);
@@ -33,3 +35,4 @@ void set_proc_csflags(pid_t pid);
 uint64_t get_cs_blob(pid_t pid);
 void set_csb_platform_binary(pid_t pid);
 void platformize(pid_t pid);
+int64_t proc_fix_setuid(pid_t pid);

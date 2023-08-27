@@ -192,7 +192,7 @@ void set_proc_csflags(pid_t pid) {
     printf("[i] csflags will:   0x%x\n", csflags);
     if(off_p_csflags == 0x1c) {
         uint64_t self_ro = kread64(proc + 0x20);
-        kwrite32(self_ro + off_p_csflags, csflags);
+        kwrite32(self_ro + off_p_csflags, csflags); // error
     } else {
         kwrite32(proc + off_p_csflags, csflags);
     }
@@ -214,4 +214,14 @@ void platformize(pid_t pid) {
     set_task_platform(pid, true);
     set_proc_csflags(pid);
     set_csb_platform_binary(pid);
+}
+
+int64_t proc_fix_setuid(pid_t pid) {
+    uint64_t proc = proc_of_pid(pid);
+    uint32_t p_flag = kread32(proc + 0x264);
+    if ((p_flag & P_SUGID) != 0) {
+        p_flag &= ~P_SUGID;
+        kwrite32(proc + 0x264, p_flag);
+    }
+    return 0;
 }

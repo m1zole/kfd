@@ -6,92 +6,139 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var kfd: UInt64 = 0
-
-    private var puaf_pages_options = [16, 32, 64, 128, 256, 512, 1024, 2048]
-    @State private var puaf_pages_index = 7
-    @State private var puaf_pages = 0
-
-    private var puaf_method_options = ["physpuppet", "smith"]
-    @State private var puaf_method = 1
-
-    private var kread_method_options = ["kqueue_workloop_ctl", "sem_open", "IOSurface"]
-    @State private var kread_method = 2
-
-    private var kwrite_method_options = ["dup", "sem_open", "IOSurface"]
-    @State private var kwrite_method = 2
-
+    
+    @State private var puafPages = 2048
+    @State private var puafMethod = 1
+    @State private var kreadMethod = 2
+    @State private var kwriteMethod = 2
+    //tweak vars
+    @State private var use_do_fun = false
+    @State private var use_stage2 = false
+    @State private var use_stage2_mdc = false
+    @State private var use_mdc = false
+    
+    var puafPagesOptions = [16, 32, 64, 128, 256, 512, 1024, 2048]
+    var puafMethodOptions = ["physpuppet", "smith"]
+    var kreadMethodOptions = ["kqueue_workloop_ctl", "sem_open", "IOSurface"]
+    var kwriteMethodOptions = ["dup", "sem_open", "IOSurface"]
+    
+    @State private var message = ""
+    
+    @State private var isSettingsPopoverPresented = false // Track the visibility of the settings popup
+    
     var body: some View {
         NavigationView {
-            Form {
-                Section {
-                    Picker(selection: $puaf_pages_index, label: Text("puaf pages:")) {
-                        ForEach(0 ..< puaf_pages_options.count, id: \.self) {
-                            Text(String(self.puaf_pages_options[$0]))
+            List {
+                
+                
+                Section(header: Text("Status")) {
+                    Text(message)
+                    if kfd != 0 {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Success!")
+                                .font(.headline)
+                                .foregroundColor(.green)
+                            Text("View output in Xcode")
+                                .foregroundColor(.gray)
                         }
-                    }.disabled(kfd != 0)
-                }
-                Section {
-                    Picker(selection: $puaf_method, label: Text("puaf method:")) {
-                        ForEach(0 ..< puaf_method_options.count, id: \.self) {
-                            Text(self.puaf_method_options[$0])
-                        }
-                    }.disabled(kfd != 0)
-                }
-                Section {
-                    Picker(selection: $kread_method, label: Text("kread method:")) {
-                        ForEach(0 ..< kread_method_options.count, id: \.self) {
-                            Text(self.kread_method_options[$0])
-                        }
-                    }.disabled(kfd != 0)
-                }
-                Section {
-                    Picker(selection: $kwrite_method, label: Text("kwrite method:")) {
-                        ForEach(0 ..< kwrite_method_options.count, id: \.self) {
-                            Text(self.kwrite_method_options[$0])
-                        }
-                    }.disabled(kfd != 0)
-                }
-                Section {
-                    HStack {
-                        Button("kopen") {
-                            puaf_pages = puaf_pages_options[puaf_pages_index]
-                            kfd = do_kopen(UInt64(puaf_pages), UInt64(puaf_method), UInt64(kread_method), UInt64(kwrite_method))
-                        }.disabled(kfd != 0).frame(minWidth: 0, maxWidth: .infinity)
-                        Button("kclose") {
-                            do_kclose()
-                            //kclose_intermediate(kfd)
-                            puaf_pages = 0
-                            kfd = 0
-                        }.disabled(kfd == 0).frame(minWidth: 0, maxWidth: .infinity)
                     }
-                }.listRowBackground(Color.clear)
-                Section {
-                    HStack {
-                        Button("15.2<") {
-                            stage2()
-                        }.frame(minWidth: 0, maxWidth: .infinity, maxHeight: 50)
-                    }
-                    HStack {
-                        Button(">15.3") {
-                            do_fun()
-                        }.frame(minWidth: 0, maxWidth: .infinity, maxHeight: 50)
-                    }
-                }.listRowBackground(Color.clear)
-                if kfd != 0 {
-                    Section {
-                        VStack {
-                            Text("Success!").foregroundColor(.green)
-                            Text("Look at output in Xcode")
-                        }.frame(minWidth: 0, maxWidth: .infinity)
-                    }.listRowBackground(Color.clear)
                 }
-            }.navigationBarTitle(Text("kfd"), displayMode: .inline)
+                
+                
+                Section(header: Text("bad things")) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text("15.2< setuid(0)")
+                            .onTapGesture{
+                                stage2()
+                                DispatchQueue.main.async {
+                                    message = "got gid=0, uid=0!"
+                                }
+                            }.frame(minWidth: 0, maxWidth: .infinity)
+                        Text("15.2< all")
+                            .onTapGesture{
+                                stage2_all()
+                                DispatchQueue.main.async {
+                                    message = "jailbreaked!"
+                                }
+                            }.frame(minWidth: 0, maxWidth: .infinity)
+                        Text("<15.3")
+                            .onTapGesture{
+                                do_fun()
+                                DispatchQueue.main.async {
+                                    message = "sucecss!"
+                                }
+                            }.frame(minWidth: 0, maxWidth: .infinity)
+                    }.foregroundColor(.green)
+                    .padding(.vertical, 8)
+                }
+                
+                Section(header: Text("open/close")) {
+                    Button("kopen") {
+                        kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
+                    }.buttonStyle(BorderlessButtonStyle()).disabled(kfd != 0)
+                    Button("kclose") {
+                        do_kclose()
+                        puafPages = 0
+                        kfd = 0
+                    }.buttonStyle(BorderlessButtonStyle()).disabled(kfd == 0)
+                }
+                Section(header: Text("Settings")) {
+                    Button(action: {
+                        isSettingsPopoverPresented.toggle()
+                    }, label: {Text("Setting")})
+                }.buttonStyle(BorderlessButtonStyle())
+            }
+            .accentColor(.green)
+            .popover(isPresented: $isSettingsPopoverPresented, arrowEdge: .bottom) {
+                settingsPopover
+            }
         }
     }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+    
+    // Payload Settings Popover
+    private var settingsPopover: some View {
+        VStack {
+            Section(header: Text("Payload Settings")) {
+                Picker("puaf pages:", selection: $puafPages) {
+                    ForEach(puafPagesOptions, id: \.self) { pages in
+                        Text(String(pages))
+                    }
+                }.pickerStyle(SegmentedPickerStyle())
+                .disabled(kfd != 0)
+                
+                Picker("puaf method:", selection: $puafMethod) {
+                    ForEach(0..<puafMethodOptions.count, id: \.self) { index in
+                        Text(puafMethodOptions[index])
+                    }
+                }.pickerStyle(SegmentedPickerStyle())
+                .disabled(kfd != 0)
+            }
+            
+            Section(header: Text("Kernel Settings")) {
+                Picker("kread method:", selection: $kreadMethod) {
+                    ForEach(0..<kreadMethodOptions.count, id: \.self) { index in
+                        Text(kreadMethodOptions[index])
+                    }
+                }.pickerStyle(SegmentedPickerStyle())
+                .disabled(kfd != 0)
+                
+                Picker("kwrite method:", selection: $kwriteMethod) {
+                    ForEach(0..<kwriteMethodOptions.count, id: \.self) { index in
+                        Text(kwriteMethodOptions[index])
+                    }
+                }.pickerStyle(SegmentedPickerStyle())
+                .disabled(kfd != 0)
+            }
+            
+            Button("Apply Settings") {
+                isSettingsPopoverPresented = false
+            }
+        }
+        .padding()
     }
+}
+struct ContentView_Previews: PreviewProvider {
+  static var previews: some View {
+    ContentView()
+  }
 }

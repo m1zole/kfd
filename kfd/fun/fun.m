@@ -35,14 +35,6 @@ void test_kalloc_kfree(void) {
     kfree(allocated_kmem, allocated_size);
 }
 
-void test_unsandbox(void) {
-    char* _token = token_by_sandbox_extension_issue_file("com.apple.app-sandbox.read-write", "/", 0);
-    printf("consume ret: %lld\n", sandbox_extension_consume(_token));
-    char* _token2 = token_by_sandbox_extension_issue_file("com.apple.sandbox.executable", "/", 0);
-    printf("token2: %s\n", _token2);
-    printf("consume ret: %lld\n", sandbox_extension_consume(_token2));
-}
-
 void test_load_trustcache(void) {
     const char* path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/binaries/unsignedhelloworld"].UTF8String;
     chmod(path, 0755);
