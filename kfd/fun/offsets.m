@@ -159,17 +159,17 @@ void _offsets_init(void) {
         off_p_list_le_prev = 0x8;
         off_p_name = 0x381;
         off_p_pid = 0x68;
-        off_p_ucred = 0; //0x78?
-        off_p_task = 0x10; //ok
-        off_p_csflags = 0x1c;
-        off_p_uid = 0x2c;//0x18
-        off_p_gid = 0x30;//0x28
-        off_p_ruid = 0x34;//0x60
+        off_p_ucred = 0;//0xd8
+        off_p_task = 0x10;
+        off_p_csflags = 0x1c;//0x300
+        off_p_uid = 0x2c;
+        off_p_gid = 0x30;
+        off_p_ruid = 0x34;
         off_p_rgid = 0x38;
-        off_p_svuid = 0x44;
-        off_p_svgid = 0x48;
+        off_p_svuid = 0x44;//0x3c
+        off_p_svgid = 0x48;//0x40
         off_p_textvp = 0x350;
-        off_p_pfd = 0xf8; //?
+        off_p_pfd = 0xf8;//0x100
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ucred.h#L91
         off_u_cr_label = 0x78;
@@ -183,7 +183,7 @@ void _offsets_init(void) {
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/kern/task.h#L157
         off_task_t_flags = 0x3e8;
-        off_task_itk_space = 0x308;
+        off_task_itk_space = 0x308;//0x330
         off_task_map = 0x28;    //_get_task_pmap
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/vm/vm_map.h#L471
@@ -206,11 +206,11 @@ void _offsets_init(void) {
         off_ubc_info_cs_blobs = 0x50;
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ubc_internal.h#L102
-        off_cs_blob_csb_platform_binary = 0xb8;
+        off_cs_blob_csb_platform_binary = 0xac;//0xb8
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/ipc/ipc_port.h#L152
         //https://github.com/0x7ff/dimentio/blob/7ffffffb4ebfcdbc46ab5e8f1becc0599a05711d/libdimentio.c#L958
-        off_ipc_port_ip_kobject = 0x48;
+        off_ipc_port_ip_kobject = 0x48; //0x58
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/ipc/ipc_space.h#L128
         off_ipc_space_is_table = 0x20;
@@ -242,18 +242,18 @@ void _offsets_init(void) {
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/proc_internal.h#L227
         off_p_list_le_prev = 0x8;
         off_p_name = 0x381;
-        off_p_pid = 0x68; //ok
-        off_p_ucred = 0; //0x78?
-        off_p_task = 0x10; //ok
-        off_p_csflags = 0x1c;
-        off_p_uid = 0x2c;//0x18
-        off_p_gid = 0x30;//0x28
-        off_p_ruid = 0x34;//0x60
+        off_p_pid = 0x68;
+        off_p_ucred = 0;//0xd8
+        off_p_task = 0x10;
+        off_p_csflags = 0x1c;//0x300
+        off_p_uid = 0x2c;
+        off_p_gid = 0x30;
+        off_p_ruid = 0x34;
         off_p_rgid = 0x38;
-        off_p_svuid = 0x44;
-        off_p_svgid = 0x48;
+        off_p_svuid = 0x44;//0x3c
+        off_p_svgid = 0x48;//0x40
         off_p_textvp = 0x350;
-        off_p_pfd = 0xf8; //?
+        off_p_pfd = 0xf8;//0x100
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ucred.h#L91
         off_u_cr_label = 0x78;
@@ -267,7 +267,7 @@ void _offsets_init(void) {
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/kern/task.h#L157
         off_task_t_flags = 0x3e8;
-        off_task_itk_space = 0x308;
+        off_task_itk_space = 0x308;//0x330
         off_task_map = 0x28;    //_get_task_pmap
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/vm/vm_map.h#L471
@@ -290,11 +290,11 @@ void _offsets_init(void) {
         off_ubc_info_cs_blobs = 0x50;
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/bsd/sys/ubc_internal.h#L102
-        off_cs_blob_csb_platform_binary = 0xb8;
+        off_cs_blob_csb_platform_binary = 0xac;//0xb8
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/ipc/ipc_port.h#L152
         //https://github.com/0x7ff/dimentio/blob/7ffffffb4ebfcdbc46ab5e8f1becc0599a05711d/libdimentio.c#L958
-        off_ipc_port_ip_kobject = 0x48;
+        off_ipc_port_ip_kobject = 0x48; //0x58
 
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.41.5/osfmk/ipc/ipc_space.h#L128
         off_ipc_space_is_table = 0x20;

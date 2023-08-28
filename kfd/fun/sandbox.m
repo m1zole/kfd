@@ -15,37 +15,13 @@
 #import "stage2.h"
 #import "boot_info.h"
 
-uint64_t get_ucred(uint64_t proc) {
-    uint64_t ucred = 0;
-    if(off_p_ucred == 0){
-        uint64_t self_ro = kread64(proc + 0x20);
-        printf("[DEBUG] self ro: 0x%llx\n", self_ro);
-        uint64_t self_ucred = kread64(self_ro + 0x20);
-        printf("[DEBUG] self ucred: 0x%llx\n", self_ucred); //ucred
-        uint64_t kernproc = get_kernproc();
-        printf("[DEBUG] Kernel proc: 0x%llx\n", kernproc);
-        uint64_t kern_ro = kread64(kernproc + 0x20);
-        printf("[DEBUG] Kernel ro: 0x%llx\n", kern_ro);
-        uint64_t kern_ucred = kread64(kern_ro + 0x20);
-        printf("[DEBUG] Kernel ucred: 0x%llx\n", kern_ucred); //kern_ucred
-        uint64_t proc_set_ucred = off_proc_set_ucred;
-        proc_set_ucred += get_kslide(); //proc_set_ucred
-        printf("[DEBUG] Kernel set_ucred: 0x%llx\n", proc_set_ucred); //func:
-        ucred = self_ucred;
-        
-    } else {
-        ucred = kread64(proc + off_p_ucred);
-    }
-    return ucred;
-}
-
 uint64_t unsandbox(pid_t pid) {
     printf("[*] Unsandboxing pid %d\n", pid);
     
     uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-    uint64_t ucred =  borrow_ucreds(getpid(), 1); // pid credentials
+    uint64_t ucred =  get_ucred(proc); // pid credentials
     uint64_t cr_label = kread64(ucred + off_u_cr_label); // MAC label
-    uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);
+    uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);// not working
     
     printf("[DEBUG] cr_label: 0x%llx\n", cr_label);
     printf("[DEBUG] orig_sb: 0x%llx\n", orig_sb);
