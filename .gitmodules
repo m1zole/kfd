@@ -10,3 +10,6 @@
 [submodule "Fugu15/SwiftUtils"]
 	path = Fugu15/SwiftUtils
 	url = https://github.com/pinauten/SwiftUtils
+[submodule "Dopamine"]
+	path = Dopamine
+	url = https://github.com/opa334/Dopamine
