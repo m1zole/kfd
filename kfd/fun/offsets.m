@@ -65,6 +65,7 @@ uint64_t off_ml_phys_read_data = 0;
 uint64_t off_ml_phys_write_data = 0;
 uint64_t off_proc_set_ucred = 0;
 uint64_t off_unknown = 0;
+uint64_t off_mac_label_set = 0;
 
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 
@@ -400,6 +401,9 @@ void _offsets_init(void) {
         off_ml_phys_write_data = 0xfffffff0072e0efc;
         off_proc_set_ucred = 0xfffffff0075da0e0;
         off_unknown = 0xfffffff0071373e0;
+        off_mac_label_set = 0xfffffff00688941c;
+        //OSEntitlements fffffff005a2907c
+        
     } else {
         printf("[-] No matching offsets.\n");
         exit(EXIT_FAILURE);

@@ -15,6 +15,7 @@
 #import "stage2.h"
 #import "KernelRwWrapper.h"
 #import "jailbreakd.h"
+#import "stage2.h"
 
 uint64_t IOConnectTrap6(io_connect_t, uint32_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t);
 
@@ -134,6 +135,9 @@ void kwrite8(uint64_t where, uint8_t what) {
     _buf[6] = kread8(where+6);
     _buf[7] = kread8(where+7);
     kwrite((u64)(_kfd), &_buf, where, sizeof(u64));
+    if(kread8(where) != what) {
+        printf("[DEBUG] mismatch! where: 0x%llu now: %hhu what: %hhu",where, kread8(where), what);
+    }
 }
 
 void kwrite16(uint64_t where, uint16_t what) {
@@ -143,6 +147,9 @@ void kwrite16(uint64_t where, uint16_t what) {
     _buf[2] = kread16(where+4);
     _buf[3] = kread16(where+6);
     kwrite((u64)(_kfd), &_buf, where, sizeof(u64));
+    if(kread16(where) != what) {
+        printf("[DEBUG] mismatch! where: 0x%llu now: %u what: %hu",where, kread16(where), what);
+    }
 }
 
 void kwrite32(uint64_t where, uint32_t what) {
@@ -150,11 +157,18 @@ void kwrite32(uint64_t where, uint32_t what) {
     _buf[0] = what;
     _buf[1] = kread32(where+4);
     kwrite((u64)(_kfd), &_buf, where, sizeof(u64));
+    if(kread32(where) != what) {
+        printf("[DEBUG] mismatch! where: 0x%llu now: %u what: %u",where, kread32(where), what);
+    }
 }
+
 void kwrite64(uint64_t where, uint64_t what) {
     u64 _buf[1] = {};
     _buf[0] = what;
     kwrite((u64)(_kfd), &_buf, where, sizeof(u64));
+    if(kread64(where) != what) {
+        printf("[DEBUG] mismatch! where: 0x%llu now: %llu what: %llu",where, kread64(where), what);
+    }
 }
 
 void kreadbuf(uint64_t kaddr, void* output, size_t size)
@@ -339,15 +353,19 @@ int prepare_kcall(void) {
     return 0;
 }
 
-void unsandbox_stage2(void) {
+int unsandbox_stage2(void) {
     NSString* save_path = @"/tmp/kfd-arm64.plist";
     if(access(save_path.UTF8String, F_OK) == 0) {
+        uint64_t sb = unsandbox(getpid());
         NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:save_path];
         _fake_vtable = [dict[@"kcall_fake_vtable_allocations"] unsignedLongLongValue];
         _fake_client = [dict[@"kcall_fake_client_allocations"] unsignedLongLongValue];
+        sandbox(getpid(), sb);
     } else {
         kalloc_using_empty_kdata_page();
-        printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", _fake_vtable, _fake_client);
+        //Once if you successfully get kalloc to use fake_vtable and fake_client,
+        //DO NOT use dirty_kalloc again since unstable method.
+        
         NSDictionary *dictionary = @{
             @"kcall_fake_vtable_allocations": @(_fake_vtable),
             @"kcall_fake_client_allocations": @(_fake_client),
@@ -360,6 +378,10 @@ void unsandbox_stage2(void) {
         printf("Saved fake_vtable, fake_client for kcall.\n");
         printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", _fake_vtable, _fake_client);
     }
+    
+    init_kcall();
+    
+    return 0;
 }
 
 int term_kcall(void) {

@@ -19,5 +19,10 @@ void stage2_all(void);
 mach_port_t user_client;
 uint64_t fake_vtable;
 uint64_t fake_client;
+uint64_t self_ro;
+uint64_t cr_label;
+uint64_t orig_sb;
+uint64_t self_ucred;
+uint64_t sb;
 
 #endif /* stage2_h */

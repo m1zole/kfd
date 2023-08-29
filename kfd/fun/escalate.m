@@ -169,7 +169,9 @@ void set_proc_csflags(pid_t pid) {
     printf("[i] csflags will:   0x%x\n", csflags);
     if(off_p_csflags == 0x1c) {
         uint64_t self_ro = kread64(proc + 0x20);
-        kwrite32(self_ro + off_p_csflags, csflags); // error
+        //kwrite32(proc + off_p_csflags, csflags);
+        kcall(off_proc_set_ucred + get_kslide(), self_ro + off_p_csflags, csflags, 0, 0, 0, 0, 0);
+        printf("[DEBUG] csflag: 0x%x", kread32(self_ro + off_p_csflags));
     } else {
         kwrite32(proc + off_p_csflags, csflags);
     }

@@ -236,8 +236,10 @@ void initKernRw(uint64_t taskSelfAddr, uint64_t (*kread64)(uint64_t addr), void 
     auto p = newKrw->getPrimitivepatches(kread64, taskSelfAddr);
 
     kwrite64(p.where, p.what);
+    printf("[DEBUG] p.where: %llx, p.what: %llx\n", p.where, p.what);
 
     krw = newKrw;
+    printf("[DEBUG] newKrw: %llx\n", krw);
     
     printf("done!\n");
 }

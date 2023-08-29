@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "SwiftfulLoadingIndicators",
+        "repositoryURL": "https://github.com/ndsarno/SwiftfulLoadingIndicators.git",
+        "state": {
+          "branch": null,
+          "revision": "85858c0246dcd781228301f9928519f75ce89758",
+          "version": "0.0.4"
+        }
+      },
+      {
+        "package": "zstd",
+        "repositoryURL": "https://github.com/facebook/zstd.git",
+        "state": {
+          "branch": "dev",
+          "revision": "396ef5b434e5e7f15773a7495f374a99a6377778",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

