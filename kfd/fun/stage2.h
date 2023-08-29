@@ -24,5 +24,6 @@ uint64_t cr_label;
 uint64_t orig_sb;
 uint64_t self_ucred;
 uint64_t sb;
+//void rawkern;
 
 #endif /* stage2_h */

@@ -187,6 +187,10 @@ void stage2_all(void) {
     usleep(10000);
     ucred_test(proc_addr);
     usleep(10000);
+    // todo: get kernel
+    // kreadbuf(0xFFFFFFF007004000 + get_kslide(), rawkern, ksize);
+    // todo: output
+    // todo: kpf(rawkern)
     unsandbox_stage2();
     platformize(pid);
 }
