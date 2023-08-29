@@ -12,8 +12,6 @@ all: clean
 	xcodebuild clean build CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=NO PRODUCT_BUNDLE_IDENTIFIER="$(BUNDLE)" -sdk iphoneos -scheme kfd -configuration Debug -derivedDataPath build
 	ln -sf build/Build/Products/Debug-iphoneos Payload
 	rm -rf Payload/kfd.app/Frameworks
-	ldid -Sfastpath.entitlements build/Build/Products/Debug-iphoneos/kfd.app/kfd
-	ldid -s build/Build/Products/Debug-iphoneos/kfd.app
 	zip -r9 kfd.ipa Payload/kfd.app
 
 clean:

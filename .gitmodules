@@ -1,0 +1,12 @@
+[submodule "Fugu15/KernelPatchfinder"]
+	path = Fugu15/KernelPatchfinder
+	url = https://github.com/opa334/KernelPatchfinder
+[submodule "Fugu15/PatchfinderUtils"]
+	path = Fugu15/PatchfinderUtils
+	url = https://github.com/pinauten/PatchfinderUtils
+[submodule "Fugu15/SwiftMachO"]
+	path = Fugu15/SwiftMachO
+	url = https://github.com/pinauten/SwiftMachO
+[submodule "Fugu15/SwiftUtils"]
+	path = Fugu15/SwiftUtils
+	url = https://github.com/pinauten/SwiftUtils
