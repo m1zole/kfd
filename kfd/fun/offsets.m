@@ -315,8 +315,8 @@ void _offsets_init(void) {
         off_pmap_find_phys = 0xFFFFFFF00729341C;		//struct unchanged
         off_ml_phys_read_data = 0xFFFFFFF0072A3828;		//struct unchanged
         off_ml_phys_write_data = 0xFFFFFFF0072A3A90;		//struct unchanged    
-        off_proc_set_ucred = 0xfffffff00759a324;
-        off_unknown = 0xfffffff0070ff160; // it wrong but i think resolt is the same
+        off_proc_set_ucred = 0xfffffff00759a324;        //<--- this one probably wrong but i'm lazy to fix. Can you send me the kernalcache 15.4.1 extracted?
+        off_unknown = 0xFFFFFFF0070FF3D0;             //<---- I corrected it, it's not the same
         
     } else if(SYSTEM_VERSION_EQUAL_TO(@"15.6")) {
 
