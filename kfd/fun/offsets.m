@@ -221,7 +221,6 @@ void _offsets_init(void) {
 
         off_kalloc_data_external = 0xfffffff0071975f4;
         off_kfree_data_external = 0xfffffff0071981b8;
-        off_add_x0_x0_0x40_ret = 0xfffffff005dc39e0;
         off_empty_kdata_page = 0xfffffff0077e4000 + 0x100;
         off_trustcache = 0xfffffff00787c680;
         
@@ -232,7 +231,6 @@ void _offsets_init(void) {
         off_pmap_find_phys = 0xfffffff007291498;
         off_ml_phys_read_data = 0xfffffff0072a1750;
         off_ml_phys_write_data = 0xfffffff0072a19b8;
-        off_proc_set_ucred = 0xfffffff00759a324;
         off_unknown = 0xfffffff0070ff160;
         
     } else if(SYSTEM_VERSION_EQUAL_TO(@"15.7.3")) {
@@ -305,7 +303,6 @@ void _offsets_init(void) {
 
         off_kalloc_data_external = 0xFFFFFFF00719762C;	//Maybe restruct but it's still here
         off_kfree_data_external = 0xFFFFFFF007197C98;	//One more function restruct
-        off_add_x0_x0_0x40_ret = 0xFFFFFFF005C79EBC;	//Yep, struct same but i need to + 0x4
         off_empty_kdata_page = 0xFFFFFFF0077E0000 + 0x100;	//Kinna same struct
         off_trustcache = 0xFFFFFFF007876530;		//struct unchange
         off_gphysbase = 0xFFFFFFF007116740; //xref pmap_attribute_cache_sync size: 0x%llx @%s:%d, same struct
@@ -314,8 +311,7 @@ void _offsets_init(void) {
         off_allproc = 0xFFFFFFF007856188;			//struct unchanged
         off_pmap_find_phys = 0xFFFFFFF00729341C;		//struct unchanged
         off_ml_phys_read_data = 0xFFFFFFF0072A3828;		//struct unchanged
-        off_ml_phys_write_data = 0xFFFFFFF0072A3A90;		//struct unchanged    
-        off_proc_set_ucred = 0xfffffff00759a324;        //<--- this one probably wrong but i'm lazy to fix. Can you send me the kernalcache 15.4.1 extracted?
+        off_ml_phys_write_data = 0xFFFFFFF0072A3A90;		//struct unchanged
         off_unknown = 0xFFFFFFF0070FF3D0;             //<---- I corrected it, it's not the same
         
     } else if(SYSTEM_VERSION_EQUAL_TO(@"15.6")) {
@@ -388,7 +384,6 @@ void _offsets_init(void) {
 
         off_kalloc_data_external = 0xfffffff0071d4164;
         off_kfree_data_external = 0xfffffff0071d47d0;
-        off_add_x0_x0_0x40_ret = 0xfffffff00596a60c;
         off_empty_kdata_page = 0xfffffff007820000 + 0x100;
         off_trustcache = 0xfffffff0078b6570;
         
@@ -399,7 +394,6 @@ void _offsets_init(void) {
         off_pmap_find_phys = 0xfffffff0072cf8b4;
         off_ml_phys_read_data = 0xfffffff0072e0c94;
         off_ml_phys_write_data = 0xfffffff0072e0efc;
-        off_proc_set_ucred = 0xfffffff0075da0e0;
         off_unknown = 0xfffffff0071373e0;
         off_mac_label_set = 0xfffffff00688941c;
         //OSEntitlements fffffff005a2907c

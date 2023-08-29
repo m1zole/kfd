@@ -58,6 +58,7 @@ struct ContentView: View {
                             }.frame(minWidth: 0, maxWidth: .infinity)
                         Text("15.2< all")
                             .onTapGesture{
+                                mineekpf(kfd)
                                 stage2_all()
                                 DispatchQueue.main.async {
                                     message = "jailbreaked!"
@@ -86,17 +87,7 @@ struct ContentView: View {
                             }.frame(minWidth: 0, maxWidth: .infinity)
                         Text("kpf")
                             .onTapGesture{
-                                func do_kpf()  {
-                                    do {
-                                        try KernelPatchfinder.testPatchfinder()
-                                        DispatchQueue.main.async {
-                                            message = "find!"
-                                        }
-                                    } catch {
-                                        print(error)
-                                    }
-                                }
-                                do_kpf()
+                                KernelPatchfinder.running
                             }.frame(minWidth: 0, maxWidth: .infinity)
                     }.foregroundColor(.green)
                     .padding(.vertical, 8)

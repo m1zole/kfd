@@ -63,6 +63,7 @@ int kalloc_using_empty_kdata_page(void);
 
 int unsandbox_stage2(void);
 int kalloc_using_empty_kdata_page_stage2(void);
+void mineekpf(uint64_t kfd);
 
 int term_kcall(void);
 
