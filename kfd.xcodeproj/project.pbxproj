@@ -34,17 +34,16 @@
 		6ECE5B892A92F95A00792D41 /* boot_info.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B882A92F95A00792D41 /* boot_info.m */; };
 		6ECE5B8C2A944CA700792D41 /* jailbreakd_test.m in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE5B8B2A944CA700792D41 /* jailbreakd_test.m */; };
 		6ECE5B912A949F0800792D41 /* unsigned in Resources */ = {isa = PBXBuildFile; fileRef = 6ECE5B902A949F0800792D41 /* unsigned */; };
-		D53175122A9DE57F00CB5AE0 /* ProcessCommunication in Resources */ = {isa = PBXBuildFile; fileRef = D531750B2A9DE57F00CB5AE0 /* ProcessCommunication */; };
-		D53175132A9DE57F00CB5AE0 /* Fugu15KernelExploit in Resources */ = {isa = PBXBuildFile; fileRef = D531750C2A9DE57F00CB5AE0 /* Fugu15KernelExploit */; };
 		D53175142A9DE57F00CB5AE0 /* SwiftUtils in Resources */ = {isa = PBXBuildFile; fileRef = D531750D2A9DE57F00CB5AE0 /* SwiftUtils */; };
 		D53175152A9DE57F00CB5AE0 /* SwiftMachO in Resources */ = {isa = PBXBuildFile; fileRef = D531750E2A9DE57F00CB5AE0 /* SwiftMachO */; };
 		D53175162A9DE57F00CB5AE0 /* KernelPatchfinder in Resources */ = {isa = PBXBuildFile; fileRef = D531750F2A9DE57F00CB5AE0 /* KernelPatchfinder */; };
 		D53175182A9DE57F00CB5AE0 /* PatchfinderUtils in Resources */ = {isa = PBXBuildFile; fileRef = D53175112A9DE57F00CB5AE0 /* PatchfinderUtils */; };
-		D53175282A9DE89400CB5AE0 /* Fugu15KernelExploit in Frameworks */ = {isa = PBXBuildFile; productRef = D53175272A9DE89400CB5AE0 /* Fugu15KernelExploit */; };
 		D531752B2A9DEA6000CB5AE0 /* libzstd in Frameworks */ = {isa = PBXBuildFile; productRef = D531752A2A9DEA6000CB5AE0 /* libzstd */; };
 		D531752E2A9DEA8600CB5AE0 /* SwiftfulLoadingIndicators in Frameworks */ = {isa = PBXBuildFile; productRef = D531752D2A9DEA8600CB5AE0 /* SwiftfulLoadingIndicators */; };
 		D58309AC2A9BC61200828844 /* DirtyCowKit in Frameworks */ = {isa = PBXBuildFile; productRef = D58309AB2A9BC61200828844 /* DirtyCowKit */; };
 		D58309AD2A9BC61D00828844 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D58309A92A9BC38800828844 /* IOKit.framework */; };
+		D5D569182AA0740100DC9A92 /* label.m in Sources */ = {isa = PBXBuildFile; fileRef = D5D569172AA0740100DC9A92 /* label.m */; };
+		D5D5691A2AA077E300DC9A92 /* KernelPatchfinder in Frameworks */ = {isa = PBXBuildFile; productRef = D5D569192AA077E300DC9A92 /* KernelPatchfinder */; };
 		D5FEFDF32A97DCFC00641590 /* stage2.m in Sources */ = {isa = PBXBuildFile; fileRef = D5FEFDF02A97D27F00641590 /* stage2.m */; };
 /* End PBXBuildFile section */
 
@@ -139,8 +138,6 @@
 		8C0AF3522A75B2DA0065C9DD /* IOSurface_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSurface_shared.h; sourceTree = "<group>"; };
 		8CC7F5312A762D46004C6F30 /* kwrite_IOSurface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kwrite_IOSurface.h; sourceTree = "<group>"; };
 		8CC7F5322A765BED004C6F30 /* IOSurface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSurface.h; sourceTree = "<group>"; };
-		D531750B2A9DE57F00CB5AE0 /* ProcessCommunication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProcessCommunication; sourceTree = "<group>"; };
-		D531750C2A9DE57F00CB5AE0 /* Fugu15KernelExploit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Fugu15KernelExploit; sourceTree = "<group>"; };
 		D531750D2A9DE57F00CB5AE0 /* SwiftUtils */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SwiftUtils; sourceTree = "<group>"; };
 		D531750E2A9DE57F00CB5AE0 /* SwiftMachO */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SwiftMachO; sourceTree = "<group>"; };
 		D531750F2A9DE57F00CB5AE0 /* KernelPatchfinder */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = KernelPatchfinder; sourceTree = "<group>"; };
@@ -155,6 +152,8 @@
 		D5830A1D2A9DBADD00828844 /* macros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
 		D5830A1E2A9DBADD00828844 /* KernelRW.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = KernelRW.mm; sourceTree = "<group>"; };
 		D5830A1F2A9DBADD00828844 /* iokit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iokit.h; sourceTree = "<group>"; };
+		D5D569162AA0740100DC9A92 /* label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = label.h; sourceTree = "<group>"; };
+		D5D569172AA0740100DC9A92 /* label.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = label.m; sourceTree = "<group>"; };
 		D5FEFDEF2A97D13B00641590 /* IOKit_electra.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOKit_electra.h; sourceTree = "<group>"; };
 		D5FEFDF02A97D27F00641590 /* stage2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = stage2.m; sourceTree = "<group>"; };
 		D5FEFDF22A97DC1F00641590 /* stage2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stage2.h; sourceTree = "<group>"; };
@@ -165,9 +164,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D53175282A9DE89400CB5AE0 /* Fugu15KernelExploit in Frameworks */,
 				D58309AC2A9BC61200828844 /* DirtyCowKit in Frameworks */,
 				D58309AD2A9BC61D00828844 /* IOKit.framework in Frameworks */,
+				D5D5691A2AA077E300DC9A92 /* KernelPatchfinder in Frameworks */,
 				D531752B2A9DEA6000CB5AE0 /* libzstd in Frameworks */,
 				D531752E2A9DEA8600CB5AE0 /* SwiftfulLoadingIndicators in Frameworks */,
 			);
@@ -326,6 +325,8 @@
 			isa = PBXGroup;
 			children = (
 				6ECE5B832A92188900792D41 /* common */,
+				D5D569162AA0740100DC9A92 /* label.h */,
+				D5D569172AA0740100DC9A92 /* label.m */,
 				6ECE5B4D2A905F5000792D41 /* escalate.h */,
 				6ECE5B4E2A905F5000792D41 /* escalate.m */,
 				6ECE5B562A9065B300792D41 /* vnode.h */,
@@ -394,8 +395,6 @@
 		D531750A2A9DE57F00CB5AE0 /* Fugu15 */ = {
 			isa = PBXGroup;
 			children = (
-				D531750B2A9DE57F00CB5AE0 /* ProcessCommunication */,
-				D531750C2A9DE57F00CB5AE0 /* Fugu15KernelExploit */,
 				D531750D2A9DE57F00CB5AE0 /* SwiftUtils */,
 				D531750E2A9DE57F00CB5AE0 /* SwiftMachO */,
 				D531750F2A9DE57F00CB5AE0 /* KernelPatchfinder */,
@@ -437,9 +436,9 @@
 			);
 			name = kfd;
 			packageProductDependencies = (
-				D53175272A9DE89400CB5AE0 /* Fugu15KernelExploit */,
 				D531752A2A9DEA6000CB5AE0 /* libzstd */,
 				D531752D2A9DEA8600CB5AE0 /* SwiftfulLoadingIndicators */,
+				D5D569192AA077E300DC9A92 /* KernelPatchfinder */,
 			);
 			productName = kfd;
 			productReference = 297BA1052A310AE100D1E51A /* kfd.app */;
@@ -497,8 +496,6 @@
 				297BA1112A310AE200D1E51A /* Preview Assets.xcassets in Resources */,
 				D53175182A9DE57F00CB5AE0 /* PatchfinderUtils in Resources */,
 				297BA10D2A310AE200D1E51A /* Assets.xcassets in Resources */,
-				D53175122A9DE57F00CB5AE0 /* ProcessCommunication in Resources */,
-				D53175132A9DE57F00CB5AE0 /* Fugu15KernelExploit in Resources */,
 				6ECE5B5D2A907DE900792D41 /* iosbinpack in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -521,6 +518,7 @@
 				6ECE5B522A905FDE00792D41 /* proc.c in Sources */,
 				6ECE5B5B2A90662200792D41 /* ipc.c in Sources */,
 				6ECE5B4F2A905F5000792D41 /* escalate.m in Sources */,
+				D5D569182AA0740100DC9A92 /* label.m in Sources */,
 				6EC787902A970190005B3A63 /* jailbreakd.c in Sources */,
 				6ECE5B892A92F95A00792D41 /* boot_info.m in Sources */,
 				6ECE5B862A9269F000792D41 /* bootstrap.m in Sources */,
@@ -572,6 +570,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -632,6 +631,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -818,10 +818,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D53175272A9DE89400CB5AE0 /* Fugu15KernelExploit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Fugu15KernelExploit;
-		};
 		D531752A2A9DEA6000CB5AE0 /* libzstd */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D53175292A9DEA6000CB5AE0 /* XCRemoteSwiftPackageReference "zstd" */;
@@ -835,6 +831,10 @@
 		D58309AB2A9BC61200828844 /* DirtyCowKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DirtyCowKit;
+		};
+		D5D569192AA077E300DC9A92 /* KernelPatchfinder */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KernelPatchfinder;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
