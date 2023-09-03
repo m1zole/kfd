@@ -8,7 +8,6 @@
 #include "offsets.h"
 #include "proc.h"
 #include "escalate.h"
-#include "stage2.h"
 #include "label.h"
 
 
@@ -34,10 +33,6 @@ uint64_t ptrauth_utils_sign_blob_generic(uint64_t ptr, uint64_t len_bytes, uint6
     uint64_t ptrauth_utils_sign_blob_generic = bootInfo_getSlidUInt64(@"ptrauth_utils_sign_blob_generic");
     return kcall(ptrauth_utils_sign_blob_generic, 4, (uint64_t[]){ptr, len_bytes, salt, flags});
 }*/
-uint64_t proc_get_task(uint64_t proc_ptr)
-{
-    return kread64(proc_ptr + 0x10);
-}
 
 uint64_t proc_get_pptr(uint64_t proc_ptr)
 {
@@ -51,7 +46,7 @@ pid_t proc_get_pid(uint64_t proc_ptr)
 
 void proc_iterate(void (^itBlock)(uint64_t, BOOL*))
 {
-    uint64_t allproc = bootInfo_getSlidUInt64(@"allproc");
+    uint64_t allproc = off_allproc;
     uint64_t proc = allproc;
     while((proc = kread64(proc)))
     {
@@ -66,7 +61,7 @@ uint64_t proc_for_pid(pid_t pidToFind, bool *needsRelease)
     __block uint64_t foundProc = 0;
 
 //    if (gKCallStatus == kKcallStatusFinalized) {
-        foundProc = kcall(bootInfo_getSlidUInt64(@"proc_find"), 1, (uint64_t[]){pidToFind}, 0, 0, 0, 0, 0);
+        foundProc = kcall(off_proc_find, 1, (uint64_t[]){pidToFind}, 0, 0, 0, 0, 0);
         if (needsRelease) *needsRelease = foundProc != 0;
 //    }
 //    else {
@@ -84,24 +79,14 @@ uint64_t proc_for_pid(pid_t pidToFind, bool *needsRelease)
     return foundProc;
 }
 
-uint64_t find_kdata(void)
-{
-    return bootInfo_getSlidUInt64(@"kalloc_data_external");
-}
-
-uint64_t find_kfree(void)
-{
-    return bootInfo_getSlidUInt64(@"kfree_data_external");
-}
-
 uint64_t find_allproc(void)
 {
-    return bootInfo_getSlidUInt64(@"allproc");
+    return off_allproc;
 }
 
 int proc_rele(uint64_t proc)
 {
-    return kcall(bootInfo_getSlidUInt64(@"proc_rele"), 1, (uint64_t[]){proc}, 0, 0, 0, 0, 0);
+    return kcall(off_proc_rele, 1, (uint64_t[]){proc}, 0, 0, 0, 0, 0);
 }
 
 uint64_t proc_get_proc_ro(uint64_t proc_ptr)
@@ -371,11 +356,6 @@ uint64_t self_task(void)
         gSelfTask = proc_get_task(self_proc());
     });
     return gSelfTask;
-}
-
-uint64_t vm_map_get_pmap(uint64_t vm_map_ptr)
-{
-    return kread64(vm_map_ptr + bootInfo_getUInt64(@"VM_MAP_PMAP"));
 }
 
 uint64_t vm_map_get_header(uint64_t vm_map_ptr)
@@ -690,7 +670,7 @@ void cr_label_replace_entitlements(uint64_t cr_label_ptr, NSDictionary *newEntit
     // Create new OSEntitlements object
     //uint64_t OSEntitlements_newPtr = kcall(bootInfo_getSlidUInt64(@"OSEntitlements_MetaClass_alloc"), 0, 0, 0, 0, 0, 0, 0, 0);
 
-    uint64_t kslide = bootInfo_getUInt64(@"kernelslide");
+    uint64_t kslide = get_kslide();
     //JBLogDebug("initWithValidationResult(0x%llX, 0x%llX, 0x%llX, 0x%llX, %d)", kslide + 0xFFFFFFF008345CF8, OSEntitlements_newPtr, fakeCERValidationResult, csblob, true);
     //sleep(5);
     //uint64_t ret = kcall(kslide + 0xFFFFFFF008345CF8, OSEntitlements_newPtr, fakeCERValidationResult, csblob, true, 0, 0, 0, 0);
@@ -836,11 +816,11 @@ int proc_set_debugged(uint64_t proc_ptr, bool fully_debugged)
 {
     uint64_t task = proc_get_task(proc_ptr);
     uint64_t vm_map = task_get_vm_map(task);
-    uint64_t pmap = vm_map_get_pmap(vm_map);
+    //uint64_t pmap = vm_map_get_pmap(vm_map);
 
     // For most unrestrictions, just setting wx_allowed is enough
     // This enabled hooks without being detectable at all, as cs_ops will not return CS_DEBUGGED
-    pmap_set_wx_allowed(pmap, true);
+    //pmap_set_wx_allowed(pmap, true);
 
     if (fully_debugged) {
         // When coming from ptrace, we want to fully emulate cs_allow_invalid though

@@ -128,3 +128,15 @@ primitive into distinct write-ups, listed below in chronological order of discov
 
 However, please note that these write-ups have been written for an audience that is already familiar
 with the XNU virtual memory system.
+
+## Credits
+- [felix-pb](https://github.com/felix-pb) kfd exploit
+- [zhuwei](https://github.com/zhuowei) mdc exploit
+- [akusio](https://github.com/akusio) some tricks from MiniRootFileManager15
+- [xerub](https://github.com/xerub) kernelpatchfinder64
+- [mineek](https://github.com/mineek) setuid(0) tricks and kpf
+- [wh1te4ever](https://github.com/wh1te4ever) kfund
+- [BomberFish](https://github.com/BomberFish) DirtyCowKit
+- [opa334](https://github.com/opa334) Dopamine, KPF fork, and an unsandbox method
+- [pinauten](https://github.com/pinauten) Fugu15 and base KPF
+- [hrtowii](https://github.com/hrtowii) base UI

@@ -1,0 +1,28 @@
+diff --git a/Sources/MacDirtyCow/MacDirtyCow.swift b/Sources/MacDirtyCow/MacDirtyCow.swift
+index 341cad5..e9643f5 100644
+--- a/Sources/MacDirtyCow/MacDirtyCow.swift
++++ b/Sources/MacDirtyCow/MacDirtyCow.swift
+@@ -80,10 +80,11 @@ public enum MacDirtyCow {
+         return installd_patch()
+     }
+ 
+-    public static func unsandbox() throws {
++    public static func unsandbox() {
+         var errormessage = ""
+         if #available(iOS 16.2, *) {
+-            throw "Your device is incompatible"
++            print("Your device is incompatible")
++            return
+         } else {
+             grant_full_disk_access { error in
+                 if error != nil {
+@@ -92,7 +93,8 @@ public enum MacDirtyCow {
+             }
+ 
+             if errormessage != "" {
+-                throw errormessage
++                print(errormessage)
++                return
+             }
+         }
+     }

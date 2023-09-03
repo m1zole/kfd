@@ -45,7 +45,6 @@ void kwrite_ptr(uint64_t kaddr, uint64_t pointer, uint16_t salt);
 void proc_iterate(void (^itBlock)(uint64_t, BOOL*));
 uint64_t proc_for_pid(pid_t pidToFind, bool *needsRelease);
 int proc_rele(uint64_t proc);
-uint64_t proc_get_task(uint64_t proc_ptr);
 uint64_t proc_get_pptr(uint64_t proc_ptr);
 pid_t proc_get_pid(uint64_t proc_ptr);
 uint64_t proc_get_ucred(uint64_t proc_ptr);
@@ -81,11 +80,9 @@ uint64_t task_get_thread(uint64_t task_ptr, thread_act_t thread);
 uint64_t self_thread(void);
 uint64_t thread_get_id(uint64_t thread_ptr);
 uint64_t thread_get_act_context(uint64_t thread_ptr);
-uint64_t task_get_vm_map(uint64_t task_ptr);
 void task_set_memory_ownership_transfer(uint64_t task_ptr, uint8_t enabled);
 uint64_t self_task(void);
 
-uint64_t vm_map_get_pmap(uint64_t vm_map_ptr);
 uint64_t vm_map_get_header(uint64_t vm_map_ptr);
 uint64_t vm_map_header_get_first_entry(uint64_t vm_header_ptr);
 uint64_t vm_map_entry_get_next_entry(uint64_t vm_entry_ptr);
@@ -101,7 +98,6 @@ void vm_map_entry_set_prot(uint64_t entry_ptr, vm_prot_t prot, vm_prot_t max_pro
 
 void pmap_set_wx_allowed(uint64_t pmap_ptr, bool wx_allowed);
 void pmap_set_type(uint64_t pmap_ptr, uint8_t type);
-uint64_t pmap_get_ttep(uint64_t pmap_ptr);
 uint64_t pmap_lv2(uint64_t pmap_ptr, uint64_t virt);
 uint64_t get_cspr_kern_intr_en(void);
 uint64_t get_cspr_kern_intr_dis(void);

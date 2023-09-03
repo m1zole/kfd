@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - kfd15
+    paths-ignore:
+      - '**/*.md'
+      - 'README.md'
+      - '.gitignore'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build IPA
+        run: |
+          git submodule init
+          git submodule update
+          cd DirtyCowKit
+          git apply -p1 ../patches/DirtyCowKit.patch 
+          cd ../packages/KernelPatchfinder 
+          git apply -p1 ../../patches/KernelPatchfinder.patch 
+          cd ../../
+          make
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: kfd
+          path: ${{ github.workspace }}/kfd.ipa

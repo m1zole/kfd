@@ -62,6 +62,8 @@ extern uint64_t off_ml_phys_write_data;
 extern uint64_t off_proc_set_ucred;
 extern uint64_t off_unknown;
 extern uint64_t off_mac_label_set;
+extern uint64_t off_proc_rele;
+extern uint64_t off_proc_find;
 
 void _offsets_init(void);
 

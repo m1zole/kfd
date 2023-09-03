@@ -188,8 +188,8 @@ u64 patchfind_kernproc(struct kfd* kfd, u64 kernel_base)
     
     u64 adrpKaddr = 0;
     u32 adrpInstr = 0;
-    for (u32 i = 0; i < 20; i++) {
-        u64 addr = movKaddr+(4*i);
+    for (u32 i = 0; i < 30; i++) {
+        u64 addr = ldrKaddr-(4*i);
         u32 instr = 0;
         kread((u64)kfd, addr, &instr, sizeof(instr));
         if ((instr & adrpFindMask) == adrpFind) {

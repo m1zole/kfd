@@ -4,7 +4,6 @@
 
 import SwiftUI
 import MacDirtyCow
-import KernelPatchfinder
 
 enum JAILBREAK_RETURN_STATUS {
     case ERR_JAILBREAK
@@ -55,21 +54,37 @@ struct ContentView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         Text("15.2< setuid(0)")
                             .onTapGesture{
-                                stage2()
+                                kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
+                                usleep(3000)
+                                mineekpf(kfd)
+                                usleep(3000)
+                                do_kclose()
+                                puafPages = 0
+                                kfd = 0
+                                //stage2()
                                 DispatchQueue.main.async {
-                                    message = "got gid=0, uid=0!"
+                                    message = "done!"
                                 }
                             }.frame(minWidth: 0, maxWidth: .infinity)
                         Text("15.2< all")
                             .onTapGesture{
+                                kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
+                                usleep(3000)
                                 mineekpf(kfd)
-                                stage2_all()
+                                usleep(3000)
+                                let proc_addr: UInt64 = stage2_all()
+                                print(proc_addr)
+                                do_kpf(proc_addr, false)
+                                do_kclose()
+                                puafPages = 0
+                                kfd = 0
                                 DispatchQueue.main.async {
                                     message = "jailbreaked!"
                                 }
                             }.frame(minWidth: 0, maxWidth: .infinity)
                         Text("<15.3")
                             .onTapGesture{
+                                mineekpf151(kfd)
                                 do_fun()
                                 DispatchQueue.main.async {
                                     message = "sucecss!"
@@ -77,24 +92,13 @@ struct ContentView: View {
                             }.frame(minWidth: 0, maxWidth: .infinity)
                         Text("mdc")
                             .onTapGesture{
-                                func unsandboxing()  {
-                                    do {
-                                        try MacDirtyCow.unsandbox()
-                                        DispatchQueue.main.async {
-                                            message = "unsandboxed!"
-                                        }
-                                    } catch {
-                                        print(error)
-                                    }
-                                }
-                                unsandboxing()
+                                MacDirtyCow.unsandbox()
                             }.frame(minWidth: 0, maxWidth: .infinity)
                         Text("kpf")
                             .onTapGesture{
-                                func do_kpf() {
-                                    KernelPatchfinder.running
-                                }
-                                do_kpf()
+                                MacDirtyCow.unsandbox()
+                                fugu15_kpf()
+                                do_kpf(0, true)
                             }.frame(minWidth: 0, maxWidth: .infinity)
                     }.foregroundColor(.green)
                     .padding(.vertical, 8)

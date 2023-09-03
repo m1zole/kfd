@@ -40,6 +40,7 @@ uint8_t kread8(uint64_t where);
 uint32_t kread16(uint64_t where);
 uint32_t kread32(uint64_t where);
 uint64_t kread64(uint64_t where);
+uint64_t kread_ptr(uint64_t where);
 void kwrite8(uint64_t where, uint8_t what);
 void kwrite16(uint64_t where, uint16_t what);
 void kwrite32(uint64_t where, uint32_t what);
@@ -64,6 +65,7 @@ int kalloc_using_empty_kdata_page(void);
 int prepare_kcall_stage2(void);
 int kalloc_using_empty_kdata_page_stage2(void);
 void mineekpf(uint64_t kfd);
+void mineekpf151(uint64_t kfd);
 
 int term_kcall(void);
 

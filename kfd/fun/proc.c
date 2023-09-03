@@ -8,7 +8,6 @@
 #include "proc.h"
 #include "krw.h"
 #include "offsets.h"
-#include "stage2.h"
 
 uint64_t proc_of_pid(pid_t pid) {
     uint64_t proc = get_kernproc();
@@ -71,6 +70,7 @@ uint64_t pmap_get_ttep(uint64_t pmap) {
 uint64_t get_ucred(uint64_t proc) {
     uint64_t ucred = 0;
     if(off_p_ucred == 0){
+        uint64_t self_ro = kread64(proc + 0x20);
         printf("[DEBUG] self ro: 0x%llx\n", self_ro);
         uint64_t self_ucred = kread64(self_ro + 0x20);
         printf("[DEBUG] self ucred: 0x%llx\n", self_ucred); //ucred

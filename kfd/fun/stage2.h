@@ -14,16 +14,7 @@ uint64_t mineek_kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint
 void mineek_getRoot(uint64_t proc_addr);
 void ucred_test(uint64_t proc_addr);
 void stage2(void);
-void stage2_all(void);
-
-mach_port_t user_client;
-uint64_t fake_vtable;
-uint64_t fake_client;
-uint64_t self_ro;
-uint64_t cr_label;
-uint64_t orig_sb;
-uint64_t self_ucred;
-uint64_t sb;
-//void rawkern;
+uint64_t stage2_all(void);
+void do_kpf(uint64_t proc_addr, bool mdc);
 
 #endif /* stage2_h */

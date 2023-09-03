@@ -12,40 +12,29 @@
 #import "sandbox.h"
 #import "proc.h"
 #import "escalate.h"
-#import "stage2.h"
 #import "boot_info.h"
 
 uint64_t unsandbox(pid_t pid) {
     printf("[*] Unsandboxing pid %d\n", pid);
-    
-    if(off_p_ucred != 0){
-        uint64_t proc = self_ro; // pid's proccess structure on the kernel
-        uint64_t ucred =  get_ucred(proc); // pid credentials
-        uint64_t cr_label = kread64(ucred + off_u_cr_label); // MAC label
-        uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);// not working
-        kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, 0); //get rid of sandbox by nullifying it
-        return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
-    }
-    usleep(1000);
-    kcall(0xfffffff0077f5b50 + get_kslide(), cr_label + off_sandbox_slot, 0, 0, 0, 0, 0, 0);
-    printf("[DEBUG] 0x%llx\n", kread64(kread64(self_ucred + off_u_cr_label) + off_sandbox_slot));
-    return (kread64(kread64(self_ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
+    uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
+    uint64_t ucred = kread64(proc + off_p_ucred); // pid credentials
+    uint64_t cr_label = kread64(ucred + off_u_cr_label); // MAC label
+    uint64_t orig_sb = kread64(cr_label + off_sandbox_slot);
+    printf("[i] cr_label: 0x%llx\n", cr_label);
+    printf("[i] orig_sb: 0x%llx\n", orig_sb);
+    kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, 0); //get rid of sandbox by nullifying it
+    return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
 }
 
 BOOL sandbox(pid_t pid, uint64_t sb) {
     if (!pid) return NO;
     
     printf("[*] Sandboxing pid %d with slot at 0x%llx\n", pid, sb);
-    if(off_p_ucred != 0){
-        uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
-        uint64_t ucred = get_ucred(proc); // pid credentials
-        uint64_t cr_label = kread64(ucred + off_u_cr_label); /* MAC label */
-        kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, sb);
-        return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == sb) ? YES : NO;
-    } else {
-        kcall(off_mac_label_set + get_kslide(), cr_label + off_sandbox_slot, 0, 0, 0, 0, 0, 0);
-        return (kread64(kread64(self_ucred + off_u_cr_label) + off_sandbox_slot) == 0) ? orig_sb : NO;
-    }
+    uint64_t proc = proc_of_pid(pid); // pid's proccess structure on the kernel
+    uint64_t ucred = get_ucred(proc); // pid credentials
+    uint64_t cr_label = kread64(ucred + off_u_cr_label); /* MAC label */
+    kwrite64(cr_label + off_sandbox_slot /* First slot is AMFI's. so, this is second? */, sb);
+    return (kread64(kread64(ucred + off_u_cr_label) + off_sandbox_slot) == sb) ? YES : NO;
 }
 
 char* token_by_sandbox_extension_issue_file(const char *extension_class, const char *path, uint32_t flags) {
@@ -76,14 +65,4 @@ char *generateSystemWideSandboxExtensions(void) {
     unborrow_ucreds(getpid(), self_ucreds);
 
   return extensionString.UTF8String;
-}
-
-void unsandbox_rootless(char* extensions) {
-  char extensionsCopy[strlen(extensions)];
-  strcpy(extensionsCopy, extensions);
-  char *extensionToken = strtok(extensionsCopy, "|");
-  while (extensionToken != NULL) {
-    sandbox_extension_consume(extensionToken);
-    extensionToken = strtok(NULL, "|");
-  }
 }

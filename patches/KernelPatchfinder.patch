@@ -1,0 +1,110 @@
+diff --git a/Sources/KernelPatchfinder/KernelPatchfinder.swift b/Sources/KernelPatchfinder/KernelPatchfinder.swift
+index 073ee97..af71e75 100644
+--- a/Sources/KernelPatchfinder/KernelPatchfinder.swift
++++ b/Sources/KernelPatchfinder/KernelPatchfinder.swift
+@@ -42,9 +42,6 @@ open class KernelPatchfinder {
+     /// `__DATA_CONST,__const` section
+     public let constSect: PatchfinderSegment
+     
+-    /// `__PPLTEXT,__text` section
+-    public let pplText: PatchfinderSegment
+-    
+     /// Address of allproc
+     public lazy var allproc: UInt64? = {
+         // First find ref to string "shutdownwait"
+@@ -700,7 +697,7 @@ open class KernelPatchfinder {
+         return mac_label_set
+     }()
+ 
+-    /*public lazy var OSEntitlements_zone: UInt64? = {
++    public lazy var OSEntitlements_zone: UInt64? = {
+         guard let OSEntitlementsString = cStrSect.addrOf("OSEntitlements") else {
+             return nil
+         }
+@@ -775,7 +772,7 @@ open class KernelPatchfinder {
+         }
+ 
+         return nil
+-    }()*/
++    }()
+ 
+     /// Address of the `kernel_mount` function
+     public lazy var kernel_mount: UInt64? = {
+@@ -997,60 +994,6 @@ open class KernelPatchfinder {
+ 
+         return proc_rele
+     }()
+-    
+-    /// Address of the ppl handler table
+-    public lazy var ppl_handler_table: UInt64? = {
+-        guard let ppl_bootstrap_dispatch = ppl_bootstrap_dispatch else {
+-            return nil
+-        }
+-        
+-        var ppl_handler_table: UInt64?
+-        for i in 1..<20 {
+-            let pc = ppl_bootstrap_dispatch + UInt64(i * 4)
+-            let adrp = textExec.instruction(at: pc) ?? 0
+-            let ldr  = textExec.instruction(at: pc + 4) ?? 0
+-            let tbl = AArch64Instr.Emulate.adrpAdd(adrp: adrp, add: ldr, pc: pc)
+-            if tbl != nil {
+-                ppl_handler_table = tbl
+-                break
+-            }
+-        }
+-        
+-        return ppl_handler_table
+-    }()
+-    
+-    /// Address of `pmap_image4_trust_caches`
+-    public lazy var pmap_image4_trust_caches: UInt64? = {
+-        guard let ppl_handler_table = ppl_handler_table else {
+-            return nil
+-        }
+-        
+-        guard var pmap_lookup_in_loaded_trust_caches_internal = constSect.r64(at: ppl_handler_table + 0x148) else {
+-            return nil
+-        }
+-        
+-        if (pmap_lookup_in_loaded_trust_caches_internal >> 48) == 0x8011 {
+-            // Relocation, on-disk kernel
+-            pmap_lookup_in_loaded_trust_caches_internal &= 0xFFFFFFFFFFFF
+-            pmap_lookup_in_loaded_trust_caches_internal += 0xFFFFFFF007004000
+-        } else {
+-            // Probably live kernel
+-            // Strip pointer authentication code
+-            pmap_lookup_in_loaded_trust_caches_internal |= 0xFFFFFF8000000000
+-        }
+-        
+-        var pmap_image4_trust_caches: UInt64?
+-        for i in 1..<20 {
+-            let pc = pmap_lookup_in_loaded_trust_caches_internal + UInt64(i * 4)
+-            let emu = AArch64Instr.Emulate.ldr(pplText.instruction(at: pc) ?? 0, pc: pc)
+-            if emu != nil {
+-                pmap_image4_trust_caches = emu
+-                break
+-            }
+-        }
+-        
+-        return pmap_image4_trust_caches
+-    }()
+ 
+     // Offset of arm_vm_init function
+     public lazy var arm_vm_init: UInt64? = {
+@@ -1483,16 +1426,11 @@ open class KernelPatchfinder {
+             return nil
+         }
+         
+-        guard let pplText = kernel.pfSection(segment: "__PPLTEXT", section: "__text") else {
+-            return nil
+-        }
+-        
+         self.textExec  = textExec
+         self.cStrSect  = cStrSect
+         self.osLogSect = osLogSect
+         self.dataSect  = dataSect
+         self.constSect = constSect
+-        self.pplText   = pplText
+         
+         var baseAddress: UInt64 = UInt64.max
+         var entryPoint: UInt64?

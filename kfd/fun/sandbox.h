@@ -18,7 +18,6 @@ int64_t sandbox_extension_consume(const char *extension_token);
 char* token_by_sandbox_extension_issue_file(const char *extension_class, const char *path, uint32_t flags);
 
 char *generateSystemWideSandboxExtensions(void);
-void unsandbox_rootless(char* extensions);
 
 enum sandbox_filter_type {
     SANDBOX_FILTER_NONE,
