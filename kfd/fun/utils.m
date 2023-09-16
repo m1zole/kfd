@@ -189,6 +189,47 @@ int VarMobileRemoveFolderTest(void) {
     return 0;
 }
 
+int clearPlist(NSString *path) {
+    NSDictionary *dictionary = @{};
+    
+    BOOL success = [dictionary writeToFile:path atomically:YES];
+    if (!success) {
+        printf("[-] Failed createPlistAtPath.\n");
+        return -1;
+    }
+    
+    return 0;
+}
+
+int whitelist() {
+    NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
+    
+    //1. Create files
+    uint64_t var_tmp_vnode = getVnodeAtPathByChdir("/var/tmp");
+    printf("[i] /var/tmp vnode: 0x%llx\n", var_tmp_vnode);
+    
+    uint64_t orig_to_v_data = createFolderAndRedirect(var_tmp_vnode, mntPath);
+    
+    clearPlist([mntPath stringByAppendingString:@"/Rejections.plist"]);
+    clearPlist([mntPath stringByAppendingString:@"/AuthListBannedUpps.plist"]);
+    clearPlist([mntPath stringByAppendingString:@"/AuthListBannedCdHashes.plist"]);
+    clearPlist([mntPath stringByAppendingString:@"/AGP.plist"]);
+    clearPlist([mntPath stringByAppendingString:@"/UserTrustedUpps.plist"]);
+    
+    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
+    
+    
+    //2. Copy
+    
+    funVnodeOverwriteFileUnlimitSize("/var/db/MobileIdentityData/Rejections.plist", "/var/tmp/Rejections.plist");
+    funVnodeOverwriteFileUnlimitSize("/var/db/MobileIdentityData/AuthListBannedUpps.plist", "/var/tmp/AuthListBannedUpps.plist");
+    funVnodeOverwriteFileUnlimitSize("/var/db/MobileIdentityData/AuthListBannedCdHashes.plist", "/var/tmp/AuthListBannedCdHashes.plist");
+    funVnodeOverwriteFileUnlimitSize("/var/db/MobileIdentityData/AGP.plist", "/var/tmp/AGP.plist");
+    funVnodeOverwriteFileUnlimitSize("/var/db/MobileIdentityData/UserTrustedUpps.plist", "/var/tmp/UserTrustedUpps.plist");
+    
+    return 0;
+}
+
 int setSuperviseMode(BOOL enable) {
     NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
 
@@ -268,7 +309,7 @@ int regionChanger(NSString *country_value, NSString *region_value) {
     NSData *binaryData = [NSPropertyListSerialization dataWithPropertyList:mdict1 format:NSPropertyListBinaryFormat_v1_0 options:0 error:nil];
     [binaryData writeToFile:rewrittenPlistPath atomically:YES];
     
-    funVnodeOverwriteFileUnlimitSize(plistPath.UTF8String, rewrittenPlistPath.UTF8String);
+    funVnodeOverwrite2(plistPath.UTF8String, rewrittenPlistPath.UTF8String);
     
     return 0;
 }
@@ -373,37 +414,6 @@ int CCTest(void) {
 //}
 //printf("[i] /var/containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles vnode: 0x%llx\n", configurationprofiles_vnode);
 
-int readpslog(void) {
-    NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
-    
-    uint64_t var_tmp_vnode = getVnodeAtPathByChdir("/var/tmp");
-    
-    printf("[i] /var/tmp vnode: 0x%llx\n", var_tmp_vnode);
-    // symlink documents folder to var/tmp
-    uint64_t orig_to_v_data = createFolderAndRedirect(var_tmp_vnode, mntPath);
-    
-    NSError *error;
-
-    printf("unredirecting from tmp\n");
-
-    printf("reading ps.log\n");
-    
-    NSString *pslog = [NSString stringWithContentsOfFile:[NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted/ps.log"] encoding:NSUTF8StringEncoding error:&error];
-    NSLog(pslog);
-    
-    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
-    
-    uint64_t telephonyui_vnode = getVnodeAtPathByChdir("/var/mobile/Library/Caches/TelephonyUI-9");
-    
-    //2. Create symbolic link /var/tmp/image.png -> /var/mobile/Library/Caches/TelephonyUI-9/en-0---white.png
-
-    orig_to_v_data = createFolderAndRedirect(telephonyui_vnode, mntPath);
-    
-    printf("cleaning up\n");
-    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
-    
-    return 0;
-}
 
 void HexDump(uint64_t addr, size_t size) {
     void *data = malloc(size);

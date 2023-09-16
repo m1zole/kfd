@@ -12,4 +12,5 @@
 
 void do_fun(char** enabledTweaks, int numTweaks);
 uint64_t fun_nvram_dump(void);
+void backboard_respring(void);
 #endif /* fun_h */

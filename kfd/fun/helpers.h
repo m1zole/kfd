@@ -1,11 +1,11 @@
 #ifndef helpers_h
 #define helpers_h
 
-char* get_temp_file_path(void);
-void test_nsexpressions(void);
-char* set_up_tmp_file(void);
+char* kfd_get_temp_file_path(void);
+void kfd_test_nsexpressions(void);
+char* kfd_set_up_tmp_file(void);
 
-void xpc_crasher(char* service_name);
+void kfd_xpc_crasher(char* service_name);
 
 void restartBackboard(void);
 void restartFrontboard(void);

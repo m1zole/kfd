@@ -33,9 +33,11 @@
 		C8CB75182A7EA18000305C68 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB750B2A7EA18000305C68 /* utils.m */; };
 		C8CB75192A7EA18000305C68 /* vnode.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB750E2A7EA18000305C68 /* vnode.m */; };
 		C8CB751A2A7EA18000305C68 /* krw.c in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75102A7EA18000305C68 /* krw.c */; };
-		C8CB751B2A7EA18000305C68 /* grant_full_disk_access.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75112A7EA18000305C68 /* grant_full_disk_access.m */; };
 		C8CB751C2A7EA18000305C68 /* proc.c in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75132A7EA18000305C68 /* proc.c */; };
 		C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */ = {isa = PBXBuildFile; productRef = C8843C222A724AA900CA0DC9 /* SwiftUtils */; };
+		D51A37FB2AB55A6400C147E2 /* DirtyCowKit in Frameworks */ = {isa = PBXBuildFile; productRef = D51A37FA2AB55A6400C147E2 /* DirtyCowKit */; };
+		D51A37FC2AB56CF800C147E2 /* grant_full_disk_access.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB75112A7EA18000305C68 /* grant_full_disk_access.m */; };
+		D51A37FF2AB56D7300C147E2 /* DirtyCowKit in Frameworks */ = {isa = PBXBuildFile; productRef = D51A37FE2AB56D7300C147E2 /* DirtyCowKit */; };
 		D543151B2A7FA08D001AAF89 /* cert.pem in Resources */ = {isa = PBXBuildFile; fileRef = D543151A2A7FA08D001AAF89 /* cert.pem */; };
 		D562393D2A7FB457003D1C28 /* ps.log in Resources */ = {isa = PBXBuildFile; fileRef = D562393C2A7FB457003D1C28 /* ps.log */; };
 		D5AE19272A83741200EE2BE7 /* cs_blobs.m in Sources */ = {isa = PBXBuildFile; fileRef = D5AE19262A83741200EE2BE7 /* cs_blobs.m */; };
@@ -118,6 +120,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D51A37FF2AB56D7300C147E2 /* DirtyCowKit in Frameworks */,
+				D51A37FB2AB55A6400C147E2 /* DirtyCowKit in Frameworks */,
 				D5AE192B2A83743E00EE2BE7 /* IOKit.framework in Frameworks */,
 				C8EAC7D02A769098005FB878 /* SwiftUtils in Frameworks */,
 			);
@@ -306,6 +310,8 @@
 			name = kfd;
 			packageProductDependencies = (
 				C8843C222A724AA900CA0DC9 /* SwiftUtils */,
+				D51A37FA2AB55A6400C147E2 /* DirtyCowKit */,
+				D51A37FE2AB56D7300C147E2 /* DirtyCowKit */,
 			);
 			productName = kfd;
 			productReference = 297BA1052A310AE100D1E51A /* kfd.app */;
@@ -338,6 +344,8 @@
 			mainGroup = 297BA0FC2A310AE100D1E51A;
 			packageReferences = (
 				C8843C212A724AA900CA0DC9 /* XCRemoteSwiftPackageReference "SwiftUtils" */,
+				D51A37F92AB55A6400C147E2 /* XCRemoteSwiftPackageReference "DirtyCowKit" */,
+				D51A37FD2AB56D7300C147E2 /* XCRemoteSwiftPackageReference "DirtyCowKit" */,
 			);
 			productRefGroup = 297BA1062A310AE100D1E51A /* Products */;
 			projectDirPath = "";
@@ -382,9 +390,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D51A37FC2AB56CF800C147E2 /* grant_full_disk_access.m in Sources */,
 				C8CB751A2A7EA18000305C68 /* krw.c in Sources */,
 				297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */,
-				C8CB751B2A7EA18000305C68 /* grant_full_disk_access.m in Sources */,
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,
 				C8CB75152A7EA18000305C68 /* offsets.m in Sources */,
 				C8CB75182A7EA18000305C68 /* utils.m in Sources */,
@@ -519,7 +527,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"kfd/Preview Content\"";
-				DEVELOPMENT_TEAM = QYRZ2HH398;
+				DEVELOPMENT_TEAM = 9NH3QC6BPH;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -538,7 +546,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mizole.kfd;
+				PRODUCT_BUNDLE_IDENTIFIER = me.m1zole.kfd;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -560,7 +568,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"kfd/Preview Content\"";
-				DEVELOPMENT_TEAM = QYRZ2HH398;
+				DEVELOPMENT_TEAM = 9NH3QC6BPH;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -579,7 +587,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mizole.kfd;
+				PRODUCT_BUNDLE_IDENTIFIER = me.m1zole.kfd;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -622,6 +630,22 @@
 				kind = branch;
 			};
 		};
+		D51A37F92AB55A6400C147E2 /* XCRemoteSwiftPackageReference "DirtyCowKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BomberFish/DirtyCowKit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		D51A37FD2AB56D7300C147E2 /* XCRemoteSwiftPackageReference "DirtyCowKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BomberFish/DirtyCowKit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -629,6 +653,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C8843C212A724AA900CA0DC9 /* XCRemoteSwiftPackageReference "SwiftUtils" */;
 			productName = SwiftUtils;
+		};
+		D51A37FA2AB55A6400C147E2 /* DirtyCowKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D51A37F92AB55A6400C147E2 /* XCRemoteSwiftPackageReference "DirtyCowKit" */;
+			productName = DirtyCowKit;
+		};
+		D51A37FE2AB56D7300C147E2 /* DirtyCowKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D51A37F92AB55A6400C147E2 /* XCRemoteSwiftPackageReference "DirtyCowKit" */;
+			productName = DirtyCowKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

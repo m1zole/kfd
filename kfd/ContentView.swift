@@ -1,4 +1,5 @@
 import SwiftUI
+import MacDirtyCow
 
 struct ContentView: View {
     @State private var kfd: UInt64 = 0
@@ -7,30 +8,57 @@ struct ContentView: View {
     @State private var puafMethod = 1
     @State private var kreadMethod = 1
     @State private var kwriteMethod = 1
-    //tweak vars
-    @State private var enableHideDock = false
-    @State private var enableCCTweaks = false
-    @State private var enableLSTweaks = false
-    @State private var enableCustomFont = false
-    @State private var enableResSet = false
+
     @State private var enableHideHomebar = false
-    @State private var enableHideNotifs = false
-    @State private var enableDynamicIsland = false
+    @State private var enableHideDock = false
+    @State private var enableResSet = false
+    @State private var enableReplacecert = false
+    @State private var enableCustomSysColors = false
+    @State private var changeRegion = false
+    @State private var whitelist = false
+    @State private var supervise = false
+    @State private var enableCustomFont = false
     
     var puafPagesOptions = [16, 32, 64, 128, 256, 512, 1024, 2048]
     var puafMethodOptions = ["physpuppet", "smith"]
     var kreadMethodOptions = ["kqueue_workloop_ctl", "sem_open"]
     var kwriteMethodOptions = ["dup", "sem_open"]
     
+    @State private var message = "ready!"
+    
     @State private var isSettingsPopoverPresented = false // Track the visibility of the settings popup
     
+    func unsandboxing()  {
+        do {
+            try MacDirtyCow.unsandbox()
+            DispatchQueue.main.async {
+                message = "unsandboxed!"
+            }
+            if (MacDirtyCow.patch_installd() == true){
+                DispatchQueue.main.async {
+                    message = "patched installd!"
+                }
+            } else {
+                DispatchQueue.main.async {
+                    message = "error occur patching installd!"
+                }
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    init() {
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor(red: 0.745, green: 0.431, blue: 0.902, alpha: 1.0)]
+    }
     var body: some View {
         NavigationView {
             List {
                 
-            
-                if kfd != 0 {
-                    Section(header: Text("Status")) {
+                
+                Section(header: Text("Status")) {
+                    Text(message).foregroundColor(.blue)
+                    if kfd != 0 {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Success!")
                                 .font(.headline)
@@ -41,162 +69,162 @@ struct ContentView: View {
                     }
                 }
                 
-                Section(header: Text("Tweaks")) {
-                    VStack(alignment: .leading, spacing: 20) {
-                        Toggle(isOn: $enableHideDock) {
-                            HStack(spacing: 20) {
-                                Image(systemName: enableHideDock ? "eye.slash" : "eye")
-                                    .foregroundColor(.blue)
-                                    .imageScale(.large)
-                                Text("Hide Dock")
-                                    .font(.headline)
-                            }
+                
+                Section(header: Text("apply")) {
+                    // Hide Homebar
+                    Toggle(isOn: $enableHideHomebar) {
+                        HStack(spacing: 20) {
+                            Image(systemName: enableHideHomebar ? "eye.slash.circle.fill" : "eye.circle")
+                            .foregroundColor(.green)
+                            .imageScale(.large)
+                            Text("Hide Home Bar").font(.headline)
                         }
-                        .onChange(of: enableHideDock, perform: { _ in
-                            // Perform any actions when the toggle state changes
-                        })
+                    }.frame(minWidth: 0, maxWidth: .infinity)
+                    .foregroundColor(.green)
+                    .tint(.green)
 
-                        Toggle(isOn: $enableHideHomebar) {
-                            HStack(spacing: 20) {
-                                Image(systemName: enableHideHomebar ? "rectangle.grid.1x2.fill" : "rectangle.grid.1x2")
-                                    .foregroundColor(.purple)
-                                    .imageScale(.large)
-                                Text("Hide Home Bar")
-                                    .font(.headline)
-                            }
+                    // Hide Dock
+                    Toggle(isOn: $enableHideDock) {
+                        HStack(spacing: 20) {
+                            Image(systemName: enableHideDock ? "eye.slash.circle.fill" : "eye.circle")
+                                .foregroundColor(.green)
+                                .imageScale(.large)
+                        Text("Hide Dock").font(.headline)
                         }
-                        .onChange(of: enableHideHomebar, perform: { _ in
-                            // Perform any actions when the toggle state changes
-                        })
-
-                        Toggle(isOn: $enableResSet) {
-                            HStack(spacing: 20) {
-                                Image(systemName: enableResSet ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
-                                    .foregroundColor(.green)
-                                    .imageScale(.large)
-                                Text("Enable iPhone 14 Pro Resolution")
-                                    .font(.headline)
-                            }
+                    }.frame(minWidth: 0, maxWidth: .infinity)
+                    .foregroundColor(.green)
+                    .tint(.green)
+                    
+                    // replace /System/Library/Lockdown/iPhoneDebug.pem
+                    Toggle(isOn: $enableReplacecert) {
+                        HStack(spacing: 20) {
+                            Image(systemName: enableReplacecert ? "square.circle.fill" : "square.circle")
+                                .foregroundColor(.green)
+                                .imageScale(.large)
+                        Text("Replace iPhoneDebug.pem").font(.headline)
                         }
-                        .onChange(of: enableResSet, perform: { _ in
-                            // Perform any actions when the toggle state changes
-                        })
-
-                        Toggle(isOn: $enableCustomFont) {
-                            HStack(spacing: 20) {
-                                Image(systemName: enableCustomFont ? "a.circle.fill" : "a.circle")
-                                    .foregroundColor(.orange)
-                                    .imageScale(.large)
-                                Text("Enable Custom Font")
-                                    .font(.headline)
-                            }
+                    }.frame(minWidth: 0, maxWidth: .infinity)
+                    .foregroundColor(.green)
+                    .tint(.green)
+                    
+                    // Enable Custom System Colors
+                    Toggle(isOn: $enableCustomSysColors) {
+                        HStack(spacing: 20) {
+                            Image(systemName: enableCustomSysColors ? "drop.circle.fill" : "drop.circle")
+                                .foregroundColor(.green)
+                                .imageScale(.large)
+                        Text("Green System & Font Color").font(.headline)
                         }
-                        .onChange(of: enableCustomFont, perform: { _ in
-                            // Perform any actions when the toggle state changes
-                        })
-
-                        Toggle(isOn: $enableCCTweaks) {
-                            HStack(spacing: 20) {
-                                Image(systemName: enableCCTweaks ? "pencil.circle.fill" : "pencil.circle")
-                                    .foregroundColor(.pink)
-                                    .imageScale(.large)
-                                Text("Replace /System/Library/Lockdown/iPhoneDebug.pem")
-                                    .font(.headline)
-                            }
+                    }.frame(minWidth: 0, maxWidth: .infinity)
+                    .foregroundColor(.green)
+                    .tint(.green)
+                    
+                    // Region Changer
+                    Toggle(isOn: $changeRegion) {
+                        HStack(spacing: 20) {
+                            Image(systemName: changeRegion ? "globe.americas.fill" : "globe.americas")
+                                .foregroundColor(.green)
+                                .imageScale(.large)
+                        Text("Change Region").font(.headline)
                         }
-                        Toggle(isOn: $enableHideNotifs) {
-                            HStack(spacing: 20) {
-                                Image(systemName: enableHideNotifs ? "pencil.circle.fill" : "pencil.circle")
-                                    .foregroundColor(.pink)
-                                    .imageScale(.large)
-                                Text("ps.log")
-                                    .font(.headline)
-                            }
+                    }.frame(minWidth: 0, maxWidth: .infinity)
+                    .foregroundColor(.green)
+                    .tint(.green)
+                    
+                    // Whitelist
+                    Toggle(isOn: $whitelist) {
+                        HStack(spacing: 20) {
+                            Image(systemName: whitelist ? "slash.circle.fill" : "slash.circle")
+                                .foregroundColor(.green)
+                                .imageScale(.large)
+                        Text("Whitelist (Test)").font(.headline)
                         }
-                        .onChange(of: enableCCTweaks, perform: { _ in
-                            // Perform any actions when the toggle state changes
-                        })
-                        Toggle(isOn: $enableLSTweaks) {
-                            HStack(spacing: 20) {
-                                Image(systemName: enableLSTweaks ? "pencil.circle.fill" : "pencil.circle")
-                                    .foregroundColor(.pink)
-                                    .imageScale(.large)
-                                Text("Enable Lockscreen Custom Icons")
-                                    .font(.headline)
-                            }
+                    }.frame(minWidth: 0, maxWidth: .infinity)
+                    .foregroundColor(.green)
+                    .tint(.green)
+                    
+                    // Supervise
+                    Toggle(isOn: $supervise) {
+                        HStack(spacing: 20) {
+                            Image(systemName: supervise ? "eye.slash.circle.fill" : "eye.circle")
+                                .foregroundColor(.green)
+                                .imageScale(.large)
+                        Text("Supervise device").font(.headline)
                         }
-                        .onChange(of: enableLSTweaks, perform: { _ in
-                            // Perform any actions when the toggle state changes
-                        })
-                        .onChange(of: enableHideNotifs, perform: { _ in
-                            // Perform any actions when the toggle state changes
-                        })
-                        Toggle(isOn: $enableDynamicIsland) {
-                            HStack(spacing: 20) {
-                                Image(systemName: enableDynamicIsland ? "pencil.circle.fill" : "pencil.circle")
-                                    .foregroundColor(.pink)
-                                    .imageScale(.large)
-                                Text("Enable the dynamic island")
-                                    .font(.headline)
-                            }
+                    }.frame(minWidth: 0, maxWidth: .infinity)
+                    .foregroundColor(.green)
+                    .tint(.green)
+                    
+                    // Custom Font
+                    Toggle(isOn: $enableCustomFont) {
+                        HStack(spacing: 20) {
+                            Image(systemName: enableCustomFont ? "a.circle.fill" : "a.circle")
+                                .foregroundColor(.green)
+                                .imageScale(.large)
+                        Text("Change Font (Hardcoded)").font(.headline)
                         }
-                        .onChange(of: enableDynamicIsland, perform: { _ in
-                            // Perform any actions when the toggle state changes
-                        })
-                    }
-                    .padding(.vertical, 8)
-                }
-
-                Section(header: Text("Confirm")) {
-                    Button("Confirm") {
-                        kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
-
-                        let tweaks = enabledTweaks()
-
-                        // Convert the Swift array of strings to a C-style array of char*
-                        var cTweaks: [UnsafeMutablePointer<CChar>?] = tweaks.map { strdup($0) }
-                        // Add a null pointer at the end to signal the end of the array
-                        cTweaks.append(nil)
-
-                        // Pass the C-style array to do_fun along with the count of tweaks
-                        cTweaks.withUnsafeMutableBufferPointer { buffer in
-                            do_fun(buffer.baseAddress, Int32(buffer.count - 1))
-                        }
-
-                        // Deallocate the C-style strings after use to avoid memory leaks
-                        cTweaks.forEach { free($0) }
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
+                    }.frame(minWidth: 0, maxWidth: .infinity)
+                    .foregroundColor(.green)
+                    .tint(.green)
                 }
                 
+                Section(header: Text("do")) {
+                    Text("kopen")
+                        .onTapGesture{
+                            print(puafPages, puafMethod, kreadMethod, kwriteMethod)
+                            kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
+                            DispatchQueue.main.async {
+                                message = "kopened!"
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd != 0).foregroundColor(.green)
+                    Text("kclose")
+                        .onTapGesture{
+                            do_kclose()
+                            puafPages = 0
+                            kfd = 0
+                            DispatchQueue.main.async {
+                                message = "kclosed!"
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(.green)
+                    Text("do fun")
+                        .onTapGesture{
+                            let tweaks = enabledTweaks()
+                            var cTweaks: [UnsafeMutablePointer<CChar>?] = tweaks.map { strdup($0) }
+                            cTweaks.append(nil)
+                            cTweaks.withUnsafeMutableBufferPointer { buffer in
+                                do_fun(buffer.baseAddress, Int32(buffer.count - 1))
+                            }
+                            cTweaks.forEach { free($0) }
+                            DispatchQueue.main.async {
+                                message = "done fun!"
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(.green)
+                    Text("mdc")
+                        .onTapGesture{
+                            print("mdc")
+                            unsandboxing()
+                            DispatchQueue.main.async {
+                                message = "sucecss!"
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).foregroundColor(.green)
+                    Text("kill backboardd")
+                        .onTapGesture{
+                            backboard_respring()
+                            DispatchQueue.main.async {
+                                message = "sucecss!"
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).foregroundColor(.green)
+                }
+                Section(header: Text("Settings")) {
+                    Button(action: {
+                        isSettingsPopoverPresented.toggle()
+                    }, label: {Text("Setting")})
+                }.buttonStyle(BorderlessButtonStyle())
             }
-            .navigationBarTitle("kfdtweaks", displayMode: .inline)
-            .accentColor(.green) // Highlight the navigation bar elements in green
-            .navigationBarItems(leading: respringButton, trailing: settingsButton)
+            .accentColor(.green)
             .popover(isPresented: $isSettingsPopoverPresented, arrowEdge: .bottom) {
                 settingsPopover
             }
-        }
-    }
-    
-    // Settings Button in the Navigation Bar
-    private var settingsButton: some View {
-        Button(action: {
-            isSettingsPopoverPresented.toggle()
-        }) {
-            Image(systemName: "gearshape")
-                .imageScale(.large)
-                .foregroundColor(.green)
-        }
-    }
-    
-    private var respringButton: some View {
-        Button(action: {
-            restartFrontboard()
-        }) {
-            Image(systemName: "umbrella")
-                .imageScale(.large)
-                .foregroundColor(.green)
         }
     }
     
@@ -243,31 +271,29 @@ struct ContentView: View {
     }
     
     private func enabledTweaks() -> [String] {
-        var enabledTweaks: [String] = []
-        if enableHideDock {
-            enabledTweaks.append("HideDock")
-        }
+            var enabledTweaks: [String] = []
         if enableHideHomebar {
             enabledTweaks.append("enableHideHomebar")
         }
-        if enableResSet {
-            enabledTweaks.append("enableResSet")
+        if enableHideDock {
+            enabledTweaks.append("HideDock")
         }
         if enableCustomFont {
             enabledTweaks.append("enableCustomFont")
         }
-        if enableCCTweaks {
-            enabledTweaks.append("enableCCTweaks")
+        if enableReplacecert {
+            enabledTweaks.append("enableReplacecert")
         }
-        if enableLSTweaks {
-            enabledTweaks.append("enableLSTweaks")
+        if changeRegion {
+            enabledTweaks.append("changeRegion")
         }
-        if enableHideNotifs {
-            enabledTweaks.append("enableHideNotifs")
+        if whitelist {
+            enabledTweaks.append("whitelist")
         }
-        if enableDynamicIsland {
-            enabledTweaks.append("enableDynamicIsland")
+        if supervise {
+            enabledTweaks.append("supervise")
         }
+
         return enabledTweaks
     }
 }
@@ -277,3 +303,30 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+/*
+ Button("kopen") {
+     print(puafPages, puafMethod, kreadMethod, kwriteMethod)
+     kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
+ }.buttonStyle(BorderlessButtonStyle()).disabled(kfd != 0)
+ Button("kclose") {
+     do_kclose()
+     puafPages = 0
+     kfd = 0
+ }.buttonStyle(BorderlessButtonStyle()).disabled(kfd == 0)
+ Button("do fun") {
+     let tweaks = enabledTweaks()
+     var cTweaks: [UnsafeMutablePointer<CChar>?] = tweaks.map { strdup($0) }
+     cTweaks.append(nil)
+     cTweaks.withUnsafeMutableBufferPointer { buffer in
+         do_fun(buffer.baseAddress, Int32(buffer.count - 1))
+     }
+     cTweaks.forEach { free($0) }
+ }.buttonStyle(BorderlessButtonStyle()).disabled(kfd == 0)
+ Button("mdc") {
+     unsandboxing()
+ }.buttonStyle(BorderlessButtonStyle())
+ Button("kill backboardd") {
+     backboard_respring()
+ }.buttonStyle(BorderlessButtonStyle())
+ */

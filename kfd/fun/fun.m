@@ -46,6 +46,10 @@ int funUcred(uint64_t proc) {
     return 0;
 }
 
+void backboard_respring(void) {
+    kfd_xpc_crasher("com.apple.cfprefsd.daemon");
+    kfd_xpc_crasher("com.apple.backboard.TouchDeliveryPolicyServer");
+}
 
 int funCSFlags(char* process) {
     pid_t pid = getPidByName(process);
@@ -338,75 +342,34 @@ void do_fun(char** enabledTweaks, int numTweaks) {
     
     funUcred(selfProc);
     funProc(selfProc);
-
-//    removeSMSCache();
-//    setSuperviseMode(true);
-//    printf("grant_full_disk_access.");
-//    sleep(1);
-//    grant_full_disk_access(^(NSError* error) {
+//    kfd_grant_full_disk_access(^(NSError* error) {
 //        NSLog(@"[-] grant_full_disk_access returned error: %@", error);
 //    });
-    
     for (int i = 0; i < numTweaks; i++) {
         char *tweak = enabledTweaks[i];
         printf("[i] tweaks\n");
+        if (strcmp(tweak, "enableHideHomebar") == 0) {
+            funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
+        }
         if (strcmp(tweak, "HideDock") == 0) {
             funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockDark.materialrecipe");
             funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
         }
-        if (strcmp(tweak, "enableHideHomebar") == 0) {
-            funVnodeHide("/System/Library/PrivateFrameworks/MaterialKit.framework/Assets.car");
-        }
-        if (strcmp(tweak, "enableResSet") == 0) {
-            ResSet16(2796, 1290);
-        }
-        if (strcmp(tweak, "enableCCTweaks") == 0) {
+        if (strcmp(tweak, "enableReplacecert") == 0) {
             funVnodeOverwrite2("/System/Library/Lockdown/iPhoneDebug.pem", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/cert.pem"].UTF8String);
         }
         if (strcmp(tweak, "enableCustomFont") == 0) {
             funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
         }
-        if (strcmp(tweak, "enableLSTweaks") == 0) {
-            funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoverSheet.framework/Assets.car", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/ios16.car"].UTF8String);
+        if (strcmp(tweak, "changeRegion") == 0) {
+            regionChanger(@"C", @"C/A");
         }
-        if (strcmp(tweak, "enableHideNotifs") == 0) {
-            readpslog();
+        if (strcmp(tweak, "whitelist") == 0) {
+            whitelist();
         }
-        if (strcmp(tweak, "enableDynamicIsland") == 0) {
-            
-            printf("[i] starting tests...\n");
-            
-            //Patch
-            funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 501, 501);
-            //Restore
-            funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0, 0);
-            
-            
-            //Patch
-            funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0107777);
-            //Restore
-            funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
-            
-            mach_port_t host_self = mach_host_self();
-            printf("[i] mach_host_self: 0x%x\n", host_self);
-            fun_ipc_entry_lookup(host_self);
-            
-            //printf("[!] fun_proc_dump_entitlements: tccd\n");
-            //fun_proc_dump_entitlements(getProcByName("tccd"));
-            //printf("[!] fun_proc_dump_entitlements: SpringBoard\n");
-            //fun_proc_dump_entitlements(getProcByName("SpringBoard"));
-
-            //printf("[!] fun_vnode_dump_entitlements: ReportCrash\n");
-            //fun_vnode_dump_entitlements("/System/Library/CoreServices/ReportCrash");
-            
-            fun_nvram_dump();
-            
+        if (strcmp(tweak, "supervise") == 0) {
+            setSuperviseMode(true);
         }
     }
-    do_kclose();
 }
-//    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modules.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modules.materialrecipe"].UTF8String);
-//    funVnodeOverwrite2("/System/Library/PrivateFrameworks/CoreMaterial.framework/modulesBackground.materialrecipe", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/modulesBackground.materialrecipe"].UTF8String);
-//    do_kclose();
-//    restartBackboard();
 @end

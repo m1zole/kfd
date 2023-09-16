@@ -306,7 +306,7 @@ static bool overwrite_file(char* to, char* from) {
     NSURL* tccd_patched = [documentDirectory URLByAppendingPathComponent:@"tccd_patched.bin"];
     funVnodeOverwrite2(to, tccd_patched.path.UTF8String);
     funVnodeSave(to);
-    xpc_crasher("com.apple.tccd");
+    kfd_xpc_crasher("com.apple.tccd");
     printf("tccd_patched: %s\n", tccd_patched.path.UTF8String);
     return true;
 }
@@ -361,7 +361,7 @@ static void grant_full_disk_access_impl(void (^completion)(NSString* extension_t
 //    sleep(1);
     //Even FREEZING when overwrite original data
     overwrite_file(targetPath, tccd_patched.path.UTF8String);
-    xpc_crasher("com.apple.tccd");
+    kfd_xpc_crasher("com.apple.tccd");
 //    call_tccd(^(NSString* _Nullable extension_token) {
 //        overwrite_file(targetPath, tccd_orig.path.UTF8String);
 //        xpc_crasher("com.apple.tccd");
@@ -387,7 +387,7 @@ static void grant_full_disk_access_impl(void (^completion)(NSString* extension_t
 //    });
 }
 
-void grant_full_disk_access(void (^completion)(NSError* _Nullable)) {
+void kfd_grant_full_disk_access(void (^completion)(NSError* _Nullable)) {
     if (!NSClassFromString(@"NSPresentationIntent")) {
         // class introduced in iOS 15.0.
         // TODO(zhuowei): maybe check the actual OS version instead?
@@ -589,7 +589,7 @@ static NSData* make_patch_installd(void* executableMap, size_t executableLength)
     return data;
 }
 
-bool patch_installd() {
+bool kfd_patch_installd() {
     const char* targetPath = "/usr/libexec/installd";
     int fd = open(targetPath, O_RDONLY | O_CLOEXEC);
     off_t targetLength = lseek(fd, 0, SEEK_END);
@@ -621,7 +621,7 @@ bool patch_installd() {
         return false;
     }
     munmap(targetMap, targetLength);
-    xpc_crasher("com.apple.mobile.installd");
+    kfd_xpc_crasher("com.apple.mobile.installd");
     sleep(1);
     
     // TODO(zhuowei): for now we revert it once installd starts

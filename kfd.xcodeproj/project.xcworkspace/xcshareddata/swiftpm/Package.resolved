@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "dirtycowkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BomberFish/DirtyCowKit",
+      "state" : {
+        "branch" : "main",
+        "revision" : "349744780f7928ab2af2d0135f1edae8aee836a1"
+      }
+    },
+    {
       "identity" : "swiftutils",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pinauten/SwiftUtils",

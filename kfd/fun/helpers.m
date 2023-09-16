@@ -3,13 +3,13 @@
 #include <mach/mach.h>
 #include <dirent.h>
 
-char* get_temp_file_path(void) {
+char* kfd_get_temp_file_path(void) {
   return strdup([[NSTemporaryDirectory() stringByAppendingPathComponent:@"AAAAs"] fileSystemRepresentation]);
 }
 
 // create a read-only test file we can target:
-char* set_up_tmp_file(void) {
-  char* path = get_temp_file_path();
+char* kfd_set_up_tmp_file(void) {
+  char* path = kfd_get_temp_file_path();
   printf("path: %s\n", path);
   
   FILE* f = fopen(path, "w");
@@ -51,7 +51,7 @@ mach_port_t get_send_once(mach_port_t recv) {
 
 // (in the exploit for this: https://googleprojectzero.blogspot.com/2019/04/splitting-atoms-in-xnu.html )
 
-void xpc_crasher(char* service_name) {
+void kfd_xpc_crasher(char* service_name) {
   mach_port_t client_port = MACH_PORT_NULL;
   mach_port_t reply_port = MACH_PORT_NULL;
 
@@ -130,11 +130,11 @@ void xpc_crasher(char* service_name) {
 }
 
 void restartBackboard(void) {
-  xpc_crasher("com.apple.backboard.TouchDeliveryPolicyServer");
+    kfd_xpc_crasher("com.apple.backboard.TouchDeliveryPolicyServer");
 }
 
 void restartFrontboard(void) {
   // NOTE: This will not kill your app on some versions
   // You may also need to exit(0) afterwards
-  xpc_crasher("com.apple.frontboard.systemappservices");
+    kfd_xpc_crasher("com.apple.frontboard.systemappservices");
 }
