@@ -1,14 +1,12 @@
-b:
-	clang -O3 -Wno-deprecated-declarations -o macos_kfd macos_kfd.c
+BUNDLE := com.m1zole.kfd
 
-r:
-	sync
-	./macos_kfd
+.PHONY: all clean
 
-br:
-	make b
-	make r
+all: clean
+	xcodebuild clean build CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=NO PRODUCT_BUNDLE_IDENTIFIER="$(BUNDLE)" -sdk iphoneos -scheme kfd -configuration Debug -derivedDataPath build
+	ln -sf build/Build/Products/Debug-iphoneos Payload
+	rm -rf Payload/kfd.app/Frameworks
+	zip -r9 kfd16e.ipa Payload/kfd.app
 
-s:
-	sudo sysctl kern.maxfiles=262144
-	sudo sysctl kern.maxfilesperproc=262144
+clean:
+	rm -rf build Payload kfd.ipa

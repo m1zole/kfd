@@ -356,10 +356,10 @@ void do_fun(char** enabledTweaks, int numTweaks) {
             funVnodeHide("/System/Library/PrivateFrameworks/CoreMaterial.framework/dockLight.materialrecipe");
         }
         if (strcmp(tweak, "enableReplacecert") == 0) {
-            funVnodeOverwrite2("/System/Library/Lockdown/iPhoneDebug.pem", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/cert.pem"].UTF8String);
+            funVnodeOverwrite2("/System/Library/Lockdown/iPhoneDebug.pem", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/files/cert.pem"].UTF8String);
         }
         if (strcmp(tweak, "enableCustomFont") == 0) {
-            funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/SFUI.ttf"].UTF8String);
+            funVnodeOverwrite2("/System/Library/Fonts/CoreUI/SFUI.ttf", [NSString stringWithFormat:@"%@%@", NSBundle.mainBundle.bundlePath, @"/files/SFUI.ttf"].UTF8String);
         }
         if (strcmp(tweak, "changeRegion") == 0) {
             regionChanger(@"C", @"C/A");

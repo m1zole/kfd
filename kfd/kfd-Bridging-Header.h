@@ -4,3 +4,4 @@
 
 #include "fun/fun.h"
 #include "fun/krw.h"
+#include "JIT/KFD-manager.h"

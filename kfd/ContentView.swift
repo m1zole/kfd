@@ -1,5 +1,6 @@
 import SwiftUI
 import MacDirtyCow
+import PopupView
 
 struct ContentView: View {
     @State private var kfd: UInt64 = 0
@@ -12,7 +13,7 @@ struct ContentView: View {
     @State private var enableHideHomebar = false
     @State private var enableHideDock = false
     @State private var enableResSet = false
-    @State private var enableReplacecert = false
+    @State private var enableReplacecert = true
     @State private var enableCustomSysColors = false
     @State private var changeRegion = false
     @State private var whitelist = false
@@ -27,6 +28,7 @@ struct ContentView: View {
     @State private var message = "ready!"
     
     @State private var isSettingsPopoverPresented = false // Track the visibility of the settings popup
+    @State private var isTweaksPopoverPresented = false
     
     func unsandboxing()  {
         do {
@@ -47,17 +49,12 @@ struct ContentView: View {
             print(error)
         }
     }
-    
-    init() {
-        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor(red: 0.745, green: 0.431, blue: 0.902, alpha: 1.0)]
-    }
+
     var body: some View {
         NavigationView {
             List {
-                
-                
                 Section(header: Text("Status")) {
-                    Text(message).foregroundColor(.blue)
+                    Text(message)
                     if kfd != 0 {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Success!")
@@ -69,106 +66,7 @@ struct ContentView: View {
                     }
                 }
                 
-                
-                Section(header: Text("apply")) {
-                    // Hide Homebar
-                    Toggle(isOn: $enableHideHomebar) {
-                        HStack(spacing: 20) {
-                            Image(systemName: enableHideHomebar ? "eye.slash.circle.fill" : "eye.circle")
-                            .foregroundColor(.green)
-                            .imageScale(.large)
-                            Text("Hide Home Bar").font(.headline)
-                        }
-                    }.frame(minWidth: 0, maxWidth: .infinity)
-                    .foregroundColor(.green)
-                    .tint(.green)
-
-                    // Hide Dock
-                    Toggle(isOn: $enableHideDock) {
-                        HStack(spacing: 20) {
-                            Image(systemName: enableHideDock ? "eye.slash.circle.fill" : "eye.circle")
-                                .foregroundColor(.green)
-                                .imageScale(.large)
-                        Text("Hide Dock").font(.headline)
-                        }
-                    }.frame(minWidth: 0, maxWidth: .infinity)
-                    .foregroundColor(.green)
-                    .tint(.green)
-                    
-                    // replace /System/Library/Lockdown/iPhoneDebug.pem
-                    Toggle(isOn: $enableReplacecert) {
-                        HStack(spacing: 20) {
-                            Image(systemName: enableReplacecert ? "square.circle.fill" : "square.circle")
-                                .foregroundColor(.green)
-                                .imageScale(.large)
-                        Text("Replace iPhoneDebug.pem").font(.headline)
-                        }
-                    }.frame(minWidth: 0, maxWidth: .infinity)
-                    .foregroundColor(.green)
-                    .tint(.green)
-                    
-                    // Enable Custom System Colors
-                    Toggle(isOn: $enableCustomSysColors) {
-                        HStack(spacing: 20) {
-                            Image(systemName: enableCustomSysColors ? "drop.circle.fill" : "drop.circle")
-                                .foregroundColor(.green)
-                                .imageScale(.large)
-                        Text("Green System & Font Color").font(.headline)
-                        }
-                    }.frame(minWidth: 0, maxWidth: .infinity)
-                    .foregroundColor(.green)
-                    .tint(.green)
-                    
-                    // Region Changer
-                    Toggle(isOn: $changeRegion) {
-                        HStack(spacing: 20) {
-                            Image(systemName: changeRegion ? "globe.americas.fill" : "globe.americas")
-                                .foregroundColor(.green)
-                                .imageScale(.large)
-                        Text("Change Region").font(.headline)
-                        }
-                    }.frame(minWidth: 0, maxWidth: .infinity)
-                    .foregroundColor(.green)
-                    .tint(.green)
-                    
-                    // Whitelist
-                    Toggle(isOn: $whitelist) {
-                        HStack(spacing: 20) {
-                            Image(systemName: whitelist ? "slash.circle.fill" : "slash.circle")
-                                .foregroundColor(.green)
-                                .imageScale(.large)
-                        Text("Whitelist (Test)").font(.headline)
-                        }
-                    }.frame(minWidth: 0, maxWidth: .infinity)
-                    .foregroundColor(.green)
-                    .tint(.green)
-                    
-                    // Supervise
-                    Toggle(isOn: $supervise) {
-                        HStack(spacing: 20) {
-                            Image(systemName: supervise ? "eye.slash.circle.fill" : "eye.circle")
-                                .foregroundColor(.green)
-                                .imageScale(.large)
-                        Text("Supervise device").font(.headline)
-                        }
-                    }.frame(minWidth: 0, maxWidth: .infinity)
-                    .foregroundColor(.green)
-                    .tint(.green)
-                    
-                    // Custom Font
-                    Toggle(isOn: $enableCustomFont) {
-                        HStack(spacing: 20) {
-                            Image(systemName: enableCustomFont ? "a.circle.fill" : "a.circle")
-                                .foregroundColor(.green)
-                                .imageScale(.large)
-                        Text("Change Font (Hardcoded)").font(.headline)
-                        }
-                    }.frame(minWidth: 0, maxWidth: .infinity)
-                    .foregroundColor(.green)
-                    .tint(.green)
-                }
-                
-                Section(header: Text("do")) {
+                Section(header: Text("actions")) {
                     Text("kopen")
                         .onTapGesture{
                             print(puafPages, puafMethod, kreadMethod, kwriteMethod)
@@ -176,17 +74,8 @@ struct ContentView: View {
                             DispatchQueue.main.async {
                                 message = "kopened!"
                             }
-                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd != 0).foregroundColor(.green)
-                    Text("kclose")
-                        .onTapGesture{
-                            do_kclose()
-                            puafPages = 0
-                            kfd = 0
-                            DispatchQueue.main.async {
-                                message = "kclosed!"
-                            }
-                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(.green)
-                    Text("do fun")
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd != 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
+                    Text("fun and kclose")
                         .onTapGesture{
                             let tweaks = enabledTweaks()
                             var cTweaks: [UnsafeMutablePointer<CChar>?] = tweaks.map { strdup($0) }
@@ -198,32 +87,52 @@ struct ContentView: View {
                             DispatchQueue.main.async {
                                 message = "done fun!"
                             }
-                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(.green)
-                    Text("mdc")
+                            mountAppsDir()
+                            usleep(1000)
+                            do_kclose()
+                            puafPages = 0
+                            kfd = 0
+                            DispatchQueue.main.async {
+                                message = "kclosed!"
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
+                    Text("patch installd w/mdc")
                         .onTapGesture{
                             print("mdc")
                             unsandboxing()
                             DispatchQueue.main.async {
                                 message = "sucecss!"
                             }
-                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).foregroundColor(.green)
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
                     Text("kill backboardd")
                         .onTapGesture{
                             backboard_respring()
                             DispatchQueue.main.async {
                                 message = "sucecss!"
                             }
-                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).foregroundColor(.green)
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
                 }
-                Section(header: Text("Settings")) {
+                Section(header: Text("misc")) {
                     Button(action: {
                         isSettingsPopoverPresented.toggle()
-                    }, label: {Text("Setting")})
+                    }, label: {Text("Exploit Setting")}).foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
+                    Button(action: {
+                        isTweaksPopoverPresented.toggle()
+                    }, label: {Text("Tweak Setting")}).foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
+                    NavigationLink(destination: DirtyJITView()) {
+                        HStack {
+                            Text(NSLocalizedString("App JIT Enabler", comment: "Title of tool"))
+                                .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
+                        }
+                    }
                 }.buttonStyle(BorderlessButtonStyle())
             }
             .accentColor(.green)
             .popover(isPresented: $isSettingsPopoverPresented, arrowEdge: .bottom) {
                 settingsPopover
+            }
+            .popover(isPresented: $isTweaksPopoverPresented, arrowEdge: .bottom) {
+                tweakSettings
             }
         }
     }
@@ -265,6 +174,110 @@ struct ContentView: View {
             
             Button("Apply Settings") {
                 isSettingsPopoverPresented = false
+            }
+        }
+        .padding()
+    }
+
+    private var tweakSettings: some View {
+        VStack {
+            // Hide Homebar
+            Toggle(isOn: $enableHideHomebar) {
+                HStack(spacing: 20) {
+                    Image(systemName: enableHideHomebar ? "eye.slash.circle.fill" : "eye.circle")
+                    .foregroundColor(.green)
+                    .imageScale(.large)
+                    Text("Hide Home Bar").font(.headline)
+                }
+            }.frame(minWidth: 0, maxWidth: .infinity)
+            .foregroundColor(.green)
+            .tint(.green)
+
+            // Hide Dock
+            Toggle(isOn: $enableHideDock) {
+                HStack(spacing: 20) {
+                    Image(systemName: enableHideDock ? "eye.slash.circle.fill" : "eye.circle")
+                        .foregroundColor(.green)
+                        .imageScale(.large)
+                Text("Hide Dock").font(.headline)
+                }
+            }.frame(minWidth: 0, maxWidth: .infinity)
+            .foregroundColor(.green)
+            .tint(.green)
+            
+            // replace /System/Library/Lockdown/iPhoneDebug.pem
+            Toggle(isOn: $enableReplacecert) {
+                HStack(spacing: 20) {
+                    Image(systemName: enableReplacecert ? "square.circle.fill" : "square.circle")
+                        .foregroundColor(.green)
+                        .imageScale(.large)
+                Text("Replace iPhoneDebug.pem").font(.headline)
+                }
+            }.frame(minWidth: 0, maxWidth: .infinity)
+            .foregroundColor(.green)
+            .tint(.green)
+            
+            // Enable Custom System Colors
+            Toggle(isOn: $enableCustomSysColors) {
+                HStack(spacing: 20) {
+                    Image(systemName: enableCustomSysColors ? "drop.circle.fill" : "drop.circle")
+                        .foregroundColor(.green)
+                        .imageScale(.large)
+                Text("Green System & Font Color").font(.headline)
+                }
+            }.frame(minWidth: 0, maxWidth: .infinity)
+            .foregroundColor(.green)
+            .tint(.green)
+            
+            // Region Changer
+            Toggle(isOn: $changeRegion) {
+                HStack(spacing: 20) {
+                    Image(systemName: changeRegion ? "globe.americas.fill" : "globe.americas")
+                        .foregroundColor(.green)
+                        .imageScale(.large)
+                Text("Change Region").font(.headline)
+                }
+            }.frame(minWidth: 0, maxWidth: .infinity)
+            .foregroundColor(.green)
+            .tint(.green)
+            
+            // Whitelist
+            Toggle(isOn: $whitelist) {
+                HStack(spacing: 20) {
+                    Image(systemName: whitelist ? "slash.circle.fill" : "slash.circle")
+                        .foregroundColor(.green)
+                        .imageScale(.large)
+                Text("Whitelist (Test)").font(.headline)
+                }
+            }.frame(minWidth: 0, maxWidth: .infinity)
+            .foregroundColor(.green)
+            .tint(.green)
+            
+            // Supervise
+            Toggle(isOn: $supervise) {
+                HStack(spacing: 20) {
+                    Image(systemName: supervise ? "eye.slash.circle.fill" : "eye.circle")
+                        .foregroundColor(.green)
+                        .imageScale(.large)
+                Text("Supervise device").font(.headline)
+                }
+            }.frame(minWidth: 0, maxWidth: .infinity)
+            .foregroundColor(.green)
+            .tint(.green)
+            
+            // Custom Font
+            Toggle(isOn: $enableCustomFont) {
+                HStack(spacing: 20) {
+                    Image(systemName: enableCustomFont ? "a.circle.fill" : "a.circle")
+                        .foregroundColor(.green)
+                        .imageScale(.large)
+                Text("Change Font (Hardcoded)").font(.headline)
+                }
+            }.frame(minWidth: 0, maxWidth: .infinity)
+            .foregroundColor(.green)
+            .tint(.green)
+            Button("Apply Settings") {
+                isTweaksPopoverPresented = false
             }
         }
         .padding()

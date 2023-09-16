@@ -1,21 +1,12 @@
 {
   "pins" : [
     {
-      "identity" : "dirtycowkit",
+      "identity" : "popupview",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/BomberFish/DirtyCowKit",
+      "location" : "https://github.com/exyte/PopupView",
       "state" : {
-        "branch" : "main",
-        "revision" : "349744780f7928ab2af2d0135f1edae8aee836a1"
-      }
-    },
-    {
-      "identity" : "swiftutils",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pinauten/SwiftUtils",
-      "state" : {
-        "branch" : "master",
-        "revision" : "1d37faabb4c58b3152394c9b6e1c1a68507646b9"
+        "revision" : "5724e89ce2e81f79ccfc1fabaaf5c42473234aef",
+        "version" : "2.6.3"
       }
     }
   ],
