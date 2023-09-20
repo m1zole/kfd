@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 // A elegant file manager for CVE-2022-446689
 
@@ -41,6 +42,14 @@ func overwriteFile(fileDataLocked: Data, pathtovictim: String) -> Bool {
     return true
 }
 
+func convertPath(path: URL) -> String {
+    return URL(fileURLWithPath: NSHomeDirectory()).absoluteString.replacingOccurrences(of: "file://", with: "")
+}
+
+func fileExists(atPath path: String) -> Bool {
+    return FileManager.default.fileExists(atPath: path)
+}
+
 // FileManager ListItem
 
 struct ListItem: View {
@@ -67,25 +76,135 @@ struct ListItem: View {
     }
 }
 
+class VnodeData: ObservableObject {
+    @Published var v_data: UInt64 = 0
+    @Published var fortesting: UInt64 = 0
+}
+
 // FileManager ContentView, begin in path "/"
 // make sure the filemanagers don't overlap
 struct FileManagerView: View {
     @State var path: String = "/"
+    @State var dir: String = "/"
     @State var folders: [Folder] = []
     @State var files: [File] = []
     @State var empty: Bool = false
-    @GestureState private var longPressTap = false
-
+    @State var orig_to_v_data: UInt64 = 0
+    @State var ismounted: Bool = false
+    @State private var isLongPressing = false
+    
     var body: some View {
             List {
                 ForEach(folders, id: \.id) { folder in
-                    NavigationLink(destination: FileManagerView(path: path + folder.name + "/")) {
+                    NavigationLink(destination: FileManagerView(path: path + folder.name + "/", orig_to_v_data: orig_to_v_data, ismounted: ismounted)) {
                         HStack {
                             Image(systemName: "folder")
                                 .resizable()
                                 .frame(width: 20, height: 20)
                             Text(folder.name)
                                 .font(.headline)
+                                .contextMenu {
+                                    VStack {
+                                        Button(action: {
+                                            // ask user for direct path to FOLDER
+                                            let alert = UIAlertController(title: "mount", message: "Enter the direct path to the folder you want to mount.", preferredStyle: .alert)
+                                            alert.addTextField { (textField) in
+                                                textField.text = path + folder.name
+                                            }
+                                            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                                            alert.addAction(UIAlertAction(title: "Mount", style: .default, handler: { (_) in
+                                                let text = alert.textFields![0].text!
+                                                if text.last != "/" {
+                                                    dir = text + "/"
+                                                } else {
+                                                    dir = text
+                                                }
+                                                print(dir)
+                                                print(URL(fileURLWithPath: NSHomeDirectory()).absoluteString.replacingOccurrences(of: "file://", with: "") + "Documents" + dir)
+                                                if !fileExists(atPath: URL(fileURLWithPath: NSHomeDirectory()).absoluteString.replacingOccurrences(of: "file://", with: "") + "Documents" + dir) {
+                                                    do {
+                                                        try FileManager.default.createDirectory(atPath: URL(fileURLWithPath: NSHomeDirectory()).absoluteString.replacingOccurrences(of: "file://", with: "") + "Documents" + dir, withIntermediateDirectories: false, attributes: nil)
+                                                    } catch let error {
+                                                        print(error.localizedDescription)
+                                                    }
+                                                }
+                                                DispatchQueue.main.async {
+                                                    orig_to_v_data = mountselectedDir(dir)
+                                                    ismounted = true
+                                                }
+                                                print(orig_to_v_data)
+                                            }))
+                                            UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true, completion: nil)
+                                        }) {
+                                            Text("mount ...")
+                                            Image(systemName: "mount")
+                                        }
+                                        Button(action: {
+                                            print(path.replacingOccurrences(of: NSHomeDirectory() + "/Documents", with: "") + folder.name + "/" )
+                                            print(path.replacingOccurrences(of: "file://", with: "") + folder.name + "/")
+                                            DispatchQueue.main.async {
+                                                orig_to_v_data = mountselectedDir(path.replacingOccurrences(of: NSHomeDirectory() + "/Documents", with: "") + folder.name + "/")
+                                                ismounted = true
+                                            }
+                                            print(orig_to_v_data)
+                                        })
+                                        {
+                                            Text("mount original folder")
+                                            Image(systemName: "mount")
+                                        }
+                                        if(ismounted) {
+                                            Button(action: {
+                                                print(orig_to_v_data)
+                                                print(path.replacingOccurrences(of: "file://", with: "") + folder.name + "/")
+                                                unmountselectedDir(orig_to_v_data, path.replacingOccurrences(of: "file://", with: "") + folder.name + "/")
+                                                ismounted = false
+                                                orig_to_v_data = 0
+                                            })
+                                            {
+                                                Text("unmount selected folder")
+                                                Image(systemName: "mount")
+                                            }
+                                        }
+                                    }
+                                    
+                                    Button(action: {
+                                        path = URL(fileURLWithPath: NSHomeDirectory()).absoluteString.replacingOccurrences(of: "file://", with: "")
+                                        // navigate to the new path
+                                        folders = []
+                                        files = []
+                                        let fileManager = FileManager.default
+                                        let enumerator = fileManager.enumerator(atPath: path)
+                                        while let element = enumerator?.nextObject() as? String {
+                                            // only do the top level files and folders
+                                            if element.contains("/") {
+                                                continue
+                                            }
+                                            let attrs = try! fileManager.attributesOfItem(atPath: path + element)
+                                            let type = attrs[.type] as! FileAttributeType
+                                            if type == .typeDirectory {
+                                                folders.append(Folder(name: element, contents: []))
+                                            } else if type == .typeRegular {
+                                                let size = attrs[.size] as! UInt64
+                                                let date = attrs[.modificationDate] as! Date
+                                                let dateFormatter = DateFormatter()
+                                                dateFormatter.dateFormat = "MMM dd, yyyy"
+                                                let dateString = dateFormatter.string(from: date)
+                                                let sizeString = ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file)
+                                                let fileExtension = element.split(separator: ".").last!
+                                                files.append(File(name: element, type: "\(fileExtension)", size: sizeString, date: dateString))
+                                            }
+                                        }
+                                        if folders.count == 0 && files.count == 0 {
+                                            empty = true
+                                        } else {
+                                            empty = false
+                                        }
+                                    })
+                                    {
+                                        Text("go to home")
+                                        Image(systemName: "house")
+                                    }
+                                }
                         }
                     }
                 }
@@ -120,24 +239,21 @@ struct FileManagerView: View {
                     Text("If you know the direct path, please enter it here.")
                     Button(action: {
                         // ask user for direct path to FOLDER
-                        let alert = UIAlertController(title: "Enter Direct Path", message: "mount without / | go the dir with /", preferredStyle: .alert)
+                        let alert = UIAlertController(title: "Enter Direct Path", message: "Enter the direct path to the folder you want to access.", preferredStyle: .alert)
                         alert.addTextField { (textField) in
-                            textField.text = URL(fileURLWithPath: NSHomeDirectory()).absoluteString
+                            textField.text = path
                         }
                         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                         alert.addAction(UIAlertAction(title: "Enter", style: .default, handler: { (_) in
                             let text = alert.textFields![0].text!
                             if text.last != "/" {
                                 path = text + "/"
-                                mountmobileDir(path)
                             } else {
                                 path = text
                             }
                             // navigate to the new path
                             folders = []
                             files = []
-                            //funVnodeFolderForFileManager(path, 501, 501)
-                            mountmobileDir(path)
                             let fileManager = FileManager.default
                             let enumerator = fileManager.enumerator(atPath: path)
                             while let element = enumerator?.nextObject() as? String {
@@ -213,14 +329,6 @@ struct FileManagerView: View {
                     empty = true
                 }
             })
-            /*.gesture(
-                LongPressGesture(minimumDuration: 1.0)
-                    .updating($longPressTap, body: { (currentState, state, transaction) in
-                                    state = currentState
-                      })
-                    .onEnded({ _ in
-                        restartBackboard()
-                      }))*/
     }
 }
 
@@ -428,20 +536,3 @@ struct TextEditorView: View {
         }
     }
 }
-
-struct FileManagerContentView: View {
-    //@State var path: String = URL(fileURLWithPath: NSHomeDirectory()).absoluteString
-    @State var path: String = "/"
-    var body: some View {
-        NavigationView {
-            FileManagerView(path: path)
-        }
-    }
-}
-/*
-struct FileManagerContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-*/

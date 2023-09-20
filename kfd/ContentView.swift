@@ -1,8 +1,8 @@
 import SwiftUI
 import MacDirtyCow
-import PopupView
 
 struct ContentView: View {
+    
     @State private var kfd: UInt64 = 0
     
     @State private var puafPages = 2048
@@ -29,6 +29,31 @@ struct ContentView: View {
     
     @State private var isSettingsPopoverPresented = false // Track the visibility of the settings popup
     @State private var isTweaksPopoverPresented = false
+
+    @Environment(\.presentationMode) var presentation
+    
+    struct FileManagerContentView: View {
+        @Environment(\.presentationMode) var presentation
+        @State var path: String = "/"
+        var body: some View {
+            NavigationView {
+                FileManagerView(path: path)
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        do_kclose()
+                        self.presentation.wrappedValue.dismiss()
+                    } label: {
+                        HStack {
+                            Image(systemName: "chevron.backward")
+                            Text("Back")
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     func unsandboxing()  {
         do {
@@ -96,14 +121,6 @@ struct ContentView: View {
                                 message = "done fun!"
                             }
                         }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
-                    Text("mount/umount Apps dir")
-                        .onTapGesture{
-                            prepare()
-                            //containersdir()
-                            DispatchQueue.main.async {
-                                message = "sucecss!"
-                            }
-                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
                     Text("patch installd w/mdc")
                         .onTapGesture{
                             print("mdc")
@@ -133,8 +150,20 @@ struct ContentView: View {
                                 .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
                         }
                     }
-                    NavigationLink(destination: FileManagerContentView()) {
-                        HStack {
+                    NavigationLink(destination: FileManagerContentView()
+                        .onAppear {
+                            kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
+                            if(kfd != 0) {
+                                UIApplication.shared.alert(title: "sucecss", body: "kpoen done", withButton: true)
+                                usleep(1000)
+                                prepare()
+                                kfd = 0
+                            } else {
+                                UIApplication.shared.alert(title: "failed", body: "kpoen failed", withButton: false)
+                            }
+                        }
+                        .navigationBarBackButtonHidden(true))
+                    { HStack {
                             Text(NSLocalizedString("FileManager", comment: "Title of tool"))
                                 .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
                         }
@@ -330,30 +359,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
-/*
- Button("kopen") {
-     print(puafPages, puafMethod, kreadMethod, kwriteMethod)
-     kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
- }.buttonStyle(BorderlessButtonStyle()).disabled(kfd != 0)
- Button("kclose") {
-     do_kclose()
-     puafPages = 0
-     kfd = 0
- }.buttonStyle(BorderlessButtonStyle()).disabled(kfd == 0)
- Button("do fun") {
-     let tweaks = enabledTweaks()
-     var cTweaks: [UnsafeMutablePointer<CChar>?] = tweaks.map { strdup($0) }
-     cTweaks.append(nil)
-     cTweaks.withUnsafeMutableBufferPointer { buffer in
-         do_fun(buffer.baseAddress, Int32(buffer.count - 1))
-     }
-     cTweaks.forEach { free($0) }
- }.buttonStyle(BorderlessButtonStyle()).disabled(kfd == 0)
- Button("mdc") {
-     unsandboxing()
- }.buttonStyle(BorderlessButtonStyle())
- Button("kill backboardd") {
-     backboard_respring()
- }.buttonStyle(BorderlessButtonStyle())
- */

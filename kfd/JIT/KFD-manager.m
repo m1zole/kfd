@@ -18,6 +18,16 @@
 
 uint64_t orig_to_v_data = 0;
 
+uint64_t onlyFolderRedirect(uint64_t vnode, NSString *mntPath) {
+    orig_to_v_data = funVnodeRedirectFolderFromVnode(mntPath.UTF8String, vnode);
+    return orig_to_v_data;
+}
+
+uint64_t onlyUnRedirectFolder(uint64_t orig_to_v_data, NSString *mntPath) {
+    funVnodeUnRedirectFolder(mntPath.UTF8String, orig_to_v_data);
+    return 0;
+}
+
 void prepare(void) {
     _offsets_init();
     
@@ -48,17 +58,22 @@ void prepare(void) {
     //});
 }
 
-uint64_t mountmobileDir(NSString* path) {
-    NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
+uint64_t mountselectedDir(NSString* path) {
+    NSString *mntPath = [NSString stringWithFormat:@"%@%@%@", NSHomeDirectory(), @"/Documents", path];
     NSLog(@"%@", mntPath);
+    NSLog(@"%@", path);
     
-    uint64_t var_mobile_vnode = getVnodeAtPathByChdir((char *) [path UTF8String]);
+    uint64_t vnode = getVnodeAtPathByChdir((char *) [path UTF8String]);
     
-    uint64_t orig_to_v_data = createFolderAndRedirect(var_mobile_vnode, mntPath);
-    
-    //UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
-    
-    return 0;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:mntPath]) {
+        printf("createFolderAndRedirect\n");
+        orig_to_v_data = createFolderAndRedirect(vnode, mntPath);
+    } else {
+        printf("onlyFolderAndRedirect\n");
+        orig_to_v_data = onlyFolderRedirect(vnode, mntPath);
+    }
+    printf("[i] orig_to_v_data: %llx", orig_to_v_data);
+    return orig_to_v_data;
 }
 
 uint64_t mountusrDir(void) {
@@ -76,67 +91,13 @@ uint64_t mountusrDir(void) {
     NSLog(@"/usr directory list:\n %@", dirs);
     
     UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
-
-    return 0;
-}
-
-uint64_t mountAppsDir(void) {
-    
-    prepare();
-    
-    printf("[i] chown /var/containers/Bundle/Application\n");
-    funVnodeChownFolder("/var/containers/Bundle/Application", 501, 501);
-    
-    printf("[i] mounting /var/containers/Bundle/Application\n");
-    
-    NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
-    
-    uint64_t containers_vnode = getVnodeAtPathByChdir("/var/containers/Bundle/Application");
-    printf("[i] /var/containers/Bundle/Application vnode: 0x%llx\n", containers_vnode);
-    
-    orig_to_v_data = createFolderAndRedirect(containers_vnode, mntPath);
-    
-    NSArray* dirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:mntPath error:NULL];
-    NSLog(@"/var/containers/Bundle/Application directory list:\n %@", dirs);
-    
-    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
-    
-    NSString *appstage1mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/appstage1/"];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:appstage1mntPath]) {
-        [[NSFileManager defaultManager] createDirectoryAtPath:appstage1mntPath withIntermediateDirectories:YES attributes:nil error:nil];
-    }
-    NSString *appstage2mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/appstage2/"];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:appstage2mntPath]) {
-        [[NSFileManager defaultManager] createDirectoryAtPath:appstage2mntPath withIntermediateDirectories:YES attributes:nil error:nil];
-    }
-    
-    for(NSString *dir in dirs) {
-        NSString *path = [NSString stringWithFormat:@"%s/%@", "/var/containers/Bundle/Application", dir];
-        [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
-        NSLog(@"full path:\n %@", path);
-        //funVnodeChownFolder((char *) [path UTF8String], 501, 501);
-        NSString *appmntPath = [NSString stringWithFormat:@"%@%@%@", NSHomeDirectory(), @"/Documents/appstage1/", dir];
-        uint64_t containers_vnode = getVnodeAtPathByChdir((char *) [path UTF8String]);
-        createFolderAndRedirect(containers_vnode, appmntPath);
-        NSArray* targetdirs = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:appmntPath error:NULL];
-        NSLog(@"appstage1 directory list: %@", targetdirs);
-    }
     
     return 0;
 }
 
-void unmountAppsDir(uint64_t orig_to_v_data) {
-    printf("[i] unmounting /var/containers/Bundle/Application\n");
-    NSString *mntPath = [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/mounted"];
-    UnRedirectAndRemoveFolder(orig_to_v_data, mntPath);
-}
-
-void containersdir(void) {
-    if(orig_to_v_data == 0) {
-        mountAppsDir();
-    } else {
-        unmountAppsDir(orig_to_v_data);
-    }
+void unmountselectedDir(uint64_t orig_to_v_data, NSString* mntPath) {
+    printf("[i] orig_to_v_data: %llx", orig_to_v_data);
+    onlyUnRedirectFolder(orig_to_v_data, mntPath);
 }
 
 void mountstage2(NSString* path) {
