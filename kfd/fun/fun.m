@@ -241,7 +241,7 @@ static uint64_t print_key_value_in_os_dict(uint64_t os_dict) {
 }
 
 
-uint64_t fun_nvram_dump(void) {
+/*uint64_t fun_nvram_dump(void) {
 
     io_registry_entry_t nvram_entry = IORegistryEntryFromPath(kIOMasterPortDefault, kIODeviceTreePlane ":/options");
     
@@ -254,7 +254,7 @@ uint64_t fun_nvram_dump(void) {
         print_key_value_in_os_dict(of_dict);
     }
     return 0;
-}
+}*/
 
 // Function to find files with specific extensions in a directory, doesn't work??? wtf?
 NSArray<NSString *> *findFilesWithExtensions(NSArray<NSString *> *extensions, NSString *directory) {

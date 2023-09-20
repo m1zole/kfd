@@ -69,13 +69,21 @@ struct ContentView: View {
                 Section(header: Text("actions")) {
                     Text("kopen")
                         .onTapGesture{
-                            print(puafPages, puafMethod, kreadMethod, kwriteMethod)
                             kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
                             DispatchQueue.main.async {
                                 message = "kopened!"
                             }
                         }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd != 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
-                    Text("fun and kclose")
+                    Text("kclose")
+                        .onTapGesture{
+                            do_kclose()
+                            puafPages = 0
+                            kfd = 0
+                            DispatchQueue.main.async {
+                                message = "kclose!"
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
+                    Text("fun")
                         .onTapGesture{
                             let tweaks = enabledTweaks()
                             var cTweaks: [UnsafeMutablePointer<CChar>?] = tweaks.map { strdup($0) }
@@ -87,15 +95,15 @@ struct ContentView: View {
                             DispatchQueue.main.async {
                                 message = "done fun!"
                             }
-                            mountAppsDir()
-                            usleep(1000)
-                            do_kclose()
-                            puafPages = 0
-                            kfd = 0
-                            DispatchQueue.main.async {
-                                message = "kclosed!"
-                            }
                         }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
+                    Text("mount/umount Apps dir")
+                        .onTapGesture{
+                            prepare()
+                            //containersdir()
+                            DispatchQueue.main.async {
+                                message = "sucecss!"
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
                     Text("patch installd w/mdc")
                         .onTapGesture{
                             print("mdc")
@@ -122,6 +130,12 @@ struct ContentView: View {
                     NavigationLink(destination: DirtyJITView()) {
                         HStack {
                             Text(NSLocalizedString("App JIT Enabler", comment: "Title of tool"))
+                                .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
+                        }
+                    }
+                    NavigationLink(destination: FileManagerContentView()) {
+                        HStack {
+                            Text(NSLocalizedString("FileManager", comment: "Title of tool"))
                                 .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
                         }
                     }

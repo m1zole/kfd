@@ -171,11 +171,11 @@ void _offsets_init(void) {
         
     } else if (SYSTEM_VERSION_EQUAL_TO(@"16.6")) {
         printf("[i] offsets selected for iOS 16.6\n");
-        //iPhone 11 Pro 16.6 offsets
+        //iPhone SE 2 16.6 offsets
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/proc_internal.h#L273
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/queue.h#L487
-        off_p_list_le_prev = 0x8;
+        off_p_list_le_prev = 0x8;//ok
         off_p_proc_ro = 0x18;
         off_p_ppid = 0x20;
         off_p_original_ppid = 0x24;
@@ -188,10 +188,10 @@ void _offsets_init(void) {
         off_p_svgid = 0x40;
         off_p_sessionid = 0x44;
         off_p_puniqueid = 0x48;
-        off_p_pid = 0x60;
-        off_p_pfd = 0xf8;
+        off_p_pid = 0x60;//ok
+        off_p_pfd = 0xf8;//p_fd__fd_ofiles? ok
         off_p_textvp = 0x548;
-        off_p_name = 0x381;
+        off_p_name = 0x579;//ok
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/proc_ro.h#L59
         off_p_ro_p_csflags = 0x1c;
@@ -221,13 +221,12 @@ void _offsets_init(void) {
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/filedesc.h#L138
         off_fd_ofiles = 0;
         off_fd_cdir = 0x20; //  new one! https://github.com/Baw-Appie/KernBypass/blob/69e5ae6baf04d0978358feee57eca8b8bc1382ed/kernel.h#L390 try these
-        off_fd_cdir = 0x20;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/file_internal.h#L125
-        off_fp_glob = 0x10;
+        off_fp_glob = 0x10;//ok?
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/file_internal.h#L179
-        off_fg_data = 0x38;
+        off_fg_data = 0x38;//ok?
         off_fg_flag = 0x10;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/vnode_internal.h#L158

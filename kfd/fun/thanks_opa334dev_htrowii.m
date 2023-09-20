@@ -290,4 +290,9 @@ uint64_t funVnodeOverwriteWithBytes(const char* filename, off_t file_offset, con
     return 1;
 }
 
-
+uint64_t funVnodeOverwriteForManager(NSString* to, NSString* from) {
+    NSLog(@"[i]: %@", to);
+    NSLog(@"[i]: %@", from);
+    uint64_t ret = funVnodeOverwrite2((char *) [to UTF8String], (char *) [from UTF8String]);
+    return ret;
+}

@@ -34,7 +34,7 @@ struct xpc_w00t {
   mach_msg_port_descriptor_t reply_port;
 };
 
-mach_port_t get_send_once(mach_port_t recv) {
+mach_port_t kfd_get_send_once(mach_port_t recv) {
   mach_port_t so = MACH_PORT_NULL;
   mach_msg_type_name_t type = 0;
   kern_return_t err = mach_port_extract_right(mach_task_self(), recv, MACH_MSG_TYPE_MAKE_SEND_ONCE, &so, &type);
@@ -75,8 +75,8 @@ void kfd_xpc_crasher(char* service_name) {
     return;
   }
 
-  mach_port_t so0 = get_send_once(client_port);
-  mach_port_t so1 = get_send_once(client_port);
+  mach_port_t so0 = kfd_get_send_once(client_port);
+  mach_port_t so1 = kfd_get_send_once(client_port);
 
   // insert a send so we maintain the ability to send to this port
   err = mach_port_insert_right(mach_task_self(), client_port, client_port, MACH_MSG_TYPE_MAKE_SEND);

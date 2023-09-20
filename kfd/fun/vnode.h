@@ -6,6 +6,7 @@
 //
 
 #include <stdio.h>
+#import <Foundation/Foundation.h>
 
 //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/mount.h#L293
 #define MNT_RDONLY      0x00000001      /* read only filesystem */
@@ -120,3 +121,5 @@ Description:
 uint64_t funVnodeOverwriteFileUnlimitSize(char* to, char* from);
 
 uint64_t funVnodeOverwriteFileUnlimitSizeWithVnode(uint64_t to_vnode, char* from);
+uint64_t funVnodeChownFolder(char* filename, uid_t uid, gid_t gid);
+uint64_t funVnodeFolderForFileManager(NSString* filename, uid_t uid, gid_t gid);

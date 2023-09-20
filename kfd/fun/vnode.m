@@ -120,6 +120,39 @@ uint64_t funVnodeChown(char* filename, uid_t uid, gid_t gid) {
     return 0;
 }
 
+uint64_t funVnodeChownFolder(char* filename, uid_t uid, gid_t gid) {
+
+    uint64_t vnode = getVnodeAtPathByChdir(filename);
+    if(vnode == -1) {
+        printf("[-] Unable to get vnode, path: %s", filename);
+        return -1;
+    }
+    
+    uint64_t v_data = kread64(vnode + off_vnode_v_data);
+    uint32_t v_uid = kread32(v_data + 0x80);
+    uint32_t v_gid = kread32(v_data + 0x84);
+    
+    //vnode->v_data->uid
+    printf("[i] Patching %s vnode->v_uid %d -> %d\n", filename, v_uid, uid);
+    kwrite32(v_data+0x80, uid);
+    //vnode->v_data->gid
+    printf("[i] Patching %s vnode->v_gid %d -> %d\n", filename, v_gid, gid);
+    kwrite32(v_data+0x84, gid);
+    
+    struct stat file_stat;
+    if(stat(filename, &file_stat) == 0) {
+        printf("[+] %s UID: %d\n", filename, file_stat.st_uid);
+        printf("[+] %s GID: %d\n", filename, file_stat.st_gid);
+    }
+    
+    return 0;
+}
+
+uint64_t funVnodeFolderForFileManager(NSString* filename, uid_t uid, gid_t gid) {
+    funVnodeRedirectFolder((char *) [filename UTF8String], (char *) [filename UTF8String]);
+    //funVnodeChownFolder((char *) [filename UTF8String], uid, gid);
+    return 0;
+}
 uint64_t funVnodeChmod(char* filename, mode_t mode) {
     uint64_t vnode = getVnodeAtPath(filename);
     if(vnode == -1) {

@@ -11,3 +11,4 @@ uint64_t funVnodeOverwriteWithBytes(const char* filename, off_t file_offset, con
 void funVnodeSave(char* file);
 void kreadbuf(uint64_t kaddr, void* output, size_t size);
 uint64_t getTask(void);
+uint64_t funVnodeOverwriteForManager(NSString* to, NSString* from);

@@ -9,6 +9,8 @@
 #include <Foundation/Foundation.h>
 #include <UIKit/UIKit.h>
 
+uint64_t createFolderAndRedirect(uint64_t vnode, NSString *mntPath);
+uint64_t UnRedirectAndRemoveFolder(uint64_t orig_to_v_data, NSString *mntPath);
 int clearUICache(void);
 int VarMobileWriteTest(void);
 int VarMobileRemoveTest(void);
