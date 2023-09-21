@@ -18,11 +18,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Select Xcode version (15.0)
-        run: |
-          sudo xcode-select -p
-
+        
       - name: Build IPA
         run: |
           make
@@ -31,4 +27,4 @@ jobs:
         uses: actions/upload-artifact@v3.1.0
         with:
           name: kfd
-          path: ${{ github.workspace }}/build/kfd.ipa
+          path: ${{ github.workspace }}/kfd.ipa
