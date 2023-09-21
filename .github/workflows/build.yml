@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches:
-      - kfd15
       - kfd16e
     paths-ignore:
       - '**/*.md'
@@ -29,7 +28,7 @@ jobs:
 
       - name: Select Xcode version (15.0)
         run: |
-          sudo xcode-select --switch /Applications/Xcode_15.0.app
+          sudo xcode-select -p
 
       - name: Build IPA
         run: |
