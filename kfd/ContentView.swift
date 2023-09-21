@@ -105,10 +105,10 @@ struct ContentView: View {
                             puafPages = 0
                             kfd = 0
                             DispatchQueue.main.async {
-                                message = "kclose!"
+                                message = "kclosed!"
                             }
                         }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
-                    Text("fun")
+                    Text("fun and kclose")
                         .onTapGesture{
                             let tweaks = enabledTweaks()
                             var cTweaks: [UnsafeMutablePointer<CChar>?] = tweaks.map { strdup($0) }
@@ -119,6 +119,27 @@ struct ContentView: View {
                             cTweaks.forEach { free($0) }
                             DispatchQueue.main.async {
                                 message = "done fun!"
+                            }
+                            usleep(1000)
+                            do_kclose()
+                            puafPages = 0
+                            kfd = 0
+                            DispatchQueue.main.async {
+                                message = "kclose!"
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
+                    Text("do kfd")
+                        .onTapGesture{
+                            do_tasks()
+                            DispatchQueue.main.async {
+                                message = "done!"
+                            }
+                            usleep(1000)
+                            do_kclose()
+                            puafPages = 0
+                            kfd = 0
+                            DispatchQueue.main.async {
+                                message = "kclose!"
                             }
                         }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
                     Text("patch installd w/mdc")

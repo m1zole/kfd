@@ -58,6 +58,36 @@ void prepare(void) {
     //});
 }
 
+void do_tasks(void) {
+    _offsets_init();
+    
+    uint64_t kslide = get_kslide();
+    uint64_t kbase = 0xfffffff007004000 + kslide;
+    printf("[i] Kernel base: 0x%llx\n", kbase);
+    printf("[i] Kernel slide: 0x%llx\n", kslide);
+    uint64_t kheader64 = kread64(kbase);
+    printf("[i] Kernel base kread64 ret: 0x%llx\n", kheader64);
+    
+    pid_t myPid = getpid();
+    uint64_t selfProc = getProc(myPid);
+    printf("[i] self proc: 0x%llx\n", selfProc);
+    
+    funUcred(selfProc);
+    funProc(selfProc);
+    printf("[i] pid: %d\n", getpid());
+    funCSFlags("launchd");
+    printf("[i] pid: %d\n", getpid());
+    //funTask("kfd");
+    mach_port_t host_self = mach_host_self();
+    printf("[i] mach_host_self: 0x%x\n", host_self);
+    fun_ipc_entry_lookup(host_self);
+    
+    //kfd_patch_installd();
+    //kfd_grant_full_disk_access(^(NSError* error) {
+    //    NSLog(@"[-] grant_full_disk_access returned error: %@", error);
+    //});
+}
+
 uint64_t mountselectedDir(NSString* path) {
     NSString *mntPath = [NSString stringWithFormat:@"%@%@%@", NSHomeDirectory(), @"/Documents", path];
     NSLog(@"%@", mntPath);
