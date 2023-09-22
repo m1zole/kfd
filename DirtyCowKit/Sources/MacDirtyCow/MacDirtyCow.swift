@@ -97,6 +97,14 @@ public enum MacDirtyCow {
         }
     }
     
+    public static func unsandboxing()  {
+        do {
+            try MacDirtyCow.unsandbox()
+        } catch {
+            print(error)
+        }
+    }
+    
     public static func toggleCatalogCorruption(at path: String, corrupt: Bool) throws {
         let fd = open(path, O_RDONLY | O_CLOEXEC)
         guard fd != -1 else { throw "Could not open target file" }
