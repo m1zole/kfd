@@ -21,6 +21,9 @@ jobs:
         
       - name: Build IPA
         run: |
+          cd MiniRootFileManager15
+          git apply -p1 ../submodule.patch
+          cd ..
           make
 
       - name: Upload IPA
