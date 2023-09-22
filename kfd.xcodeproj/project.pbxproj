@@ -27,9 +27,25 @@
 		D52BA4692AB582C9002E9836 /* ApplicationManager2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA4512AB5812A002E9836 /* ApplicationManager2.swift */; };
 		D52BA46B2AB5866D002E9836 /* TextField++.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA46A2AB5866D002E9836 /* TextField++.swift */; };
 		D52BA46D2AB586BF002E9836 /* Alert++.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA46C2AB586BF002E9836 /* Alert++.swift */; };
-		D586507F2AB9F2B0005A2379 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D586507E2AB9F2AF005A2379 /* FileManager.swift */; };
 		D58653662ABBB60E005A2379 /* vm_unaligned_copy_switch_race.c in Sources */ = {isa = PBXBuildFile; fileRef = D58653622ABBB28D005A2379 /* vm_unaligned_copy_switch_race.c */; };
-		D5CB286B2AB5B6D9009DF689 /* KFD-manager.m in Sources */ = {isa = PBXBuildFile; fileRef = D5CB286A2AB5B6D9009DF689 /* KFD-manager.m */; };
+		D586547C2ABD508B005A2379 /* AXLocationBackgrounder.m in Sources */ = {isa = PBXBuildFile; fileRef = D58654582ABD508B005A2379 /* AXLocationBackgrounder.m */; };
+		D586547D2ABD508B005A2379 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D58654592ABD508B005A2379 /* ViewController.m */; };
+		D586547E2ABD508B005A2379 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D586545A2ABD508B005A2379 /* SceneDelegate.m */; };
+		D586547F2ABD508B005A2379 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D586545B2ABD508B005A2379 /* LaunchScreen.storyboard */; };
+		D58654802ABD508B005A2379 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D586545D2ABD508B005A2379 /* Main.storyboard */; };
+		D58654812ABD508B005A2379 /* FileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D586545F2ABD508B005A2379 /* FileManager.m */; };
+		D58654822ABD508B005A2379 /* kerneldec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D58654602ABD508B005A2379 /* kerneldec.cpp */; };
+		D58654842ABD508B005A2379 /* AXNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = D58654622ABD508B005A2379 /* AXNavigationController.m */; };
+		D58654852ABD508B005A2379 /* AXFIle.m in Sources */ = {isa = PBXBuildFile; fileRef = D58654632ABD508B005A2379 /* AXFIle.m */; };
+		D58654862ABD508B005A2379 /* AXFileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D58654652ABD508B005A2379 /* AXFileViewController.m */; };
+		D58654872ABD508B005A2379 /* liblzfse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D58654662ABD508B005A2379 /* liblzfse.a */; };
+		D58654882ABD508B005A2379 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D58654672ABD508B005A2379 /* AppDelegate.m */; };
+		D58654892ABD508B005A2379 /* lzssdec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D58654682ABD508B005A2379 /* lzssdec.cpp */; };
+		D586548A2ABD508B005A2379 /* patchfinder64.m in Sources */ = {isa = PBXBuildFile; fileRef = D58654692ABD508B005A2379 /* patchfinder64.m */; };
+		D5AFB5B72ABE074C006266EA /* KFD-manager.m in Sources */ = {isa = PBXBuildFile; fileRef = D5AFB5B62ABE074C006266EA /* KFD-manager.m */; };
+		D5AFB5BF2ABE1671006266EA /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5AFB5BE2ABE1671006266EA /* LogView.swift */; };
+		D5AFB5C32ABE1691006266EA /* SwiftfulLoadingIndicators in Frameworks */ = {isa = PBXBuildFile; productRef = D5AFB5C22ABE1691006266EA /* SwiftfulLoadingIndicators */; };
+		D5AFB5C52ABE1781006266EA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5AFB5C42ABE1781006266EA /* Logger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,7 +58,6 @@
 		2948BA772A3163B900B2ED3C /* kread_sem_open.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kread_sem_open.h; sourceTree = "<group>"; };
 		2948BA782A3163C500B2ED3C /* kwrite_dup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kwrite_dup.h; sourceTree = "<group>"; };
 		2948BA792A3163D200B2ED3C /* kwrite_sem_open.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kwrite_sem_open.h; sourceTree = "<group>"; };
-		2965065D2A31565B0025D1A7 /* kfd-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "kfd-Bridging-Header.h"; sourceTree = "<group>"; };
 		2965065E2A31565B0025D1A7 /* libkfd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libkfd.h; sourceTree = "<group>"; };
 		297BA1052A310AE100D1E51A /* kfd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kfd.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		297BA1082A310AE100D1E51A /* kfdApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = kfdApp.swift; sourceTree = "<group>"; };
@@ -86,8 +101,44 @@
 		D58653612ABBB28D005A2379 /* vm_unaligned_copy_switch_race.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm_unaligned_copy_switch_race.h; sourceTree = "<group>"; };
 		D58653622ABBB28D005A2379 /* vm_unaligned_copy_switch_race.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vm_unaligned_copy_switch_race.c; sourceTree = "<group>"; };
 		D58653632ABBB28D005A2379 /* grant_full_disk_access.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = grant_full_disk_access.h; sourceTree = "<group>"; };
-		D5CB286A2AB5B6D9009DF689 /* KFD-manager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "KFD-manager.m"; sourceTree = "<group>"; };
-		D5CB286C2AB5B6F8009DF689 /* KFD-manager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KFD-manager.h"; sourceTree = "<group>"; };
+		D58654392ABD508B005A2379 /* AXNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AXNavigationController.h; sourceTree = "<group>"; };
+		D586543A2ABD508B005A2379 /* lzfse_tunables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzfse_tunables.h; sourceTree = "<group>"; };
+		D586543B2ABD508B005A2379 /* FileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileManager.h; sourceTree = "<group>"; };
+		D58654512ABD508B005A2379 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		D58654522ABD508B005A2379 /* lzfse_encode_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzfse_encode_tables.h; sourceTree = "<group>"; };
+		D58654532ABD508B005A2379 /* AXFileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AXFileViewController.h; sourceTree = "<group>"; };
+		D58654542ABD508B005A2379 /* AXFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AXFile.h; sourceTree = "<group>"; };
+		D58654552ABD508B005A2379 /* patchfinder64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patchfinder64.h; sourceTree = "<group>"; };
+		D58654562ABD508B005A2379 /* lzfse_fse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzfse_fse.h; sourceTree = "<group>"; };
+		D58654582ABD508B005A2379 /* AXLocationBackgrounder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AXLocationBackgrounder.m; sourceTree = "<group>"; };
+		D58654592ABD508B005A2379 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		D586545A2ABD508B005A2379 /* SceneDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
+		D586545C2ABD508B005A2379 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D586545E2ABD508B005A2379 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D586545F2ABD508B005A2379 /* FileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileManager.m; sourceTree = "<group>"; };
+		D58654602ABD508B005A2379 /* kerneldec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kerneldec.cpp; sourceTree = "<group>"; };
+		D58654622ABD508B005A2379 /* AXNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AXNavigationController.m; sourceTree = "<group>"; };
+		D58654632ABD508B005A2379 /* AXFIle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AXFIle.m; sourceTree = "<group>"; };
+		D58654642ABD508B005A2379 /* kerneldec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kerneldec.h; sourceTree = "<group>"; };
+		D58654652ABD508B005A2379 /* AXFileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AXFileViewController.m; sourceTree = "<group>"; };
+		D58654662ABD508B005A2379 /* liblzfse.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = liblzfse.a; sourceTree = "<group>"; };
+		D58654672ABD508B005A2379 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		D58654682ABD508B005A2379 /* lzssdec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lzssdec.cpp; sourceTree = "<group>"; };
+		D58654692ABD508B005A2379 /* patchfinder64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = patchfinder64.m; sourceTree = "<group>"; };
+		D586546A2ABD508B005A2379 /* kstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kstruct.h; sourceTree = "<group>"; };
+		D586546B2ABD508B005A2379 /* lzfse_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzfse_internal.h; sourceTree = "<group>"; };
+		D586546C2ABD508B005A2379 /* lzfse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzfse.h; sourceTree = "<group>"; };
+		D586546D2ABD508B005A2379 /* lzssdec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzssdec.h; sourceTree = "<group>"; };
+		D586546F2ABD508B005A2379 /* AXLocationBackgrounder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AXLocationBackgrounder.h; sourceTree = "<group>"; };
+		D58654702ABD508B005A2379 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		D58654712ABD508B005A2379 /* SceneDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
+		D586548D2ABD5112005A2379 /* kfd-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "kfd-Bridging-Header.h"; sourceTree = "<group>"; };
+		D58654902ABD55B3005A2379 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5AFB5B52ABE074C006266EA /* KFD-manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KFD-manager.h"; sourceTree = "<group>"; };
+		D5AFB5B62ABE074C006266EA /* KFD-manager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KFD-manager.m"; sourceTree = "<group>"; };
+		D5AFB5BE2ABE1671006266EA /* LogView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
+		D5AFB5C02ABE167C006266EA /* ProcessCommunication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ProcessCommunication; sourceTree = "<group>"; };
+		D5AFB5C42ABE1781006266EA /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		D5CB286E2AB5D02F009DF689 /* static_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_info.h; sourceTree = "<group>"; };
 		D5CB286F2AB5D02F009DF689 /* dynamic_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dynamic_info.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -98,7 +149,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D52BA4622AB58212002E9836 /* DirtyCowKit in Frameworks */,
+				D58654872ABD508B005A2379 /* liblzfse.a in Frameworks */,
 				D51A38002AB56ED900C147E2 /* IOKit.framework in Frameworks */,
+				D5AFB5C32ABE1691006266EA /* SwiftfulLoadingIndicators in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,16 +232,22 @@
 		297BA1072A310AE100D1E51A /* kfd */ = {
 			isa = PBXGroup;
 			children = (
+				D58654902ABD55B3005A2379 /* Info.plist */,
+				D58654382ABD508B005A2379 /* filemanager_by akusio */,
 				D52BA44F2AB5812A002E9836 /* JIT */,
 				2948BA6A2A3162C600B2ED3C /* libkfd */,
 				6E75BFA62A8475790056ABDA /* fun */,
 				D51A38102AB5717500C147E2 /* files */,
 				297BA10C2A310AE200D1E51A /* Assets.xcassets */,
+				D5AFB5B62ABE074C006266EA /* KFD-manager.m */,
+				D5AFB5B52ABE074C006266EA /* KFD-manager.h */,
 				D586507E2AB9F2AF005A2379 /* FileManager.swift */,
 				297BA10A2A310AE100D1E51A /* ContentView.swift */,
-				2965065D2A31565B0025D1A7 /* kfd-Bridging-Header.h */,
+				D5AFB5BE2ABE1671006266EA /* LogView.swift */,
+				D5AFB5C42ABE1781006266EA /* Logger.swift */,
 				297BA1082A310AE100D1E51A /* kfdApp.swift */,
 				2965065E2A31565B0025D1A7 /* libkfd.h */,
+				D586548D2ABD5112005A2379 /* kfd-Bridging-Header.h */,
 				297BA10F2A310AE200D1E51A /* Preview Content */,
 			);
 			path = kfd;
@@ -235,6 +294,7 @@
 			isa = PBXGroup;
 			children = (
 				D58309A92A9BC38800828844 /* IOKit.framework */,
+				D5AFB5C02ABE167C006266EA /* ProcessCommunication */,
 				D52BA4352AB57EC9002E9836 /* DirtyCowKit */,
 			);
 			name = Frameworks;
@@ -245,8 +305,6 @@
 			children = (
 				D52BA4532AB5812A002E9836 /* DirtyJIT */,
 				D52BA4512AB5812A002E9836 /* ApplicationManager2.swift */,
-				D5CB286A2AB5B6D9009DF689 /* KFD-manager.m */,
-				D5CB286C2AB5B6F8009DF689 /* KFD-manager.h */,
 			);
 			path = JIT;
 			sourceTree = "<group>";
@@ -262,6 +320,45 @@
 			);
 			path = DirtyJIT;
 			sourceTree = "<group>";
+		};
+		D58654382ABD508B005A2379 /* filemanager_by akusio */ = {
+			isa = PBXGroup;
+			children = (
+				D58654592ABD508B005A2379 /* ViewController.m */,
+				D58654702ABD508B005A2379 /* ViewController.h */,
+				D586545A2ABD508B005A2379 /* SceneDelegate.m */,
+				D58654712ABD508B005A2379 /* SceneDelegate.h */,
+				D58654672ABD508B005A2379 /* AppDelegate.m */,
+				D58654512ABD508B005A2379 /* AppDelegate.h */,
+				D586545F2ABD508B005A2379 /* FileManager.m */,
+				D586543B2ABD508B005A2379 /* FileManager.h */,
+				D58654632ABD508B005A2379 /* AXFIle.m */,
+				D58654542ABD508B005A2379 /* AXFile.h */,
+				D58654652ABD508B005A2379 /* AXFileViewController.m */,
+				D58654532ABD508B005A2379 /* AXFileViewController.h */,
+				D58654622ABD508B005A2379 /* AXNavigationController.m */,
+				D58654392ABD508B005A2379 /* AXNavigationController.h */,
+				D58654582ABD508B005A2379 /* AXLocationBackgrounder.m */,
+				D586546F2ABD508B005A2379 /* AXLocationBackgrounder.h */,
+				D58654692ABD508B005A2379 /* patchfinder64.m */,
+				D58654552ABD508B005A2379 /* patchfinder64.h */,
+				D58654602ABD508B005A2379 /* kerneldec.cpp */,
+				D586546A2ABD508B005A2379 /* kstruct.h */,
+				D58654642ABD508B005A2379 /* kerneldec.h */,
+				D58654682ABD508B005A2379 /* lzssdec.cpp */,
+				D586546C2ABD508B005A2379 /* lzfse.h */,
+				D586546D2ABD508B005A2379 /* lzssdec.h */,
+				D58654562ABD508B005A2379 /* lzfse_fse.h */,
+				D586546B2ABD508B005A2379 /* lzfse_internal.h */,
+				D586543A2ABD508B005A2379 /* lzfse_tunables.h */,
+				D58654522ABD508B005A2379 /* lzfse_encode_tables.h */,
+				D586545B2ABD508B005A2379 /* LaunchScreen.storyboard */,
+				D586545D2ABD508B005A2379 /* Main.storyboard */,
+				D58654662ABD508B005A2379 /* liblzfse.a */,
+			);
+			name = "filemanager_by akusio";
+			path = "MiniRootFileManager15/filemanager_by akusio";
+			sourceTree = SOURCE_ROOT;
 		};
 		D5CB286D2AB5D02F009DF689 /* info */ = {
 			isa = PBXGroup;
@@ -290,6 +387,7 @@
 			name = kfd;
 			packageProductDependencies = (
 				D52BA4612AB58212002E9836 /* DirtyCowKit */,
+				D5AFB5C22ABE1691006266EA /* SwiftfulLoadingIndicators */,
 			);
 			productName = kfd;
 			productReference = 297BA1052A310AE100D1E51A /* kfd.app */;
@@ -321,6 +419,7 @@
 			);
 			mainGroup = 297BA0FC2A310AE100D1E51A;
 			packageReferences = (
+				D5AFB5C12ABE1691006266EA /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */,
 			);
 			productRefGroup = 297BA1062A310AE100D1E51A /* Products */;
 			projectDirPath = "";
@@ -336,7 +435,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D586547F2ABD508B005A2379 /* LaunchScreen.storyboard in Resources */,
 				D51A38112AB5717500C147E2 /* files in Resources */,
+				D58654802ABD508B005A2379 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,26 +452,57 @@
 				D52BA4652AB582C9002E9836 /* SearchBar.swift in Sources */,
 				D52BA4662AB582C9002E9836 /* DirtyJITView.swift in Sources */,
 				D52BA4672AB582C9002E9836 /* AppsView.swift in Sources */,
+				D58654892ABD508B005A2379 /* lzssdec.cpp in Sources */,
+				D5AFB5B72ABE074C006266EA /* KFD-manager.m in Sources */,
 				D52BA4692AB582C9002E9836 /* ApplicationManager2.swift in Sources */,
+				D5AFB5C52ABE1781006266EA /* Logger.swift in Sources */,
 				D51A380A2AB56F8400C147E2 /* vnode.m in Sources */,
 				D51A380C2AB56F8400C147E2 /* cs_blobs.m in Sources */,
+				D58654842ABD508B005A2379 /* AXNavigationController.m in Sources */,
+				D58654822ABD508B005A2379 /* kerneldec.cpp in Sources */,
 				6E75BFAE2A847A980056ABDA /* offsets.m in Sources */,
 				297BA10B2A310AE100D1E51A /* ContentView.swift in Sources */,
 				D52BA46D2AB586BF002E9836 /* Alert++.swift in Sources */,
 				D51A38092AB56F8400C147E2 /* krw.c in Sources */,
 				6E75BFA82A8475C70056ABDA /* fun.m in Sources */,
 				D51A38082AB56F8400C147E2 /* utils.m in Sources */,
+				D586547C2ABD508B005A2379 /* AXLocationBackgrounder.m in Sources */,
+				D58654882ABD508B005A2379 /* AppDelegate.m in Sources */,
+				D58654812ABD508B005A2379 /* FileManager.m in Sources */,
 				D52BA46B2AB5866D002E9836 /* TextField++.swift in Sources */,
+				D586547E2ABD508B005A2379 /* SceneDelegate.m in Sources */,
 				6ECE5B522A905FDE00792D41 /* proc.c in Sources */,
-				D586507F2AB9F2B0005A2379 /* FileManager.swift in Sources */,
+				D586548A2ABD508B005A2379 /* patchfinder64.m in Sources */,
+				D58654862ABD508B005A2379 /* AXFileViewController.m in Sources */,
 				6E08ABFE2A9A3B9800BF5B0D /* helpers.m in Sources */,
+				D586547D2ABD508B005A2379 /* ViewController.m in Sources */,
 				297BA1092A310AE100D1E51A /* kfdApp.swift in Sources */,
+				D5AFB5BF2ABE1671006266EA /* LogView.swift in Sources */,
 				D51A380B2AB56F8400C147E2 /* thanks_opa334dev_htrowii.m in Sources */,
-				D5CB286B2AB5B6D9009DF689 /* KFD-manager.m in Sources */,
+				D58654852ABD508B005A2379 /* AXFIle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		D586545B2ABD508B005A2379 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D586545C2ABD508B005A2379 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		D586545D2ABD508B005A2379 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D586545E2ABD508B005A2379 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		297BA1122A310AE200D1E51A /* Debug */ = {
@@ -509,8 +641,8 @@
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = kfd/Info.plist;
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Full access to files on your device is required to apply tweaks.";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -531,6 +663,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/debs",
+					"$(PROJECT_DIR)/MiniRootFileManager15/multicast_bytecopy",
+					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by\\ akusio",
+					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by\\ akusio",
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_CFLAGS = "-Os";
@@ -574,8 +709,8 @@
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = kfd/Info.plist;
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Full access to files on your device is required to apply tweaks.";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -596,6 +731,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/debs",
+					"$(PROJECT_DIR)/MiniRootFileManager15/multicast_bytecopy",
+					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by\\ akusio",
+					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by\\ akusio",
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_CFLAGS = "-Os";
@@ -641,10 +779,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		D5AFB5C12ABE1691006266EA /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ndsarno/SwiftfulLoadingIndicators.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		D52BA4612AB58212002E9836 /* DirtyCowKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DirtyCowKit;
+		};
+		D5AFB5C22ABE1691006266EA /* SwiftfulLoadingIndicators */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D5AFB5C12ABE1691006266EA /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */;
+			productName = SwiftfulLoadingIndicators;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

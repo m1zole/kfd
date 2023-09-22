@@ -7,14 +7,15 @@
 
 #import <Foundation/Foundation.h>
 #include <mach/mach.h>
-#include "../fun/vnode.h"
-#include "../fun/utils.h"
-#include "../fun/offsets.h"
-#include "../fun/krw.h"
-#include "../fun/proc.h"
-#include "../fun/cs_blobs.h"
-#include "../fun/fun.h"
-#include "../fun/grant_full_disk_access.h"
+#include "fun/vnode.h"
+#include "fun/utils.h"
+#include "fun/offsets.h"
+#include "fun/krw.h"
+#include "fun/proc.h"
+#include "fun/cs_blobs.h"
+#include "fun/fun.h"
+#include "fun/grant_full_disk_access.h"
+#include "kfd-Swift.h"
 
 uint64_t orig_to_v_data = 0;
 
@@ -25,6 +26,26 @@ uint64_t onlyFolderRedirect(uint64_t vnode, NSString *mntPath) {
 
 uint64_t onlyUnRedirectFolder(uint64_t orig_to_v_data, NSString *mntPath) {
     funVnodeUnRedirectFolder(mntPath.UTF8String, orig_to_v_data);
+    return 0;
+}
+
+uint64_t do_getTask(char* process) {
+    pid_t pid = getPidByName(process);
+    uint64_t proc = getProc(pid);
+    printf("[i] %s proc: 0x%llx\n", process, proc);
+    uint64_t proc_ro = kread64(proc + off_p_proc_ro);
+    
+    /*
+     * RO-protected flags:
+     */
+    #define TFRO_PLATFORM                   0x00000400                      /* task is a platform binary */
+    #define TFRO_FILTER_MSG                 0x00004000                      /* task calls into message filter callback before sending a message */
+    #define TFRO_PAC_EXC_FATAL              0x00010000                      /* task is marked a corpse if a PAC exception occurs */
+    #define TFRO_PAC_ENFORCE_USER_STATE     0x01000000                      /* Enforce user and kernel signed thread state */
+    
+    uint32_t t_flags_ro = kread32(proc_ro + off_p_ro_t_flags_ro);
+    printf("[i] %s proc->proc_ro->t_flags_ro: 0x%x\n", process, t_flags_ro);
+    
     return 0;
 }
 
@@ -50,7 +71,7 @@ void prepare(void) {
     //funTask("kfd");
     mach_port_t host_self = mach_host_self();
     printf("[i] mach_host_self: 0x%x\n", host_self);
-    fun_ipc_entry_lookup(host_self);
+    //fun_ipc_entry_lookup(host_self);
     
     //kfd_patch_installd();
     //kfd_grant_full_disk_access(^(NSError* error) {
@@ -75,17 +96,11 @@ void do_tasks(void) {
     funUcred(selfProc);
     funProc(selfProc);
     printf("[i] pid: %d\n", getpid());
-    funCSFlags("launchd");
-    printf("[i] pid: %d\n", getpid());
-    //funTask("kfd");
+    funCSFlags("kfd");
     mach_port_t host_self = mach_host_self();
     printf("[i] mach_host_self: 0x%x\n", host_self);
     fun_ipc_entry_lookup(host_self);
-    
-    //kfd_patch_installd();
-    //kfd_grant_full_disk_access(^(NSError* error) {
-    //    NSLog(@"[-] grant_full_disk_access returned error: %@", error);
-    //});
+    fun_nvram_dump();
 }
 
 uint64_t mountselectedDir(NSString* path) {
@@ -130,5 +145,11 @@ void unmountselectedDir(uint64_t orig_to_v_data, NSString* mntPath) {
     onlyUnRedirectFolder(orig_to_v_data, mntPath);
 }
 
-void mountstage2(NSString* path) {
+bool check_mdc(void) {
+    if (@available(iOS 16.2, *)) {
+        return true;
+    } else {
+        return false;
+    }
 }
+

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import MacDirtyCow
 
 struct ContentView: View {
@@ -29,31 +30,13 @@ struct ContentView: View {
     
     @State private var isSettingsPopoverPresented = false // Track the visibility of the settings popup
     @State private var isTweaksPopoverPresented = false
-
-    @Environment(\.presentationMode) var presentation
+    @State private var isFilePopoverPresented = false
+    @State private var isJITPopoverPresented = false
     
-    struct FileManagerContentView: View {
-        @Environment(\.presentationMode) var presentation
-        @State var path: String = "/"
-        var body: some View {
-            NavigationView {
-                FileManagerView(path: path)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        do_kclose()
-                        self.presentation.wrappedValue.dismiss()
-                    } label: {
-                        HStack {
-                            Image(systemName: "chevron.backward")
-                            Text("Back")
-                        }
-                    }
-                }
-            }
-        }
-    }
+    @State private var isLogPopoverPresented = false
+    @State var advancedLogsTemporarilyEnabled: Bool = true
+    @State var advancedLogsByDefault: Bool = true
+    @Environment(\.presentationMode) var presentation
     
     func unsandboxing()  {
         do {
@@ -128,7 +111,7 @@ struct ContentView: View {
                                 message = "kclose!"
                             }
                         }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).disabled(kfd == 0).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
-                    Text("do kfd")
+                    Text("do kfd tasks and kclose")
                         .onTapGesture{
                             do_tasks()
                             DispatchQueue.main.async {
@@ -158,38 +141,33 @@ struct ContentView: View {
                             }
                         }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading).foregroundColor(Color(red: 0.678, green: 0.847, blue: 0.901, opacity: 1))
                 }
-                Section(header: Text("misc")) {
+                
+                Section(header: Text("Settings")) {
                     Button(action: {
                         isSettingsPopoverPresented.toggle()
                     }, label: {Text("Exploit Setting")}).foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
                     Button(action: {
                         isTweaksPopoverPresented.toggle()
                     }, label: {Text("Tweak Setting")}).foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
-                    NavigationLink(destination: DirtyJITView()) {
-                        HStack {
-                            Text(NSLocalizedString("App JIT Enabler", comment: "Title of tool"))
-                                .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
-                        }
-                    }
-                    NavigationLink(destination: FileManagerContentView()
-                        .onAppear {
-                            kfd = do_kopen(UInt64(puafPages), UInt64(puafMethod), UInt64(kreadMethod), UInt64(kwriteMethod))
-                            if(kfd != 0) {
-                                UIApplication.shared.alert(title: "sucecss", body: "kpoen done", withButton: true)
-                                usleep(1000)
-                                prepare()
-                                kfd = 0
-                            } else {
-                                UIApplication.shared.alert(title: "failed", body: "kpoen failed", withButton: false)
-                            }
-                        }
-                        .navigationBarBackButtonHidden(true))
-                    { HStack {
-                            Text(NSLocalizedString("FileManager", comment: "Title of tool"))
-                                .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
-                        }
-                    }
                 }.buttonStyle(BorderlessButtonStyle())
+                
+                Section(header: Text("Tools")) {
+                    Text("Dirty JIT")
+                        .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
+                        .onTapGesture {
+                            isJITPopoverPresented.toggle()
+                        }
+                    Text("File Manager")
+                        .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
+                        .onTapGesture {
+                            if (check_mdc()) {
+                                do_tasks()
+                            } else {
+                                MacDirtyCow.unsandboxing()
+                            }
+                            isFilePopoverPresented.toggle()
+                        }
+                }
             }
             .accentColor(.green)
             .popover(isPresented: $isSettingsPopoverPresented, arrowEdge: .bottom) {
@@ -197,6 +175,12 @@ struct ContentView: View {
             }
             .popover(isPresented: $isTweaksPopoverPresented, arrowEdge: .bottom) {
                 tweakSettings
+            }
+            .popover(isPresented: $isJITPopoverPresented, arrowEdge: .bottom) {
+                DirtyJITView()
+            }
+            .popover(isPresented: $isFilePopoverPresented, arrowEdge: .bottom) {
+                FileManagerUIKitViewControllerWrapper()
             }
         }
     }
@@ -380,3 +364,112 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+struct FileManagerUIKitViewControllerWrapper: UIViewControllerRepresentable {
+    typealias UIViewControllerType = ViewController
+
+    func makeUIViewController(context: Context) -> ViewController {
+        return ViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: ViewController, context: Context) {
+    }
+}
+
+struct MaterialView: UIViewRepresentable {
+    let material: UIBlurEffect.Style
+
+    init(_ material: UIBlurEffect.Style) {
+        self.material = material
+    }
+
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        UIVisualEffectView(effect: UIBlurEffect(style: material))
+    }
+
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+        uiView.effect = UIBlurEffect(style: material)
+    }
+}
+
+
+/*
+struct AXFileViewControllerUIKitViewControllerWrapper: UIViewControllerRepresentable {
+    typealias UIViewControllerType = UITableViewController
+
+    func makeUIViewController(context: Context) -> UITableViewController {
+        return AXFileViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: UITableViewController, context: Context) {
+    }
+}
+
+struct withbarview: View {
+    @State private var selectedview: String = "kfd"
+    
+    var targetview: some View {
+        ZStack{
+            switch selectedview {
+            case "kfd":
+                ContentView()
+            case "jit":
+                DirtyJITView()
+            case "file":
+                FileManagerUIKitViewControllerWrapper()
+            default:
+                ContentView()
+            }
+        }
+    }
+    
+    var body: some View {
+        ZStack{
+            targetview
+        }.toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                Spacer()
+            }
+            ToolbarItem(placement: .bottomBar) {
+                Image(systemName: "snowflake")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 32, height: 32)
+                    .onTapGesture{
+                        selectedview = "kfd"
+                        print(selectedview)
+                    }
+            }
+            ToolbarItem(placement: .bottomBar) {
+                Spacer()
+            }
+            ToolbarItem(placement: .bottomBar) {
+                Image(systemName: "app.connected.to.app.below.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 32, height: 32)
+                    .onTapGesture{
+                        selectedview = "jit"
+                        print(selectedview)
+                    }
+            }
+            ToolbarItem(placement: .bottomBar) {
+                Spacer()
+            }
+            ToolbarItem(placement: .bottomBar) {
+                Image(systemName: "pc")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 32, height: 32)
+                    .onTapGesture{
+                        selectedview = "file"
+                        print(selectedview)
+                    }
+            }
+            ToolbarItem(placement: .bottomBar) {
+                Spacer()
+            }
+        }
+    }
+}
+*/

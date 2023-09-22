@@ -32,7 +32,7 @@ uint64_t getProcByName(char* nm) {
         uint64_t nameptr = proc + off_p_name;
         char name[32];
         do_kread(nameptr, &name, 32);
-        printf("[i] pid: %d, process name: %s\n", kread32(proc + off_p_pid), name);
+        //printf("[i] pid: %d, process name: %s\n", kread32(proc + off_p_pid), name);
         if(strcmp(name, nm) == 0) {
             return proc;
         }

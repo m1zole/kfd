@@ -16,6 +16,7 @@ typedef io_object_t io_service_t, io_connect_t, io_registry_entry_t;
 extern const mach_port_t kIOMasterPortDefault;
 
 void do_fun(char** enabledTweaks, int numTweaks);
+uint64_t fun_nvram_dump(void);
 void backboard_respring(void);
 int funUcred(uint64_t proc);
 int funCSFlags(char* process);

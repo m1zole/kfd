@@ -5,17 +5,17 @@
 //  Created by Seo Hyun-gyu on 2023/07/25.
 //
 
-#include "krw.h"
-#include "offsets.h"
-#include <sys/stat.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <sys/mount.h>
+#import <IOKit/IOKitLib.h>
 #include <sys/stat.h>
 #include <sys/attr.h>
 #include <sys/snapshot.h>
 #include <sys/mman.h>
 #include <mach/mach.h>
+#include "krw.h"
+#include "offsets.h"
 #include "proc.h"
 #include "vnode.h"
 #include "grant_full_disk_access.h"
@@ -56,6 +56,7 @@ int funCSFlags(char* process) {
     uint64_t proc = getProc(pid);
     
     uint64_t proc_ro = kread64(proc + off_p_proc_ro);
+    printf("[i] %s proc->proc_ro: 0x%llx\n", process, proc_ro);
     uint32_t csflags = kread32(proc_ro + off_p_ro_p_csflags);
     printf("[i] %s proc->proc_ro->p_csflags: 0x%x\n", process, csflags);
     
@@ -72,9 +73,10 @@ int funCSFlags(char* process) {
 
 #define CS_DEBUGGED         0x10000000  /* process is currently or has previously been debugged and allowed to run with invalid pages */
     
-//    csflags = (csflags | CS_PLATFORM_BINARY | CS_INSTALLER | CS_GET_TASK_ALLOW | CS_DEBUGGED) & ~(CS_RESTRICT | CS_HARD | CS_KILL);
-//    sleep(3);
-//    kwrite32(proc_ro + off_p_ro_p_csflags, csflags);
+    csflags = (csflags | CS_PLATFORM_BINARY | CS_INSTALLER | CS_GET_TASK_ALLOW | CS_DEBUGGED) & ~(CS_RESTRICT | CS_HARD | CS_KILL);
+    sleep(3);
+    printf("[i] setting csflags: 0x%x\n", process, csflags);
+    //kwrite32(proc_ro + off_p_ro_p_csflags, csflags);
     
     return 0;
 }
@@ -197,7 +199,7 @@ static uint64_t print_key_value_in_os_dict(uint64_t os_dict) {
                 printf("[i] os_dict_cnt: 0x%x\n", os_dict_cnt);
                 while(os_dict_cnt-- != 0) {
                     kreadbuf(os_dict_entry_ptr + os_dict_cnt * sizeof(os_dict_entry), &os_dict_entry, sizeof(os_dict_entry));
-                    //printf("key: 0x%llx, val: 0x%llx\n", os_dict_entry.key, os_dict_entry.val);
+                    printf("key: 0x%llx, val: 0x%llx\n", os_dict_entry.key, os_dict_entry.val);
                     
                     //KEY
                     cur_key_len = kread32(os_dict_entry.key + 0xc/*OS_STRING_LEN_OFF*/);
@@ -215,7 +217,7 @@ static uint64_t print_key_value_in_os_dict(uint64_t os_dict) {
                     
                     
                     //VALUE
-//                    HexDump(os_dict_entry.val, 100);
+                    HexDump(os_dict_entry.val, 100);
                     cur_val_len = kread32(os_dict_entry.val + 0xc/*OS_STRING_LEN_OFF*/);
                     if(cur_val_len == 0) {
                         printf("[-] cur_val_len = 0\n");
@@ -241,7 +243,7 @@ static uint64_t print_key_value_in_os_dict(uint64_t os_dict) {
 }
 
 
-/*uint64_t fun_nvram_dump(void) {
+uint64_t fun_nvram_dump(void) {
 
     io_registry_entry_t nvram_entry = IORegistryEntryFromPath(kIOMasterPortDefault, kIODeviceTreePlane ":/options");
     
@@ -254,7 +256,7 @@ static uint64_t print_key_value_in_os_dict(uint64_t os_dict) {
         print_key_value_in_os_dict(of_dict);
     }
     return 0;
-}*/
+}
 
 // Function to find files with specific extensions in a directory, doesn't work??? wtf?
 NSArray<NSString *> *findFilesWithExtensions(NSArray<NSString *> *extensions, NSString *directory) {
