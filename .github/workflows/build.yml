@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches:
-      - kfd15
       - kfd16e
     paths-ignore:
       - '**/*.md'
@@ -14,23 +13,12 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: macos-12
+    runs-on: macos-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Set up Procursus
-        uses: beerpiss/procursus-action@v2
-        with:
-          packages: ldid
-          cache: true
-          cache-path: ~/__cache
-
-      - name: Select Xcode version (15.0)
-        run: |
-          sudo xcode-select --switch /Applications/Xcode_15.0.app
-
+        
       - name: Build IPA
         run: |
           make
@@ -39,4 +27,4 @@ jobs:
         uses: actions/upload-artifact@v3.1.0
         with:
           name: kfd
-          path: ${{ github.workspace }}/build/kfd.ipa
+          path: ${{ github.workspace }}/kfd.ipa
