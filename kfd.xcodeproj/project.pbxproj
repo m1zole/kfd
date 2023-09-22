@@ -357,7 +357,7 @@
 				D58654662ABD508B005A2379 /* liblzfse.a */,
 			);
 			name = "filemanager_by akusio";
-			path = "MiniRootFileManager15/filemanager_by akusio";
+			path = MiniRootFileManager15/filemanager_by_akusio;
 			sourceTree = SOURCE_ROOT;
 		};
 		D5CB286D2AB5D02F009DF689 /* info */ = {
@@ -662,10 +662,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/debs",
-					"$(PROJECT_DIR)/MiniRootFileManager15/multicast_bytecopy",
-					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by\\ akusio",
-					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by\\ akusio",
+					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by_akusio",
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_CFLAGS = "-Os";
@@ -730,10 +727,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/debs",
-					"$(PROJECT_DIR)/MiniRootFileManager15/multicast_bytecopy",
-					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by\\ akusio",
-					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by\\ akusio",
+					"$(PROJECT_DIR)/MiniRootFileManager15/filemanager_by_akusio",
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_CFLAGS = "-Os";
