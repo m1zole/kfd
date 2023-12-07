@@ -39,7 +39,6 @@ struct DirtyJITView: View {
                 }
             }
             unsandboxing()
-            
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 UIApplication.shared.dismissAlert(animated: false)
                 

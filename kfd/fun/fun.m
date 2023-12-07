@@ -106,8 +106,8 @@ int funTask(char* process) {
     #define TFRO_PAC_EXC_FATAL              0x00010000                      /* task is marked a corpse if a PAC exception occurs */
     #define TFRO_PAC_ENFORCE_USER_STATE     0x01000000                      /* Enforce user and kernel signed thread state */
     
-    uint32_t t_flags_ro = kread32(proc_ro + off_p_ro_t_flags_ro);
-    printf("[i] %s proc->proc_ro->t_flags_ro: 0x%x\n", process, t_flags_ro);
+    //uint32_t t_flags_ro = kread32(proc_ro + off_p_ro_t_flags_ro);
+    //printf("[i] %s proc->proc_ro->t_flags_ro: 0x%x\n", process, t_flags_ro);
     
     return 0;
 }

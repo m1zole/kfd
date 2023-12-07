@@ -85,17 +85,17 @@ void _offsets_init(void) {
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/queue.h#L487
         off_p_list_le_prev = 0x8;
         off_p_proc_ro = 0x18;
-        off_p_ppid = 0x20;
-        off_p_original_ppid = 0x24;
-        off_p_pgrpid = 0x28;
+        off_p_ppid = 0x20;//ok
+        off_p_original_ppid = 0x24;//ok
+        off_p_pgrpid = 0x28;//ok
         off_p_uid = 0x2c;
         off_p_gid = 0x30;
         off_p_ruid = 0x34;
         off_p_rgid = 0x38;
         off_p_svuid = 0x3c;
         off_p_svgid = 0x40;
-        off_p_sessionid = 0x44;
-        off_p_puniqueid = 0x48;
+        off_p_sessionid = 0x44;//ok
+        off_p_puniqueid = 0x48;//ok
         off_p_pid = 0x60;
         off_p_pfd = 0xf8;
         off_p_textvp = 0x350;
@@ -177,25 +177,25 @@ void _offsets_init(void) {
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/queue.h#L487
         off_p_list_le_prev = 0x8;//ok
         off_p_proc_ro = 0x18;
-        off_p_ppid = 0x20;
-        off_p_original_ppid = 0x24;
-        off_p_pgrpid = 0x28;
+        off_p_ppid = 0x20;//ok
+        off_p_original_ppid = 0x24;//ok
+        off_p_pgrpid = 0x28;//ok
         off_p_uid = 0x2c;
         off_p_gid = 0x30;
         off_p_ruid = 0x34;
         off_p_rgid = 0x38;
         off_p_svuid = 0x3c;
         off_p_svgid = 0x40;
-        off_p_sessionid = 0x44;
-        off_p_puniqueid = 0x48;
+        off_p_sessionid = 0x44;//ok
+        off_p_puniqueid = 0x48;//ok
         off_p_pid = 0x60;//ok
         off_p_pfd = 0xf8;//p_fd__fd_ofiles? ok
         off_p_textvp = 0x548;
         off_p_name = 0x579;//ok
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/proc_ro.h#L59
-        off_p_ro_p_csflags = 0x1c;
-        off_p_ro_p_ucred = 0x20;
+        off_p_ro_p_csflags = 0x1c;//ok
+        off_p_ro_p_ucred = 0x20;//ok
         off_p_ro_pr_proc = 0;
         off_p_ro_pr_task = 0x8;
         off_p_ro_t_flags_ro = 0x78;
@@ -216,7 +216,7 @@ void _offsets_init(void) {
         off_cr_flags = 0x5c;
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/osfmk/kern/task.h#L280
-        off_task_t_flags = 0x3D0;
+        off_task_t_flags = 0x3D0;//ok
         
         //https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.41.9/bsd/sys/filedesc.h#L138
         off_fd_ofiles = 0;

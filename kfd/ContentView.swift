@@ -32,6 +32,7 @@ struct ContentView: View {
     @State private var isTweaksPopoverPresented = false
     @State private var isFilePopoverPresented = false
     @State private var isJITPopoverPresented = false
+    @State private var isSwiftFilePopoverPresented = false
     
     @State private var isLogPopoverPresented = false
     @State var advancedLogsTemporarilyEnabled: Bool = true
@@ -157,6 +158,11 @@ struct ContentView: View {
                         .onTapGesture {
                             isJITPopoverPresented.toggle()
                         }
+                    Text("Swift File Manager")
+                        .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
+                        .onTapGesture {
+                            isSwiftFilePopoverPresented.toggle()
+                        }
                     Text("File Manager")
                         .foregroundColor(Color(red: 0.941, green: 0.502, blue: 0.502, opacity: 1))
                         .onTapGesture {
@@ -181,6 +187,9 @@ struct ContentView: View {
             }
             .popover(isPresented: $isFilePopoverPresented, arrowEdge: .bottom) {
                 FileManagerUIKitViewControllerWrapper()
+            }
+            .popover(isPresented: $isSwiftFilePopoverPresented, arrowEdge: .bottom) {
+                FileManagerView()
             }
         }
     }

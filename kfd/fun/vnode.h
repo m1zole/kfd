@@ -122,4 +122,5 @@ uint64_t funVnodeOverwriteFileUnlimitSize(char* to, char* from);
 
 uint64_t funVnodeOverwriteFileUnlimitSizeWithVnode(uint64_t to_vnode, char* from);
 uint64_t funVnodeChownFolder(char* filename, uid_t uid, gid_t gid);
+uint64_t funVnodeChmodFolder(char* filename, mode_t mode);
 uint64_t funVnodeFolderForFileManager(NSString* filename, uid_t uid, gid_t gid);

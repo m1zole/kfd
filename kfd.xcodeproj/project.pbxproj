@@ -24,7 +24,7 @@
 		D52BA4652AB582C9002E9836 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA4562AB5812A002E9836 /* SearchBar.swift */; };
 		D52BA4662AB582C9002E9836 /* DirtyJITView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA4572AB5812A002E9836 /* DirtyJITView.swift */; };
 		D52BA4672AB582C9002E9836 /* AppsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA4582AB5812A002E9836 /* AppsView.swift */; };
-		D52BA4692AB582C9002E9836 /* ApplicationManager2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA4512AB5812A002E9836 /* ApplicationManager2.swift */; };
+		D52BA4692AB582C9002E9836 /* ApplicationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA4512AB5812A002E9836 /* ApplicationManager.swift */; };
 		D52BA46B2AB5866D002E9836 /* TextField++.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA46A2AB5866D002E9836 /* TextField++.swift */; };
 		D52BA46D2AB586BF002E9836 /* Alert++.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BA46C2AB586BF002E9836 /* Alert++.swift */; };
 		D58653662ABBB60E005A2379 /* vm_unaligned_copy_switch_race.c in Sources */ = {isa = PBXBuildFile; fileRef = D58653622ABBB28D005A2379 /* vm_unaligned_copy_switch_race.c */; };
@@ -46,6 +46,8 @@
 		D5AFB5BF2ABE1671006266EA /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5AFB5BE2ABE1671006266EA /* LogView.swift */; };
 		D5AFB5C32ABE1691006266EA /* SwiftfulLoadingIndicators in Frameworks */ = {isa = PBXBuildFile; productRef = D5AFB5C22ABE1691006266EA /* SwiftfulLoadingIndicators */; };
 		D5AFB5C52ABE1781006266EA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5AFB5C42ABE1781006266EA /* Logger.swift */; };
+		D5AFB71B2AC0252D006266EA /* grant_full_disk_access.m in Sources */ = {isa = PBXBuildFile; fileRef = D58653602ABBB28D005A2379 /* grant_full_disk_access.m */; };
+		D5B87E8F2B00CC2E0024E70C /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D586507E2AB9F2AF005A2379 /* FileManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,7 +91,7 @@
 		D51A38072AB56F8400C147E2 /* cs_blobs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cs_blobs.m; sourceTree = "<group>"; };
 		D51A38102AB5717500C147E2 /* files */ = {isa = PBXFileReference; lastKnownFileType = folder; path = files; sourceTree = "<group>"; };
 		D52BA4352AB57EC9002E9836 /* DirtyCowKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DirtyCowKit; sourceTree = "<group>"; };
-		D52BA4512AB5812A002E9836 /* ApplicationManager2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationManager2.swift; sourceTree = "<group>"; };
+		D52BA4512AB5812A002E9836 /* ApplicationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationManager.swift; sourceTree = "<group>"; };
 		D52BA4562AB5812A002E9836 /* SearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		D52BA4572AB5812A002E9836 /* DirtyJITView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirtyJITView.swift; sourceTree = "<group>"; };
 		D52BA4582AB5812A002E9836 /* AppsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppsView.swift; sourceTree = "<group>"; };
@@ -233,7 +235,7 @@
 			isa = PBXGroup;
 			children = (
 				D58654902ABD55B3005A2379 /* Info.plist */,
-				D58654382ABD508B005A2379 /* filemanager_by akusio */,
+				D58654382ABD508B005A2379 /* filemanager_by_akusio */,
 				D52BA44F2AB5812A002E9836 /* JIT */,
 				2948BA6A2A3162C600B2ED3C /* libkfd */,
 				6E75BFA62A8475790056ABDA /* fun */,
@@ -304,7 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				D52BA4532AB5812A002E9836 /* DirtyJIT */,
-				D52BA4512AB5812A002E9836 /* ApplicationManager2.swift */,
+				D52BA4512AB5812A002E9836 /* ApplicationManager.swift */,
 			);
 			path = JIT;
 			sourceTree = "<group>";
@@ -321,7 +323,7 @@
 			path = DirtyJIT;
 			sourceTree = "<group>";
 		};
-		D58654382ABD508B005A2379 /* filemanager_by akusio */ = {
+		D58654382ABD508B005A2379 /* filemanager_by_akusio */ = {
 			isa = PBXGroup;
 			children = (
 				D58654592ABD508B005A2379 /* ViewController.m */,
@@ -356,7 +358,7 @@
 				D586545D2ABD508B005A2379 /* Main.storyboard */,
 				D58654662ABD508B005A2379 /* liblzfse.a */,
 			);
-			name = "filemanager_by akusio";
+			name = filemanager_by_akusio;
 			path = MiniRootFileManager15/filemanager_by_akusio;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -448,13 +450,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5B87E8F2B00CC2E0024E70C /* FileManager.swift in Sources */,
+				D5AFB71B2AC0252D006266EA /* grant_full_disk_access.m in Sources */,
 				D58653662ABBB60E005A2379 /* vm_unaligned_copy_switch_race.c in Sources */,
 				D52BA4652AB582C9002E9836 /* SearchBar.swift in Sources */,
 				D52BA4662AB582C9002E9836 /* DirtyJITView.swift in Sources */,
 				D52BA4672AB582C9002E9836 /* AppsView.swift in Sources */,
 				D58654892ABD508B005A2379 /* lzssdec.cpp in Sources */,
 				D5AFB5B72ABE074C006266EA /* KFD-manager.m in Sources */,
-				D52BA4692AB582C9002E9836 /* ApplicationManager2.swift in Sources */,
+				D52BA4692AB582C9002E9836 /* ApplicationManager.swift in Sources */,
 				D5AFB5C52ABE1781006266EA /* Logger.swift in Sources */,
 				D51A380A2AB56F8400C147E2 /* vnode.m in Sources */,
 				D51A380C2AB56F8400C147E2 /* cs_blobs.m in Sources */,

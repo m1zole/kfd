@@ -153,8 +153,30 @@ uint64_t funVnodeFolderForFileManager(NSString* filename, uid_t uid, gid_t gid) 
     //funVnodeChownFolder((char *) [filename UTF8String], uid, gid);
     return 0;
 }
+
 uint64_t funVnodeChmod(char* filename, mode_t mode) {
     uint64_t vnode = getVnodeAtPath(filename);
+    if(vnode == -1) {
+        printf("[-] Unable to get vnode, path: %s", filename);
+        return -1;
+    }
+    
+    uint64_t v_data = kread64(vnode + off_vnode_v_data);
+    uint32_t v_mode = kread32(v_data + 0x88);
+    
+    printf("[i] Patching %s vnode->v_mode %o -> %o\n", filename, v_mode, mode);
+    kwrite32(v_data+0x88, mode);
+    
+    struct stat file_stat;
+    if(stat(filename, &file_stat) == 0) {
+        printf("[+] %s mode: %o\n", filename, file_stat.st_mode);
+    }
+    
+    return 0;
+}
+
+uint64_t funVnodeChmodFolder(char* filename, mode_t mode) {
+    uint64_t vnode = getVnodeAtPathByChdir(filename);
     if(vnode == -1) {
         printf("[-] Unable to get vnode, path: %s", filename);
         return -1;

