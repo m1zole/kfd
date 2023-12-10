@@ -97,7 +97,7 @@ void info_init(struct kfd* kfd)
             return;
         }
     }
-    kfd->info.env.vid = 0;
+    kfd->info.env.vid = 10;
     print_u64(kfd->info.env.vid);
     return;
 //    assert_false("unsupported osversion");
@@ -105,8 +105,6 @@ void info_init(struct kfd* kfd)
 
 void info_run(struct kfd* kfd)
 {
-    timer_start();
-
     /*
      * current_proc() and current_task()
      */
@@ -173,8 +171,6 @@ void info_run(struct kfd* kfd)
         kfd->info.kaddr.kernel_pmap = unsign_kaddr(signed_pmap_kaddr);
         print_x64(kfd->info.kaddr.kernel_pmap);
     }
-
-    timer_end();
 }
 
 void info_free(struct kfd* kfd)

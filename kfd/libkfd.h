@@ -170,8 +170,6 @@ void kfd_free(struct kfd* kfd)
 
 u64 kopen(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method)
 {
-    timer_start();
-
     const u64 puaf_pages_min = 16;
     const u64 puaf_pages_max = 2048;
     assert(puaf_pages >= puaf_pages_min);
@@ -184,10 +182,8 @@ u64 kopen(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method)
     puaf_run(kfd);
     krkw_run(kfd);
     info_run(kfd);
-    perf_run(kfd);
-    puaf_cleanup(kfd);
+    //puaf_cleanup(kfd);
 
-    timer_end();
     return (u64)(kfd);
 }
 

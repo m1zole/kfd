@@ -40,17 +40,12 @@ void puaf_init(struct kfd* kfd, u64 puaf_pages, u64 puaf_method)
 void puaf_run(struct kfd* kfd)
 {
     puaf_helper_give_ppl_pages();
-
-    timer_start();
     kfd->puaf.puaf_method_ops.run(kfd);
-    timer_end();
 }
 
 void puaf_cleanup(struct kfd* kfd)
 {
-    timer_start();
     kfd->puaf.puaf_method_ops.cleanup(kfd);
-    timer_end();
 }
 
 void puaf_free(struct kfd* kfd)
@@ -114,8 +109,6 @@ void puaf_helper_get_vm_map_min_and_max(u64* min_out, u64* max_out)
 
 void puaf_helper_give_ppl_pages(void)
 {
-    timer_start();
-
     const u64 given_ppl_pages_max = 10000;
     const u64 l2_block_size = (1ull << 25);
 
@@ -151,7 +144,6 @@ void puaf_helper_give_ppl_pages(void)
     }
 
     print_u64(given_ppl_pages);
-    timer_end();
 }
 
 #endif /* puaf_h */

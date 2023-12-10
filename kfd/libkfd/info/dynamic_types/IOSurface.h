@@ -34,7 +34,7 @@ const struct IOSurface IOSurface_versions[] = {
     { .isa = 0x0, .PixelFormat = 0xA4, .AllocSize = 0xAC, .UseCountPtr = 0xC0, .IndexedTimestampPtr = 0x360, .ReadDisplacement = 0x14 }, // iOS 15.4 - 15.7.8 arm64
     { .isa = 0x0, .PixelFormat = 0xA4, .AllocSize = 0xAC, .UseCountPtr = 0xC0, .IndexedTimestampPtr = 0x360, .ReadDisplacement = 0x14 }, // iOS 15.4 - 15.7.2 arm64e
     
-    { .isa = 0x0, .PixelFormat = 0xA4, .AllocSize = 0xAC, .UseCountPtr = 0xC0, .IndexedTimestampPtr = 0x360, .ReadDisplacement = 0x14 }, // iOS 16.6b1 arm64 please work
+    { .isa = 0x0, .PixelFormat = 0xA4, .AllocSize = 0xAC, .UseCountPtr = 0xC0, .IndexedTimestampPtr = 0x368, .ReadDisplacement = 0x18 }, // iOS 16.6b1 arm64 please work
     { .isa = 0x0, .PixelFormat = 0xA4, .AllocSize = 0xAC, .UseCountPtr = 0xC0, .IndexedTimestampPtr = 0x360, .ReadDisplacement = 0x14 }, // iOS 16.6b1 arm64e (Prob not)
 };
 
